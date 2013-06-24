@@ -23,6 +23,7 @@ import bluerpint.sdk.util.Counter;
  * A Worker Group shares a JobQueue.<br>
  * <b>Thread Safe</b><br>
  * 
+ * @param <T> job class
  * @author Simon Lee
  * @since 2008. 11. 25.
  */

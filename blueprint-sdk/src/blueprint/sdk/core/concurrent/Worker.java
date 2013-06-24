@@ -20,6 +20,7 @@ import bluerpint.sdk.util.jvm.shutdown.Terminatable;
 /**
  * Worker Thread
  * 
+ * @param <T> job class
  * @author Simon Lee
  * @since 2007. 07. 25
  */
