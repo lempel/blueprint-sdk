@@ -15,7 +15,6 @@ package blueprint.sdk.util;
 
 import java.io.File;
 
-
 /**
  * @author Simon Lee
  * @since 2002. 07. 30
@@ -34,7 +33,7 @@ public class FilenameUtil {
 	 * @param ext
 	 * @return full path
 	 */
-	public static String generateRandomFileName(final String filepath, final String ext) {
+	public synchronized static String generateRandomFileName(final String filepath, final String ext) {
 		String result = null;
 
 		String path = filepath;
