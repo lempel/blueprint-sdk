@@ -11,7 +11,7 @@
  Blog - http://lempel.egloos.com
  */
 
-package blueprint.sdk.util.jvm.shutdown;
+package blueprint.sdk.util;
 
 /**
  * Provides common method for graceful shutdown

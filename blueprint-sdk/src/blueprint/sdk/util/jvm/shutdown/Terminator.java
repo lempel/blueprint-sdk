@@ -16,6 +16,8 @@ package blueprint.sdk.util.jvm.shutdown;
 import java.util.List;
 import java.util.Vector;
 
+import blueprint.sdk.util.Terminatable;
+
 /**
  * A Shutdown Hook terminates all registered Terminatables
  * 

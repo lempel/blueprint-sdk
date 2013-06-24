@@ -35,8 +35,8 @@ import blueprint.sdk.util.stream.StreamExhauster;
 /**
  * Marker Process for graceful shutdown.<br>
  * <br>
- * If you kills a process of {@link KillMeInstead}, parent process will begin shutdown
- * procedure.<Br>
+ * If you kills a process of {@link KillMeInstead}, parent process will begin
+ * shutdown procedure.<Br>
  * 
  * @author Simon Lee
  * @since 2013. 6. 22.
@@ -46,7 +46,8 @@ public class KillMeInstead {
 	 * Launch {@link KillMeInstead} process and wait for shutdown
 	 * 
 	 * @param callback
-	 *            Will be invoked after shutdown of {@link KillMeInstead} process
+	 *            Will be invoked after shutdown of {@link KillMeInstead}
+	 *            process
 	 * @throws IOException
 	 *             Can't launch
 	 */
@@ -58,7 +59,8 @@ public class KillMeInstead {
 	 * Launch {@link KillMeInstead} process and wait for shutdown
 	 * 
 	 * @param callback
-	 *            Will be invoked after shutdown of {@link KillMeInstead} process
+	 *            Will be invoked after shutdown of {@link KillMeInstead}
+	 *            process
 	 * @param print
 	 *            true: print {@link KillMeInstead}'s output
 	 * @throws IOException
@@ -97,6 +99,7 @@ public class KillMeInstead {
 				}
 			}
 		};
+		loop.setDaemon(true);
 		loop.start();
 	}
 
@@ -126,44 +129,10 @@ public class KillMeInstead {
 	 *             Can't monitor JVMs
 	 */
 	public static void main(String[] args) throws FileNotFoundException, MonitorException {
-		final Object lock = new Object();
-
 		String pid = getPid();
 
 		if (args.length >= 1) {
-			final int ppid = Integer.parseInt(args[0]);
-
-			// monitor parent VM
-			JavaProcesses jps = new JavaProcesses();
-			List<VmInfo> vms = jps.listJvms();
-			for (VmInfo vm : vms) {
-				if (ppid == vm.pid) {
-					MonitoredHost host = jps.getMonitoredHost();
-					host.addHostListener(new HostListener() {
-						@Override
-						public void vmStatusChanged(VmStatusChangeEvent event) {
-							@SuppressWarnings("unchecked")
-							Set<Integer> deadPids = event.getTerminated();
-
-							for (int deadPid : deadPids) {
-								if (deadPid == ppid) {
-									// die with parent
-									synchronized (lock) {
-										lock.notify();
-									}
-									break;
-								}
-							}
-						}
-
-						@Override
-						public void disconnected(HostEvent event) {
-							// die with parent
-							lock.notify();
-						}
-					});
-				}
-			}
+			monitor(args);
 		}
 
 		if (pid == null || pid.isEmpty()) {
@@ -177,13 +146,70 @@ public class KillMeInstead {
 					+ ManagementFactory.getRuntimeMXBean().getName());
 			pwr.flush();
 			pwr.close();
-		} else {
-			// just wait for death
+		}
+	}
+
+	private static void monitor(String[] args) throws MonitorException {
+		final int ppid = Integer.parseInt(args[0]);
+		final Object lock = new Object();
+
+		JavaProcesses jps = new JavaProcesses();
+
+		// find parent vm and install listener
+		long start = System.currentTimeMillis();
+		List<VmInfo> vms = jps.listJvms();
+		long end = System.currentTimeMillis();
+		for (VmInfo vm : vms) {
+			if (ppid == vm.pid) {
+				MonitoredHost host = jps.getMonitoredHost();
+				host.addHostListener(new HostListener() {
+					@Override
+					public void vmStatusChanged(VmStatusChangeEvent event) {
+						@SuppressWarnings("unchecked")
+						Set<Integer> deadPids = event.getTerminated();
+
+						for (int deadPid : deadPids) {
+							if (deadPid == ppid) {
+								synchronized (lock) {
+									// die with parent
+									lock.notify();
+								}
+								break;
+							}
+						}
+					}
+
+					@Override
+					public void disconnected(HostEvent event) {
+						synchronized (lock) {
+							// die with parent
+							lock.notify();
+						}
+					}
+				});
+			}
+		}
+
+		// check interval - 2% of CPU time
+		long interval = (end - start) * 50;
+
+		boolean hasParent = true;
+		while (hasParent) {
 			try {
 				synchronized (lock) {
-					lock.wait();
+					lock.wait(interval);
 				}
 			} catch (InterruptedException e) {
+			}
+
+			// search parent - parent could be terminated without any event
+			vms = jps.listJvms();
+			hasParent = false;
+			for (VmInfo vm : vms) {
+				if (ppid == vm.pid) {
+					hasParent = true;
+					break;
+				}
 			}
 		}
 	}

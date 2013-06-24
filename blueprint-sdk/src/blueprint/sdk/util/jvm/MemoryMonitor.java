@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import blueprint.sdk.util.jvm.shutdown.Terminatable;
+import blueprint.sdk.util.Terminatable;
 
 /**
  * Monitors memory usage<br>

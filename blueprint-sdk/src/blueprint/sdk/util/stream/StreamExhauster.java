@@ -43,6 +43,8 @@ public class StreamExhauster extends Thread {
 	 */
 	public StreamExhauster(final InputStream ins, final boolean print) {
 		super();
+
+		setDaemon(true);
 		this.ins = new DataInputStream(ins);
 	}
 
