@@ -11,7 +11,7 @@
  Blog - http://lempel.egloos.com
  */
 
-package bluerpint.sdk.util.jvm.shutdown;
+package blueprint.sdk.util.jvm.shutdown;
 
 import java.util.List;
 import java.util.Vector;

@@ -11,7 +11,7 @@
  Blog - http://lempel.egloos.com
  */
 
-package bluerpint.sdk.util;
+package blueprint.sdk.util;
 
 /**
  * Provides common methods for millisecond handling

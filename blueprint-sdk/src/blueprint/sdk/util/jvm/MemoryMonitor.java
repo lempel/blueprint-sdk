@@ -11,7 +11,7 @@
  Blog - http://lempel.egloos.com
  */
 
-package bluerpint.sdk.util.jvm;
+package blueprint.sdk.util.jvm;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import bluerpint.sdk.util.jvm.shutdown.Terminatable;
+import blueprint.sdk.util.jvm.shutdown.Terminatable;
 
 /**
  * Monitors memory usage<br>

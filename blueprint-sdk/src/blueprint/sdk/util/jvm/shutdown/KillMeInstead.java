@@ -11,7 +11,7 @@
  Blog - http://lempel.egloos.com
  */
 
-package bluerpint.sdk.util.jvm.shutdown;
+package blueprint.sdk.util.jvm.shutdown;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -28,9 +28,9 @@ import sun.jvmstat.monitor.MonitoredHost;
 import sun.jvmstat.monitor.event.HostEvent;
 import sun.jvmstat.monitor.event.HostListener;
 import sun.jvmstat.monitor.event.VmStatusChangeEvent;
-import bluerpint.sdk.util.jvm.JavaProcesses;
-import bluerpint.sdk.util.jvm.VmInfo;
-import bluerpint.sdk.util.stream.StreamExhauster;
+import blueprint.sdk.util.jvm.JavaProcesses;
+import blueprint.sdk.util.jvm.VmInfo;
+import blueprint.sdk.util.stream.StreamExhauster;
 
 /**
  * Marker Process for graceful shutdown.<br>

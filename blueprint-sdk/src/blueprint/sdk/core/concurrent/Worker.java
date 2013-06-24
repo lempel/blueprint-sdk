@@ -15,7 +15,7 @@ package blueprint.sdk.core.concurrent;
 
 import org.apache.log4j.Logger;
 
-import bluerpint.sdk.util.jvm.shutdown.Terminatable;
+import blueprint.sdk.util.jvm.shutdown.Terminatable;
 
 /**
  * Worker Thread

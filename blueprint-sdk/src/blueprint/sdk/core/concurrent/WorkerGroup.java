@@ -21,8 +21,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import bluerpint.sdk.util.jvm.shutdown.Terminatable;
-import bluerpint.sdk.util.jvm.shutdown.Terminator;
+import blueprint.sdk.util.jvm.shutdown.Terminatable;
+import blueprint.sdk.util.jvm.shutdown.Terminator;
 
 /**
  * A Group of Workers<br>

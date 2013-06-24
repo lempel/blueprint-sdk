@@ -11,7 +11,7 @@
  Blog - http://lempel.egloos.com
  */
 
-package bluerpint.sdk.util.stream;
+package blueprint.sdk.util.stream;
 
 import java.io.DataInputStream;
 import java.io.IOException;

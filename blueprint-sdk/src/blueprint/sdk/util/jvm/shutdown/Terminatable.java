@@ -11,18 +11,18 @@
  Blog - http://lempel.egloos.com
  */
 
-package bluerpint.sdk.util.jvm;
+package blueprint.sdk.util.jvm.shutdown;
 
 /**
- * Summay of sun.jvmstat.monitor.MonitoredVm
+ * Provides common method for graceful shutdown
  * 
  * @author Simon Lee
- * @since 2013. 6. 23.
+ * @since 2007. 07. 18
  */
-public class VmInfo {
-	public int pid;
-	public String mainClass;
-	public String mainArgs;
-	public String vmArgs;
-	public String vmFlags;
+public interface Terminatable {
+	boolean isValid();
+
+	boolean isTerminated();
+
+	void terminate();
 }

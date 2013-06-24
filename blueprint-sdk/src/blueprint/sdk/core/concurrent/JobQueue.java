@@ -16,7 +16,7 @@ package blueprint.sdk.core.concurrent;
 import java.util.List;
 import java.util.Vector;
 
-import bluerpint.sdk.util.Counter;
+import blueprint.sdk.util.Counter;
 
 /**
  * JobQueue for Workers.<br>

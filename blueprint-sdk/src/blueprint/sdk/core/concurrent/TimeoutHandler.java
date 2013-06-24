@@ -18,7 +18,7 @@ import java.util.Hashtable;
 
 import org.apache.log4j.Logger;
 
-import bluerpint.sdk.util.jvm.shutdown.Terminatable;
+import blueprint.sdk.util.jvm.shutdown.Terminatable;
 
 /**
  * Checks registered Terminatables and terminates timed-out or invalid ones

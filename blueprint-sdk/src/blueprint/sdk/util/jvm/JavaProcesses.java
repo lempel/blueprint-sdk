@@ -23,7 +23,7 @@
  * questions.
  */
 
-package bluerpint.sdk.util.jvm;
+package blueprint.sdk.util.jvm;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;

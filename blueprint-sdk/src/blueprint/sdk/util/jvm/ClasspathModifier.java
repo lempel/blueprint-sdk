@@ -11,7 +11,7 @@
  Blog - http://lempel.egloos.com
  */
 
-package bluerpint.sdk.util.jvm;
+package blueprint.sdk.util.jvm;
 
 import java.io.File;
 import java.io.IOException;
