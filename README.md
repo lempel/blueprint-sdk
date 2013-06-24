@@ -13,6 +13,6 @@ Blog - http://lempel.egloos.com<br>
 <br>
 Sub-Projects:<br>
 <br>
+blueprint-sdk (https://github.com/lempel/blueprint-sdk.git)<br>
 blueprint-sdk-logger (https://github.com/lempel/blueprint-sdk-logger.git)<br>
-blueprint-sdk-util (https://github.com/lempel/blueprint-sdk-util.git)<br>
 <p>
