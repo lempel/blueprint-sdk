@@ -127,8 +127,26 @@ public class StringUtil {
 		return result;
 	}
 
+	public static String nvl(Object value) {
+		String result = null;
+		if (value == null) {
+			result = "";
+		} else {
+			result = value.toString().trim();
+		}
+		return result;
+	}
+
+	public static String nvl(Object value, String defaultValue) {
+		String result = defaultValue;
+		if (value != null) {
+			result = value.toString();
+		}
+		return result;
+	}
+
 	public static String rpadSpace(final String src, final int length) {
-		byte[] sourceArray = src.getBytes();
+		byte[] sourceArray = nvl(src).getBytes();
 		byte[] targetArray = new byte[length];
 		int count;
 
@@ -147,7 +165,7 @@ public class StringUtil {
 	}
 
 	public static String lpadZero(final String src, final int length) {
-		byte[] sourceArray = src.getBytes();
+		byte[] sourceArray = nvl(src).getBytes();
 		byte[] targetArray = new byte[length];
 		int count;
 
@@ -171,9 +189,9 @@ public class StringUtil {
 	public static byte[] rpadNull(final String src, final int length) {
 		byte[] result;
 		try {
-			result = rpadNull(src.trim().getBytes(CharsetUtil.getDefaultEncoding()), length);
+			result = rpadNull(nvl(src).trim().getBytes(CharsetUtil.getDefaultEncoding()), length);
 		} catch (UnsupportedEncodingException e) {
-			result = rpadNull(src.trim().getBytes(), length);
+			result = rpadNull(nvl(src).trim().getBytes(), length);
 		}
 		return result;
 	}
@@ -195,7 +213,7 @@ public class StringUtil {
 	}
 
 	public static String lpadSapce(final String src, final int length) {
-		byte[] sourceArray = src.getBytes();
+		byte[] sourceArray = nvl(src).getBytes();
 		byte[] targetArray = new byte[length];
 		int count;
 
@@ -215,6 +233,16 @@ public class StringUtil {
 
 		return new String(targetArray);
 
+	}
+
+	public static String rtrim(String value, int maxLength) {
+		String result = nvl(value).trim();
+
+		if (result.length() > maxLength) {
+			result = result.substring(0, maxLength);
+		}
+
+		return result;
 	}
 
 	public static String concatString(final String... str) {
