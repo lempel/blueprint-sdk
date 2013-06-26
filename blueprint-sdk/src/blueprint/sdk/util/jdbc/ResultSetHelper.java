@@ -46,7 +46,9 @@ public class ResultSetHelper {
 	}
 
 	public void close() throws SQLException {
-		rset.close();
+		if (rset != null) {
+			rset.close();
+		}
 	}
 
 	public void wasNull() throws SQLException {
