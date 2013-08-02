@@ -13,6 +13,9 @@
 
 package blueprint.sdk.util;
 
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Collection;
@@ -265,6 +268,123 @@ public final class Validator {
 		if (sel != null && sel.isOpen()) {
 			result = true;
 		}
+		return result;
+	}
+
+	/**
+	 * See if given address is private or not
+	 * 
+	 * @param addr
+	 * @return true : private network
+	 */
+	public static boolean isPrivateIp(InetAddress addr) {
+		boolean result = false;
+
+		if (addr instanceof Inet4Address) {
+			result = isPrivateIp((Inet4Address) addr);
+		} else if (addr instanceof Inet6Address) {
+			result = isPrivateIp((Inet6Address) addr);
+		}
+
+		return result;
+	}
+
+	/**
+	 * See if given address is private or not
+	 * 
+	 * @param addr
+	 *            IPv4 address
+	 * @return true : private network
+	 */
+	public static boolean isPrivateIp(Inet4Address addr) {
+		boolean result = false;
+
+		byte[] address = addr.getAddress();
+
+		if (address[0] == 10) {
+			result = true;
+		} else if (address[0] == 172 && (address[1] >= 16 && address[1] <= 31)) {
+			result = true;
+		} else if (address[0] == 192 && address[1] == 168) {
+			result = true;
+		}
+
+		return result;
+	}
+
+	/**
+	 * See if given address is private or not
+	 * 
+	 * @param addr
+	 *            IPv6 address
+	 * @return true : private network
+	 */
+	public static boolean isPrivateIp(Inet6Address addr) {
+		boolean result = false;
+
+		byte[] address = addr.getAddress();
+
+		// XXX not so sure about this
+		if (address[0] == 0xfc && address[0] == 0x00) {
+			result = true;
+		}
+
+		return result;
+	}
+
+	/**
+	 * See if given address is loopback or not
+	 * 
+	 * @param addr
+	 * @return true : private network
+	 */
+	public static boolean isLoopbackIp(InetAddress addr) {
+		boolean result = false;
+
+		if (addr instanceof Inet4Address) {
+			result = isLoopbackIp((Inet4Address) addr);
+		} else if (addr instanceof Inet6Address) {
+			result = isLoopbackIp((Inet6Address) addr);
+		}
+
+		return result;
+	}
+
+	/**
+	 * See if given address is loopback or not
+	 * 
+	 * @param addr
+	 *            IPv4 address
+	 * @return true : private network
+	 */
+	public static boolean isLoopbackIp(Inet4Address addr) {
+		boolean result = false;
+
+		byte[] address = addr.getAddress();
+
+		if (address[0] == 127) {
+			result = true;
+		}
+
+		return result;
+	}
+
+	/**
+	 * See if given address is loopback or not
+	 * 
+	 * @param addr
+	 *            IPv6 address
+	 * @return true : private network
+	 */
+	public static boolean isLoopbackIp(Inet6Address addr) {
+		boolean result = false;
+
+		byte[] address = addr.getAddress();
+
+		if (address[address.length - 1] == 1) {
+			result = true;
+		}
+
 		return result;
 	}
 }
