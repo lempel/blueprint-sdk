@@ -56,11 +56,15 @@ public class IpUtil {
 
 		if (address[0] == 10) {
 			result = true;
-		} else if (address[0] == 169 && address[1] == 254) {
+		} else if ((address[0] & 0x000000ff) == 0xa9 && (address[1] & 0x000000ff) == 0xfe) {
+			// 169.254.*.*
 			result = true;
-		} else if (address[0] == 172 && (address[1] >= 16 && address[1] <= 31)) {
+		} else if ((address[0] & 0x000000ff) == 0xac
+				&& ((address[1] & 0x000000ff) >= 16 && (address[1] & 0x000000ff) <= 31)) {
+			// 172.16.*.* ~ 172.31.*.*
 			result = true;
-		} else if (address[0] == 192 && address[1] == 168) {
+		} else if ((address[0] & 0x000000ff) == 0xc0 && (address[1] & 0x000000ff) == 0xa8) {
+			// 192.168.*.*
 			result = true;
 		}
 
@@ -78,10 +82,10 @@ public class IpUtil {
 		boolean result = false;
 
 		byte[] address = addr.getAddress();
-		
-		if (address[0] == 0xfc && address[0] == 0x00) {
+
+		if ((address[0] & 0x000000ff) == 0xfc && (address[1] & 0x000000ff) == 0x00) {
 			result = true;
-		} else if (address[0] == 0xfe && address[0] == 0x80) {
+		} else if ((address[0] & 0x000000ff) == 0xfe && (address[1] & 0x000000ff) == 0x80) {
 			result = true;
 		}
 
@@ -118,7 +122,8 @@ public class IpUtil {
 
 		byte[] address = addr.getAddress();
 
-		if (address[0] == 127) {
+		if ((address[0] & 0x000000ff) == 0x7f) {
+			// 127.*.*.*
 			result = true;
 		}
 
