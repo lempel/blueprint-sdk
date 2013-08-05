@@ -16,6 +16,11 @@ package blueprint.sdk.util;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
 /**
  * IP address related utility
@@ -24,6 +29,32 @@ import java.net.InetAddress;
  * @since 2013. 8. 5.
  */
 public class IpUtil {
+	/**
+	 * @return list of all available ip address
+	 * @throws SocketException
+	 *             I/O error occurs
+	 */
+	public static List<String> getAllIp() throws SocketException {
+		List<String> result = new ArrayList<String>();
+
+		Enumeration<NetworkInterface> infs = NetworkInterface.getNetworkInterfaces();
+		while (infs.hasMoreElements()) {
+			NetworkInterface inf = infs.nextElement();
+
+			Enumeration<InetAddress> addrs = inf.getInetAddresses();
+			while (addrs.hasMoreElements()) {
+				InetAddress addr = addrs.nextElement();
+				String ip = addr.getHostAddress();
+				if ("0.0.0.0".equals(ip) || "::0".equals(ip)) {
+					continue;
+				}
+				result.add(ip);
+			}
+		}
+
+		return result;
+	}
+
 	/**
 	 * See if given address is private or not
 	 * 
