@@ -86,6 +86,7 @@ public class IpUtil {
 		byte[] address = addr.getAddress();
 
 		if (address[0] == 10) {
+			// 10.*.*.*
 			result = true;
 		} else if ((address[0] & 0x000000ff) == 0xa9 && (address[1] & 0x000000ff) == 0xfe) {
 			// 169.254.*.*
