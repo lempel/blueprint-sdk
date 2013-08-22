@@ -26,12 +26,28 @@ public class StringUtil {
 	protected static String lineSeparator = System.getProperty("line.separator");
 
 	/**
-	 * convert bye[] to hexa decimal dump
+	 * convert bye[] to hexa decimal expression in String
 	 * 
 	 * @param data
 	 * @return
 	 */
 	public static String toHex(final byte[] data) {
+		StringBuilder buffer = new StringBuilder(data.length * 2);
+
+		for (int i = 0; i < data.length; i++) {
+			buffer.append(StringUtil.lpadZero(Integer.toHexString(data[i]), 2));
+		}
+
+		return buffer.toString();
+	}
+
+	/**
+	 * convert bye[] to hexa decimal dump
+	 * 
+	 * @param data
+	 * @return
+	 */
+	public static String toHexDump(final byte[] data) {
 		// 72bytes per line
 		// offset 8bytes, 'h: ', hexa value + space 3*16bytes, '; ', sanitized
 		// value 16bytes
