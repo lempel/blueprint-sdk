@@ -28,6 +28,8 @@ import blueprint.sdk.util.Counter;
  * @since 2008. 11. 25.
  */
 public class JobQueue<T> {
+	// TODO replace with java.util.concurrent.LinkedBlockingQueue
+	
 	/** mutex for exclusion */
 	private final Mutex mtx = new Mutex();
 	/** mutex for lock */
