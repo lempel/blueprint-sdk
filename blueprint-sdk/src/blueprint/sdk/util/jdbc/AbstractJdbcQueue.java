@@ -129,7 +129,8 @@ public abstract class AbstractJdbcQueue {
 	protected abstract void delete(Element element) throws SQLException;
 
 	/**
-	 * Pop an element from queue
+	 * Retrieves an element from queue.<br>
+	 * Blocks until queue is not empty.<br>
 	 * 
 	 * @return queue element
 	 * @throws SQLException
@@ -139,9 +140,42 @@ public abstract class AbstractJdbcQueue {
 	 */
 	public String pop() throws SQLException, InterruptedException {
 		Element item = queue.take();
-		delete(item);
+		try {
+			delete(item);
+		} catch (SQLException e) {
+			queue.put(item);
+			throw e;
+		}
 
 		return item.content;
+	}
+
+	/**
+	 * Retrieves an element from queue.<br>
+	 * If queue is empty, just returns null.<br>
+	 * 
+	 * @return queue element or null
+	 * @throws SQLException
+	 *             Can't delete
+	 * @throws InterruptedException
+	 *             interrupted from blocked status
+	 */
+	public String poll() throws SQLException, InterruptedException {
+		String result = null;
+
+		Element item = queue.poll();
+		if (item != null) {
+			try {
+				delete(item);
+
+				result = item.content;
+			} catch (SQLException e) {
+				queue.put(item);
+				throw e;
+			}
+		}
+
+		return result;
 	}
 
 	/**
