@@ -88,10 +88,9 @@ public class H2Queue extends AbstractJdbcQueue {
 	protected void load() throws SQLException {
 		checkConnection();
 
-		Statement stmt = null;
+		Statement stmt = con.createStatement();
 		ResultSet rset = null;
 		try {
-			stmt = con.createStatement();
 			rset = stmt.executeQuery("SELECT UUID, CONTENT FROM " + schema + "." + table + "");
 			while (rset.next()) {
 				Element item = new Element();
@@ -108,9 +107,8 @@ public class H2Queue extends AbstractJdbcQueue {
 	protected void insert(Element element) throws SQLException {
 		checkConnection();
 
-		Statement stmt = null;
+		Statement stmt = con.createStatement();
 		try {
-			stmt = con.createStatement();
 			stmt.executeUpdate("INSERT INTO " + schema + "." + table + " (UUID, CONTENT) VALUES ('" + element.uuid
 					+ "', '" + element.content + "')");
 		} finally {
@@ -122,9 +120,8 @@ public class H2Queue extends AbstractJdbcQueue {
 	protected void delete(Element element) throws SQLException {
 		checkConnection();
 
-		Statement stmt = null;
+		Statement stmt = con.createStatement();
 		try {
-			stmt = con.createStatement();
 			stmt.executeUpdate("DELETE FROM " + schema + "." + table + " WHERE UUID = '" + element.uuid + "'");
 		} finally {
 			CloseHelper.close(stmt);
