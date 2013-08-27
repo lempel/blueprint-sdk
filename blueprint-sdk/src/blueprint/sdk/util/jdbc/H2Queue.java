@@ -73,7 +73,8 @@ public class H2Queue extends AbstractJdbcQueue {
 
 		try {
 			stmt.executeUpdate("CREATE TABLE " + schema + "." + table + " ( UUID CHAR(36) NOT NULL, CONTENT VARCHAR)");
-			stmt.executeUpdate("ALTER TABLE " + schema + "." + table + " ADD CONSTRAINT QUEUE_IDX_01 UNIQUE (UUID)");
+			stmt.executeUpdate("ALTER TABLE " + schema + "." + table + " ADD CONSTRAINT " + table
+					+ "_IDX_01 UNIQUE (UUID)");
 		} catch (SQLException e) {
 			if (e.getErrorCode() != 42101) {
 				throw e;
