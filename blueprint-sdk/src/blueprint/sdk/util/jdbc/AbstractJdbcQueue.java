@@ -45,6 +45,10 @@ public abstract class AbstractJdbcQueue {
 	 */
 	public AbstractJdbcQueue(DataSource datasrc) {
 		this.datasrc = datasrc;
+
+		if (datasrc == null) {
+			throw new NullPointerException("DataSource is null");
+		}
 	}
 
 	/**

@@ -51,8 +51,10 @@ public class H2Queue extends AbstractJdbcQueue {
 	 * @throws SQLException
 	 */
 	protected void checkConnection() throws SQLException {
-		if (con == null || con.isClosed()) {
-			con = datasrc.getConnection();
+		synchronized (this) {
+			if (con == null || con.isClosed()) {
+				con = datasrc.getConnection();
+			}
 		}
 	}
 
