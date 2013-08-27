@@ -31,9 +31,9 @@ public class H2Queue extends AbstractJdbcQueue {
 	protected Connection con = null;
 
 	/** schema for queue */
-	protected static final String SCHEMA = "BLUEPRINT";
+	protected String schema = "BLUEPRINT";
 	/** table for queue */
-	protected static final String TABLE = "QUEUE";
+	protected String table = "QUEUE";
 
 	/**
 	 * Constructor
@@ -62,7 +62,7 @@ public class H2Queue extends AbstractJdbcQueue {
 
 		Statement stmt = con.createStatement();
 		try {
-			stmt.executeUpdate("CREATE SCHEMA " + SCHEMA);
+			stmt.executeUpdate("CREATE SCHEMA " + schema);
 		} catch (SQLException e) {
 			if (e.getErrorCode() != 90078) {
 				throw e;
@@ -70,8 +70,8 @@ public class H2Queue extends AbstractJdbcQueue {
 		}
 
 		try {
-			stmt.executeUpdate("CREATE TABLE " + SCHEMA + "." + TABLE + " ( UUID CHAR(36) NOT NULL, CONTENT VARCHAR)");
-			stmt.executeUpdate("ALTER TABLE " + SCHEMA + "." + TABLE + " ADD CONSTRAINT QUEUE_IDX_01 UNIQUE (UUID)");
+			stmt.executeUpdate("CREATE TABLE " + schema + "." + table + " ( UUID CHAR(36) NOT NULL, CONTENT VARCHAR)");
+			stmt.executeUpdate("ALTER TABLE " + schema + "." + table + " ADD CONSTRAINT QUEUE_IDX_01 UNIQUE (UUID)");
 		} catch (SQLException e) {
 			if (e.getErrorCode() != 42101) {
 				throw e;
@@ -89,7 +89,7 @@ public class H2Queue extends AbstractJdbcQueue {
 		ResultSet rset = null;
 		try {
 			stmt = con.createStatement();
-			rset = stmt.executeQuery("SELECT UUID, CONTENT FROM " + SCHEMA + "." + TABLE + "");
+			rset = stmt.executeQuery("SELECT UUID, CONTENT FROM " + schema + "." + table + "");
 			while (rset.next()) {
 				Element item = new Element();
 				item.uuid = rset.getString(1);
@@ -108,7 +108,7 @@ public class H2Queue extends AbstractJdbcQueue {
 		Statement stmt = null;
 		try {
 			stmt = con.createStatement();
-			stmt.executeUpdate("INSERT INTO " + SCHEMA + "." + TABLE + " (UUID, CONTENT) VALUES ('" + element.uuid
+			stmt.executeUpdate("INSERT INTO " + schema + "." + table + " (UUID, CONTENT) VALUES ('" + element.uuid
 					+ "', '" + element.content + "')");
 		} finally {
 			CloseHelper.close(stmt);
@@ -122,9 +122,39 @@ public class H2Queue extends AbstractJdbcQueue {
 		Statement stmt = null;
 		try {
 			stmt = con.createStatement();
-			stmt.executeUpdate("DELETE FROM " + SCHEMA + "." + TABLE + " WHERE UUID = '" + element.uuid + "'");
+			stmt.executeUpdate("DELETE FROM " + schema + "." + table + " WHERE UUID = '" + element.uuid + "'");
 		} finally {
 			CloseHelper.close(stmt);
 		}
+	}
+
+	/**
+	 * @return the schema
+	 */
+	public String getSchema() {
+		return schema;
+	}
+
+	/**
+	 * @param schema
+	 *            the schema to set
+	 */
+	public void setSchema(String schema) {
+		this.schema = schema;
+	}
+
+	/**
+	 * @return the table
+	 */
+	public String getTable() {
+		return table;
+	}
+
+	/**
+	 * @param table
+	 *            the table to set
+	 */
+	public void setTable(String table) {
+		this.table = table;
 	}
 }
