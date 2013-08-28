@@ -64,20 +64,23 @@ public class H2Queue extends AbstractJdbcQueue {
 
 		Statement stmt = con.createStatement();
 		try {
-			stmt.executeUpdate("CREATE SCHEMA " + schema);
-		} catch (SQLException e) {
-			if (e.getErrorCode() != 90078) {
-				throw e;
+			try {
+				stmt.executeUpdate("CREATE SCHEMA " + schema);
+			} catch (SQLException e) {
+				if (e.getErrorCode() != 90078) {
+					throw e;
+				}
 			}
-		}
 
-		try {
-			stmt.executeUpdate("CREATE TABLE " + schema + "." + table + " ( UUID CHAR(36) NOT NULL, CONTENT VARCHAR)");
-			stmt.executeUpdate("ALTER TABLE " + schema + "." + table + " ADD CONSTRAINT " + table
-					+ "_IDX_01 UNIQUE (UUID)");
-		} catch (SQLException e) {
-			if (e.getErrorCode() != 42101) {
-				throw e;
+			try {
+				stmt.executeUpdate("CREATE TABLE " + schema + "." + table
+						+ " ( UUID CHAR(36) NOT NULL, CONTENT VARCHAR)");
+				stmt.executeUpdate("ALTER TABLE " + schema + "." + table + " ADD CONSTRAINT " + table
+						+ "_IDX_01 UNIQUE (UUID)");
+			} catch (SQLException e) {
+				if (e.getErrorCode() != 42101) {
+					throw e;
+				}
 			}
 		} finally {
 			CloseHelper.close(stmt);
