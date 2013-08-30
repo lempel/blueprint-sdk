@@ -44,6 +44,10 @@ public class Terminator extends Thread {
 		terminatables.add(target);
 	}
 
+	public void unregister(final Terminatable target) {
+		terminatables.remove(target);
+	}
+
 	public void run() {
 		while (!terminatables.isEmpty()) {
 			Terminatable ter = (Terminatable) terminatables.remove(0);

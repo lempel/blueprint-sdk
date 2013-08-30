@@ -13,8 +13,12 @@
 
 package blueprint.sdk.util;
 
+import blueprint.sdk.util.jvm.shutdown.Terminator;
+
 /**
- * Simple Thread with implementation of {@link Terminatable}
+ * Simple Thread with implementation of {@link Terminatable}.<br>
+ * Automatically registered to {@link Terminator} at creation, unregistered by
+ * {@link TerminatableThread#terminate()}.<br>
  * 
  * @author Simon Lee
  * @since 2013. 8. 21.
@@ -25,33 +29,27 @@ public class TerminatableThread extends Thread implements Terminatable {
 	/** Sets when terminated */
 	protected boolean terminated = false;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see blueprint.sdk.util.Terminatable#isValid()
+	/**
+	 * Constructor;
 	 */
+	public TerminatableThread() {
+		Terminator.getInstance().register(this);
+	}
+
 	@Override
 	public boolean isValid() {
 		return running;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see blueprint.sdk.util.Terminatable#isTerminated()
-	 */
 	@Override
 	public boolean isTerminated() {
 		return terminated;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see blueprint.sdk.util.Terminatable#terminate()
-	 */
 	@Override
 	public void terminate() {
 		running = false;
+
+		Terminator.getInstance().unregister(this);
 	}
 }
