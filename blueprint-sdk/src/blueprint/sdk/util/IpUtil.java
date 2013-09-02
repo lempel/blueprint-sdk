@@ -40,6 +40,9 @@ public class IpUtil {
 		Enumeration<NetworkInterface> infs = NetworkInterface.getNetworkInterfaces();
 		while (infs.hasMoreElements()) {
 			NetworkInterface inf = infs.nextElement();
+			if (!inf.isUp() || inf.isVirtual()) {
+				continue;
+			}
 
 			Enumeration<InetAddress> addrs = inf.getInetAddresses();
 			while (addrs.hasMoreElements()) {
