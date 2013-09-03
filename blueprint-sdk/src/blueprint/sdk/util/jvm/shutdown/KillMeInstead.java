@@ -13,6 +13,7 @@
 
 package blueprint.sdk.util.jvm.shutdown;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -131,19 +132,26 @@ public class KillMeInstead {
 	public static void main(String[] args) throws FileNotFoundException, MonitorException {
 		String pid = getPid();
 
-		if (args.length >= 1) {
-			monitor(args);
-		}
+		try {
+			if (args.length >= 1) {
+				monitor(args);
+			}
 
-		if (pid == null || pid.isEmpty()) {
-			// warn
-			OperatingSystemMXBean osm = ManagementFactory.getOperatingSystemMXBean();
-			PrintWriter pwr = new PrintWriter("killme.err");
-			pwr.println("Can't get PID from RuntimeMXBean. Please contact commiters.");
-			pwr.println("OS = " + osm.getName());
-			pwr.println("Verson = " + osm.getVersion());
-			pwr.println("ManagementFactory.getRuntimeMXBean().getName() = "
-					+ ManagementFactory.getRuntimeMXBean().getName());
+			if (pid == null || pid.isEmpty()) {
+				// warn
+				OperatingSystemMXBean osm = ManagementFactory.getOperatingSystemMXBean();
+				PrintWriter pwr = new PrintWriter("killme.err");
+				pwr.println("Can't get PID from RuntimeMXBean. Please contact commiters.");
+				pwr.println("OS = " + osm.getName());
+				pwr.println("Verson = " + osm.getVersion());
+				pwr.println("ManagementFactory.getRuntimeMXBean().getName() = "
+						+ ManagementFactory.getRuntimeMXBean().getName());
+				pwr.flush();
+				pwr.close();
+			}
+		} catch (Exception e) {
+			PrintWriter pwr = new PrintWriter(new File("killme.err"));
+			e.printStackTrace(pwr);
 			pwr.flush();
 			pwr.close();
 		}
@@ -196,10 +204,8 @@ public class KillMeInstead {
 		boolean hasParent = true;
 		while (hasParent) {
 			try {
-				synchronized (lock) {
-					lock.wait(interval);
-				}
-			} catch (InterruptedException e) {
+				Thread.sleep(interval);
+			} catch (InterruptedException ignored) {
 			}
 
 			// search parent - parent could be terminated without any event
