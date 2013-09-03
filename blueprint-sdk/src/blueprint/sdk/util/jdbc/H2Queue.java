@@ -88,6 +88,18 @@ public class H2Queue extends AbstractJdbcQueue {
 	}
 
 	@Override
+	protected void emptyTable() throws SQLException {
+		checkConnection();
+
+		Statement stmt = con.createStatement();
+		try {
+			stmt.executeUpdate("DELETE FROM " + schema + "." + table + "");
+		} finally {
+			CloseHelper.close(stmt);
+		}
+	}
+
+	@Override
 	protected void load() throws SQLException {
 		checkConnection();
 

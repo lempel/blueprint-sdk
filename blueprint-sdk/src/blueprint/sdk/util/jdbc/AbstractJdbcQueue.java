@@ -70,12 +70,20 @@ public abstract class AbstractJdbcQueue {
 	protected abstract void load() throws SQLException;
 
 	/**
-	 * Create tables for queue (if not exits)
+	 * Create table for queue (if not exits)
 	 * 
 	 * @throws SQLException
 	 *             Can't create
 	 */
 	protected abstract void createTable() throws SQLException;
+
+	/**
+	 * Empty table for queue
+	 * 
+	 * @throws SQLException
+	 *             Can't delete
+	 */
+	protected abstract void emptyTable() throws SQLException;
 
 	/**
 	 * Clears queue
@@ -85,12 +93,8 @@ public abstract class AbstractJdbcQueue {
 	 */
 	public void clear() throws SQLException {
 		synchronized (this) {
-			while (size() > 0) {
-				try {
-					pop();
-				} catch (InterruptedException ignored) {
-				}
-			}
+			emptyTable();
+			queue.clear();
 		}
 	}
 
@@ -111,7 +115,7 @@ public abstract class AbstractJdbcQueue {
 	}
 
 	/**
-	 * Insert queue element to tables
+	 * Insert queue element to table
 	 * 
 	 * @param element
 	 * @throws SQLException
@@ -120,7 +124,7 @@ public abstract class AbstractJdbcQueue {
 	protected abstract void insert(Element element) throws SQLException;
 
 	/**
-	 * Delete queue element from tables
+	 * Delete queue element from table
 	 * 
 	 * @param element
 	 * @throws SQLException
