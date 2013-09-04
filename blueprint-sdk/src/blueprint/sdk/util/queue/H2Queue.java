@@ -11,7 +11,7 @@
  Blog - http://lempel.egloos.com
  */
 
-package blueprint.sdk.util.jdbc;
+package blueprint.sdk.util.queue;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -20,13 +20,15 @@ import java.sql.Statement;
 
 import javax.sql.DataSource;
 
+import blueprint.sdk.util.jdbc.CloseHelper;
+
 /**
  * H2 based AbstractJdbcQueue implementation (example).
  * 
  * @author Simon Lee
  * @since 2013. 8. 27.
  */
-public class H2Queue extends AbstractJdbcQueue {
+public class H2Queue extends JdbcQueue {
 	/** H2 Connection */
 	protected Connection con = null;
 
