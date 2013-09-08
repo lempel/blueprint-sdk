@@ -164,9 +164,7 @@ public class KillMeInstead {
 		JavaProcesses jps = new JavaProcesses();
 
 		// find parent vm and install listener
-		long start = System.currentTimeMillis();
 		List<VmInfo> vms = jps.listJvms();
-		long end = System.currentTimeMillis();
 		for (VmInfo vm : vms) {
 			if (ppid == vm.pid) {
 				MonitoredHost host = jps.getMonitoredHost();
@@ -198,13 +196,11 @@ public class KillMeInstead {
 			}
 		}
 
-		// check interval - 2% of CPU time
-		long interval = (end - start) * 50;
-
 		boolean hasParent = true;
 		while (hasParent) {
 			try {
-				Thread.sleep(interval);
+				// 10sec interval
+				Thread.sleep(10000);
 			} catch (InterruptedException ignored) {
 			}
 
