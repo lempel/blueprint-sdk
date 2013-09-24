@@ -102,36 +102,40 @@ public class MemoryMonitor implements Terminatable, Runnable {
 		boolean xmx = isXmxSet();
 
 		while (running) {
-			if (!interrupted) {
-				Runtime rtime = Runtime.getRuntime();
-				long total = rtime.maxMemory();
-				long used = rtime.totalMemory() - rtime.freeMemory();
-				double ratio = (double) used / (double) total;
-				int percent = (int) (ratio * 100d);
+			try {
+				if (!interrupted) {
+					Runtime rtime = Runtime.getRuntime();
+					long total = rtime.maxMemory();
+					long used = rtime.totalMemory() - rtime.freeMemory();
+					double ratio = (double) used / (double) total;
+					int percent = (int) (ratio * 100d);
 
-				if (percent >= WARNING_USAGE) {
-					warnCount++;
-					if (warnCount >= MAX_WARNINGS) {
-						L.error("LOW FREE MEMORY!! Memory usage is Critical. Over " + WARNING_USAGE
-								+ "% for long time.");
-						if (xmx) {
-							L.error("RECOMMEND: 1. Increase -Xmx value");
+					if (percent >= WARNING_USAGE) {
+						warnCount++;
+						if (warnCount >= MAX_WARNINGS) {
+							L.error("LOW FREE MEMORY!! Memory usage is Critical. Over " + WARNING_USAGE
+									+ "% for long time.");
+							if (xmx) {
+								L.error("RECOMMEND: 1. Increase -Xmx value");
+							} else {
+								L.error("RECOMMEND: 1. Set -Xmx value");
+							}
+							L.error("RECOMMEND: 2. Check for memory leak");
+							L.error("RECOMMEND: 3. Increase performance or use better machine)");
+							warnCount = 0;
 						} else {
-							L.error("RECOMMEND: 1. Set -Xmx value");
+							L.warn("Memory usage: " + percent + "% - " + (used / 1024 / 1024) + "M");
 						}
-						L.error("RECOMMEND: 2. Check for memory leak");
-						L.error("RECOMMEND: 3. Increase performance or use better machine)");
-						warnCount = 0;
 					} else {
-						L.warn("Memory usage: " + percent + "% - " + (used / 1024 / 1024) + "M");
+						warnCount = 0;
 					}
-				} else {
-					warnCount = 0;
-				}
 
-				if (trace) {
-					L.info("Memory usage: " + percent + "% - " + (used / 1024 / 1024) + "M");
+					if (trace) {
+						L.info("Memory usage: " + percent + "% - " + (used / 1024 / 1024) + "M");
+					}
 				}
+			} catch (OutOfMemoryError oom) {
+				L.error("OutOfMemoryError", oom);
 			}
 
 			try {
