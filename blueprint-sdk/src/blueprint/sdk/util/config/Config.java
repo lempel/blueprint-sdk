@@ -242,6 +242,17 @@ public class Config {
 	}
 
 	/**
+	 * Evaluate and return NodeList
+	 * 
+	 * @param xpath
+	 * @return
+	 * @throws XPathExpressionException
+	 */
+	public NodeList getNodeList(String xpath) throws XPathExpressionException {
+		return (NodeList) eval.evaluate(xpath, doc, XPathConstants.NODESET);
+	}
+
+	/**
 	 * Replace '$' enclosed value with system property.
 	 * 
 	 * @param value
