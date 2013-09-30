@@ -26,7 +26,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import blueprint.sdk.util.Validator;
@@ -46,11 +46,28 @@ public class Config {
 
 	protected DocumentBuilder builder;
 
-	/** config의 Document */
-	protected Document doc;
+	/** config의 root Node */
+	protected Node root;
 
 	/** XPath evaluator */
 	protected XPath eval = XPathFactory.newInstance().newXPath();
+
+	/**
+	 * Constructor
+	 */
+	public Config() {
+		// NO-OP
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param root
+	 *            Document or Node of config
+	 */
+	public Config(Node root) {
+		this.root = root;
+	}
 
 	/**
 	 * @return configuration의 uri
@@ -79,14 +96,14 @@ public class Config {
 		}
 
 		try {
-			doc = builder.parse(uri);
+			root = builder.parse(uri);
 		} catch (Exception e) {
 			throw new ConfigException("Can't parse config xml", e);
 		}
 
 		String configName = null;
 		try {
-			configName = eval.evaluate("config/@name", doc);
+			configName = eval.evaluate("config/@name", root);
 			if (Validator.isEmpty(configName)) {
 				configName = "no-name";
 			}
@@ -105,7 +122,7 @@ public class Config {
 	 * @throws XPathExpressionException
 	 */
 	public String getString(String xpath) throws XPathExpressionException {
-		String result = eval.evaluate(xpath, doc);
+		String result = eval.evaluate(xpath, root);
 		result = resolveProperty(result);
 
 		warnEmptyValue(xpath, result);
@@ -168,7 +185,7 @@ public class Config {
 	public String[] getStringArray(String xpath) throws XPathExpressionException {
 		List<String> result = new ArrayList<String>(10);
 
-		NodeList nodes = (NodeList) eval.evaluate(xpath, doc, XPathConstants.NODESET);
+		NodeList nodes = (NodeList) eval.evaluate(xpath, root, XPathConstants.NODESET);
 		if (nodes == null) {
 			warnEmptyValue(xpath, null);
 		} else {
@@ -193,7 +210,7 @@ public class Config {
 	public Boolean[] getBooleanArray(String xpath) throws XPathExpressionException {
 		List<Boolean> result = new ArrayList<Boolean>(10);
 
-		NodeList nodes = (NodeList) eval.evaluate(xpath, doc, XPathConstants.NODESET);
+		NodeList nodes = (NodeList) eval.evaluate(xpath, root, XPathConstants.NODESET);
 		if (nodes == null) {
 			warnEmptyValue(xpath, null);
 		} else {
@@ -222,7 +239,7 @@ public class Config {
 	public Integer[] getIntArray(String xpath) throws XPathExpressionException {
 		List<Integer> result = new ArrayList<Integer>(10);
 
-		NodeList nodes = (NodeList) eval.evaluate(xpath, doc, XPathConstants.NODESET);
+		NodeList nodes = (NodeList) eval.evaluate(xpath, root, XPathConstants.NODESET);
 		if (nodes == null) {
 			warnEmptyValue(xpath, null);
 		} else {
@@ -249,7 +266,7 @@ public class Config {
 	 * @throws XPathExpressionException
 	 */
 	public NodeList getNodeList(String xpath) throws XPathExpressionException {
-		return (NodeList) eval.evaluate(xpath, doc, XPathConstants.NODESET);
+		return (NodeList) eval.evaluate(xpath, root, XPathConstants.NODESET);
 	}
 
 	/**
