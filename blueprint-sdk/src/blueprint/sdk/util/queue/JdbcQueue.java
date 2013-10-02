@@ -99,19 +99,19 @@ public abstract class JdbcQueue extends MessageQueue {
 		item.uuid = UUID.randomUUID().toString();
 		item.content = element;
 
-		synchronized (queue) {
-			try {
-				insert(item);
+		try {
+			insert(item);
+			synchronized (queue) {
 				queue.push(item);
-			} catch (SQLException e) {
-				throw new JdbcQueueException(e);
 			}
+		} catch (SQLException e) {
+			throw new JdbcQueueException(e);
+		}
 
-			try {
-				MessageConsumer consumer = waiters.pop();
-				consumer.interrupt();
-			} catch (NoSuchElementException ignored) {
-			}
+		try {
+			MessageConsumer consumer = waiters.pop();
+			consumer.interrupt();
+		} catch (NoSuchElementException ignored) {
 		}
 	}
 
@@ -126,19 +126,23 @@ public abstract class JdbcQueue extends MessageQueue {
 	public String pop() throws JdbcQueueException {
 		String result = null;
 
-		synchronized (queue) {
-			try {
-				Element element = queue.pop();
-				try {
-					delete(element);
-					result = element.content;
-				} catch (SQLException e) {
-					queue.push(element);
-					throw new JdbcQueueException(e);
-				}
-			} catch (NoSuchElementException ignored) {
-				// just return null
+		try {
+			Element element = null;
+			synchronized (queue) {
+				element = queue.pop();
 			}
+
+			try {
+				delete(element);
+				result = element.content;
+			} catch (SQLException e) {
+				synchronized (queue) {
+					queue.push(element);
+				}
+				throw new JdbcQueueException(e);
+			}
+		} catch (NoSuchElementException ignored) {
+			// just return null
 		}
 
 		return result;
