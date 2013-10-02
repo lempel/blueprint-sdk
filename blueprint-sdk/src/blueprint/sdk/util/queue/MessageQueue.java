@@ -80,7 +80,9 @@ public class MessageQueue {
 
 			try {
 				MessageConsumer consumer = waiters.pop();
-				consumer.interrupt();
+				if (consumer != null) {
+					consumer.interrupt();
+				}
 			} catch (NoSuchElementException ignored) {
 			}
 		}
@@ -97,7 +99,9 @@ public class MessageQueue {
 		synchronized (queue) {
 			try {
 				Element element = queue.pop();
-				result = element.content;
+				if (element != null) {
+					result = element.content;
+				}
 			} catch (NoSuchElementException ignored) {
 				// just return null
 			}

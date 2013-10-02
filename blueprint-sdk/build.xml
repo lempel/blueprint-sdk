@@ -32,7 +32,7 @@
 
 	<!-- compile -->
 	<target name="compile">
-		<javac classpathref="build.classpath" source="${jdk}" target="${jdk}" srcdir="${src}" destdir="${classes}" deprecation="on" debug="ture" includeantruntime="false" />
+	    		<javac classpathref="build.classpath" source="${jdk}" target="${jdk}" srcdir="${src}" destdir="${classes}" deprecation="on" debug="on" includeantruntime="false" />
 	</target>
 	<!-- jar -->
 	<target name="jar" unless="-jar">
