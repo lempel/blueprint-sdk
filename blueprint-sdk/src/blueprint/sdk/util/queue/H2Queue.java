@@ -25,7 +25,7 @@ import blueprint.sdk.util.jdbc.CloseHelper;
 /**
  * H2 based AbstractJdbcQueue implementation (example).
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2013. 8. 27.
  */
 public class H2Queue extends JdbcQueue {

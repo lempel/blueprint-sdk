@@ -65,7 +65,7 @@ import blueprint.sdk.util.config.Config;
  * href="http://x-15.org/tracing.htm">http://x-15.org/tracing.htm</a>) file and<br>
  * create a 'trace.properties' file on working directory<br>
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @version $Revision$
  * @since 2007. 12. 12
  * @last $Date$

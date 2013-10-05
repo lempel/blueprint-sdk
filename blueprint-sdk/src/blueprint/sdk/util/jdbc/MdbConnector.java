@@ -22,7 +22,7 @@ import blueprint.sdk.util.Validator;
 /**
  * Creates java.sql.Connection instance for MDB file(MS Access)
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2007. 08. 07
  */
 public class MdbConnector {

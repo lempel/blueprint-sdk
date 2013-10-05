@@ -20,7 +20,7 @@ import java.io.InputStream;
 /**
  * Read everything from given InputStream.
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2012. 11. 28.
  */
 public class StreamExhauster extends Thread {

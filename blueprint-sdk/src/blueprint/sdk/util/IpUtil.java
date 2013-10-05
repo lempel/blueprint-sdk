@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * IP address related utility
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2013. 8. 5.
  */
 public class IpUtil {

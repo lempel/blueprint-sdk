@@ -24,7 +24,7 @@ import blueprint.sdk.util.Counter;
  * <b>Thread Safe</b><br>
  * 
  * @param <T> job class
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2008. 11. 25.
  */
 public class JobQueue<T> {

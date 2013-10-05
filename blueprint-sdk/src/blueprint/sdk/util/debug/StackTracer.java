@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 /**
  * Utility for stack trace
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2013. 9. 5.
  */
 public class StackTracer {

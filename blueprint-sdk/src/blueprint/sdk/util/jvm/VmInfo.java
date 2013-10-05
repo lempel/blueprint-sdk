@@ -16,7 +16,7 @@ package blueprint.sdk.util.jvm;
 /**
  * Summay of sun.jvmstat.monitor.MonitoredVm
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2013. 6. 23.
  */
 public class VmInfo {

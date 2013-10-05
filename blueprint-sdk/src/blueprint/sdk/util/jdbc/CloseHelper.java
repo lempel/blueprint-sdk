@@ -21,7 +21,7 @@ import java.sql.Statement;
 /**
  * Closes JDBC resources.
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2013. 8. 27.
  */
 public class CloseHelper {
@@ -34,7 +34,7 @@ public class CloseHelper {
 		if (con != null) {
 			try {
 				con.close();
-			} catch (SQLException ignored) { // NOPMD by Simon Lee
+			} catch (SQLException ignored) { // NOPMD by Sangmin Lee
 			}
 		}
 	}
@@ -48,7 +48,7 @@ public class CloseHelper {
 		if (stmt != null) {
 			try {
 				stmt.close();
-			} catch (SQLException ignored) { // NOPMD by Simon Lee
+			} catch (SQLException ignored) { // NOPMD by Sangmin Lee
 			}
 		}
 	}
@@ -62,7 +62,7 @@ public class CloseHelper {
 		if (rset != null) {
 			try {
 				rset.close();
-			} catch (SQLException ignored) { // NOPMD by Simon Lee
+			} catch (SQLException ignored) { // NOPMD by Sangmin Lee
 			}
 		}
 	}
@@ -76,7 +76,7 @@ public class CloseHelper {
 		if (rset != null) {
 			try {
 				rset.close();
-			} catch (SQLException ignored) { // NOPMD by Simon Lee
+			} catch (SQLException ignored) { // NOPMD by Sangmin Lee
 			}
 		}
 	}

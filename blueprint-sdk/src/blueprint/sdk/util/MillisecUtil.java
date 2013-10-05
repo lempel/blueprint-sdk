@@ -16,7 +16,7 @@ package blueprint.sdk.util;
 /**
  * Provides common methods for millisecond handling
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2009. 8. 22.
  */
 public final class MillisecUtil {

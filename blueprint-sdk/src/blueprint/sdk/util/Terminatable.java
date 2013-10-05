@@ -16,7 +16,7 @@ package blueprint.sdk.util;
 /**
  * Provides common method for graceful shutdown
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2007. 07. 18
  */
 public interface Terminatable {

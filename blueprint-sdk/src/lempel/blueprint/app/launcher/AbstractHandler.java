@@ -49,7 +49,7 @@ import blueprint.sdk.util.config.Config;
 /**
  * Prototype for handlers
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2007. 12. 12
  */
 public abstract class AbstractHandler {

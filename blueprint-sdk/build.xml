@@ -37,7 +37,7 @@
 	<!-- jar -->
 	<target name="jar" unless="-jar">
 		<manifest file="MANIFEST.MF">
-			<attribute name="Built-By" value="Simon Lee" />
+			<attribute name="Built-By" value="Sangmin Lee" />
 		</manifest>
 
 		<jar jarfile="${dist}/blueprint-sdk.jar" filesonly="true" manifest="MANIFEST.MF">

@@ -17,7 +17,7 @@ import java.util.Calendar;
 
 
 /**
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2002. 07. 30
  */
 public class TimeStamper {

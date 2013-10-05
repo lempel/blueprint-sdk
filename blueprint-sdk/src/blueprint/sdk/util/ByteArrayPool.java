@@ -21,7 +21,7 @@ import java.util.List;
  * <b>BEWARE: </b>This pool reduces memory allocations & heap usage variations
  * but total performance could be decreased (due to inevitable locks).<br>
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2009. 1. 20.
  */
 public class ByteArrayPool {

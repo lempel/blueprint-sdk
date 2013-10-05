@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Factory for ByteArrayPool
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2009. 1. 20.
  */
 public class ByteArrayFactory {

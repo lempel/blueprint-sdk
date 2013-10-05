@@ -20,7 +20,7 @@ import java.io.Serializable;
  * 
  * @param <T>
  *            element type
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2013. 6. 28.
  */
 public class CacheItem<T> implements Serializable {

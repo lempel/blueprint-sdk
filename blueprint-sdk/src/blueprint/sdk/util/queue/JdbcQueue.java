@@ -29,7 +29,7 @@ import javax.sql.DataSource;
  * <br>
  * Must call {@link JdbcQueue#init()} before use.<br>
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2013. 8. 26.
  */
 public abstract class JdbcQueue extends MessageQueue {

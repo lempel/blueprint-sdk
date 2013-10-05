@@ -31,7 +31,7 @@ import java.sql.Timestamp;
  * Prevent NullPointerException from ResultSet.<br>
  * (getString, getBytes)<br>
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2009. 2. 26.
  */
 public class ResultSetHelper {

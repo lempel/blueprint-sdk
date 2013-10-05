@@ -30,7 +30,7 @@ import blueprint.sdk.util.jvm.shutdown.Terminator;
  * <br>
  * If you want to use automatic thread spanning feature, call start() method.<br>
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2008. 11. 25.
  */
 public class WorkerGroup implements Terminatable, Runnable {

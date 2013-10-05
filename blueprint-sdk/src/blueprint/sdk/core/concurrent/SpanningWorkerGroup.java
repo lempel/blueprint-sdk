@@ -21,7 +21,7 @@ import java.lang.reflect.InvocationTargetException;
  * <br>
  * Provides automatic thread spanning feature, call start() method.<br>
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2008. 11. 25.
  */
 public class SpanningWorkerGroup extends WorkerGroup {

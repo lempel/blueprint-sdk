@@ -26,7 +26,7 @@ import java.util.UUID;
 /**
  * Simple Message Queue.
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2013. 9. 4.
  */
 public class MessageQueue {
@@ -123,7 +123,7 @@ public class MessageQueue {
 /**
  * Internal element of AbstractJdbcQueue
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2013. 8. 27.
  */
 class Element {

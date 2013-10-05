@@ -17,7 +17,7 @@ import java.io.File;
 import java.util.UUID;
 
 /**
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2002. 07. 30
  */
 public class FilenameUtil {

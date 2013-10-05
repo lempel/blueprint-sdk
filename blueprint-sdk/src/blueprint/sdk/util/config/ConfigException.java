@@ -3,7 +3,7 @@ package blueprint.sdk.util.config;
 /**
  * Config 내부에서 발생하는 Exception
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2013. 6. 18.
  */
 public class ConfigException extends Exception {

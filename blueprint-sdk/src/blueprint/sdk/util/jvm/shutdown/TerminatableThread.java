@@ -20,7 +20,7 @@ import blueprint.sdk.util.Terminatable;
  * Automatically registered to {@link Terminator} at creation, unregistered by
  * {@link TerminatableThread#terminate()}.<br>
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2013. 8. 21.
  */
 public class TerminatableThread extends Thread implements Terminatable {

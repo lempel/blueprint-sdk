@@ -16,7 +16,7 @@ package blueprint.sdk.util;
 /**
  * Thread-Safe Counter
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2009. 2. 26.
  */
 public class Counter {

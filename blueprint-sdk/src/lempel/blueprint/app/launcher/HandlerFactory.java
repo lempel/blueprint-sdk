@@ -49,7 +49,7 @@ import blueprint.sdk.util.config.Config;
 /**
  * Handler Factory for JavaLauncher
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2007. 12. 12
  */
 public final class HandlerFactory {

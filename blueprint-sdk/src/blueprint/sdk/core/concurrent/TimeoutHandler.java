@@ -23,7 +23,7 @@ import blueprint.sdk.util.Terminatable;
 /**
  * Checks registered Terminatables and terminates timed-out or invalid ones
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2007. 07. 20
  */
 public final class TimeoutHandler implements Terminatable, Runnable {

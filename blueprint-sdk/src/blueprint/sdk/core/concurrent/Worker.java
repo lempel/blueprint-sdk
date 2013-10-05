@@ -21,7 +21,7 @@ import blueprint.sdk.util.Terminatable;
  * Worker Thread
  * 
  * @param <T> job class
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2007. 07. 25
  */
 public abstract class Worker<T> implements Terminatable, Runnable {

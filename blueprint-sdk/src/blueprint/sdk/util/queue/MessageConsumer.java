@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * Consumer for {@link MessageQueue}
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2013. 9. 4.
  */
 public class MessageConsumer {

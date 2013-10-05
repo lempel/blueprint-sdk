@@ -21,7 +21,7 @@ import java.lang.reflect.ReflectPermission;
 /**
  * Provides reflective access to every field/method.
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2013. 9. 5.
  */
 public class Crowbar {

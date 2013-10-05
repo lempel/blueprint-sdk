@@ -25,7 +25,7 @@ import blueprint.sdk.util.Terminatable;
  * Monitors memory usage<br>
  * For better result, please set -Xmx argument.<br>
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2009. 3. 2.
  */
 public class MemoryMonitor implements Terminatable, Runnable {

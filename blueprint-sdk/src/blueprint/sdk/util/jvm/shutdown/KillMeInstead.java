@@ -39,7 +39,7 @@ import blueprint.sdk.util.stream.StreamExhauster;
  * If you kills a process of {@link KillMeInstead}, parent process will begin
  * shutdown procedure.<Br>
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2013. 6. 22.
  */
 public class KillMeInstead {

@@ -21,7 +21,7 @@ import blueprint.sdk.util.Terminatable;
 /**
  * A Shutdown Hook terminates all registered Terminatables
  * 
- * @author Simon Lee
+ * @author Sangmin Lee
  * @since 2007. 07. 26
  */
 public class Terminator extends Thread {
