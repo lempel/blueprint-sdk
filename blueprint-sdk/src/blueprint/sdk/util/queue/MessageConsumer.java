@@ -44,7 +44,10 @@ public class MessageConsumer {
 
 		result = queue.pop();
 		if (result == null) {
+			// FIXME should be synchronized with MessageQueue.eueue
+			// ----- MessageQueue.push() can be executed between queue.pop() and queue.waiters.push()
 			queue.waiters.push(this);
+			
 			synchronized (this) {
 				blocked.set(true);
 
