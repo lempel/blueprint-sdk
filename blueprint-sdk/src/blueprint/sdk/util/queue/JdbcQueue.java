@@ -57,12 +57,6 @@ public abstract class JdbcQueue extends MessageQueue {
 		}
 	}
 
-	/**
-	 * Clears queue
-	 * 
-	 * @throws JdbcQueueException
-	 *             Can't delete
-	 */
 	@Override
 	public void clear() throws JdbcQueueException {
 		synchronized (queue) {
@@ -75,15 +69,6 @@ public abstract class JdbcQueue extends MessageQueue {
 		}
 	}
 
-	/**
-	 * Push an element to queue
-	 * 
-	 * @param element
-	 * @throws JdbcQueueException
-	 *             Can't insert
-	 * @throws NullPointerException
-	 *             null element
-	 */
 	@Override
 	public void push(String element) {
 		if (element == null) {
@@ -103,22 +88,17 @@ public abstract class JdbcQueue extends MessageQueue {
 			throw new JdbcQueueException(e);
 		}
 
-		try {
-			MessageConsumer consumer = waiters.pop();
-			if (consumer != null) {
-				consumer.interrupt();
+		synchronized (waiters) {
+			try {
+				Thread consumer = waiters.pop();
+				if (consumer != null) {
+					consumer.interrupt();
+				}
+			} catch (NoSuchElementException ignored) {
 			}
-		} catch (NoSuchElementException ignored) {
 		}
 	}
 
-	/**
-	 * Retrieves an element from queue.
-	 * 
-	 * @return queue element or null(queue is empty)
-	 * @throws JdbcQueueException
-	 *             Can't delete
-	 */
 	@Override
 	public String pop() throws JdbcQueueException {
 		String result = null;

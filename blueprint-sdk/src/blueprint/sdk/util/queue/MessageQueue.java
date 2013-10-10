@@ -29,7 +29,7 @@ public class MessageQueue {
 	protected LinkedList<Element> queue = new LinkedList<Element>();
 
 	/** waiting consumers */
-	protected LinkedList<MessageConsumer> waiters = new LinkedList<MessageConsumer>();
+	protected LinkedList<Thread> waiters = new LinkedList<Thread>();
 
 	public MessageQueue() {
 		super();
@@ -45,13 +45,6 @@ public class MessageQueue {
 		synchronized (queue) {
 			queue.clear();
 		}
-	}
-
-	/**
-	 * @return consumer of this queue
-	 */
-	public MessageConsumer newConsumer() {
-		return new MessageConsumer(this);
 	}
 
 	/**
@@ -74,7 +67,11 @@ public class MessageQueue {
 			queue.push(item);
 
 			try {
-				MessageConsumer consumer = waiters.pop();
+				Thread consumer = null;
+				synchronized (waiters) {
+					consumer = waiters.pop();
+				}
+
 				if (consumer != null) {
 					consumer.interrupt();
 				}
@@ -103,6 +100,51 @@ public class MessageQueue {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Retrieves an element from queue. (blocks if queue is empty)
+	 * 
+	 * @return queue element or null(interrupted)
+	 */
+	public String take() {
+		String result = null;
+		Thread current = null;
+
+		synchronized (waiters) {
+			result = pop();
+
+			if (result == null) {
+				current = Thread.currentThread();
+				waiters.add(current);
+			}
+		}
+
+		if (current != null) {
+			synchronized (current) {
+				try {
+					current.wait();
+				} catch (InterruptedException ignored) {
+				}
+
+				result = pop();
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * release all threads which is block by {@link MessageQueue#take()}
+	 */
+	public void release() {
+		synchronized (waiters) {
+			for (Thread waiter : waiters) {
+				waiter.interrupt();
+			}
+
+			waiters.clear();
+		}
 	}
 
 	/**
