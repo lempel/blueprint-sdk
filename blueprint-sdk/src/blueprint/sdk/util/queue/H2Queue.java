@@ -18,8 +18,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -40,8 +38,8 @@ public class H2Queue extends JdbcQueue {
 	/** table for queue */
 	protected String table = "QUEUE";
 
-	protected List<PreparedStatement> insertStmts = new ArrayList<PreparedStatement>();
-	protected List<PreparedStatement> deleteStmts = new ArrayList<PreparedStatement>();
+	protected PreparedStatement insertStmt;
+	protected PreparedStatement deleteStmt;
 
 	/**
 	 * Constructor
@@ -63,38 +61,11 @@ public class H2Queue extends JdbcQueue {
 			if (con == null || con.isClosed()) {
 				con = datasrc.getConnection();
 
-				insertStmts.clear();
-				deleteStmts.clear();
+				insertStmt = con.prepareStatement("INSERT INTO " + schema + "." + table
+						+ " (UUID, CONTENT) VALUES (?, ?)");
+				deleteStmt = con.prepareStatement("DELETE FROM " + schema + "." + table + " WHERE UUID = ?");
 			}
 		}
-	}
-
-	protected PreparedStatement getInsertStmt() throws SQLException {
-		PreparedStatement result = null;
-
-		synchronized (insertStmts) {
-			if (insertStmts.isEmpty()) {
-				result = con.prepareStatement("INSERT INTO " + schema + "." + table + " (UUID, CONTENT) VALUES (?, ?)");
-			} else {
-				result = insertStmts.remove(0);
-			}
-		}
-
-		return result;
-	}
-
-	protected PreparedStatement getDeleteStmt() throws SQLException {
-		PreparedStatement result = null;
-
-		synchronized (deleteStmts) {
-			if (deleteStmts.isEmpty()) {
-				result = con.prepareStatement("DELETE FROM " + schema + "." + table + " WHERE UUID = ?");
-			} else {
-				result = deleteStmts.remove(0);
-			}
-		}
-
-		return result;
 	}
 
 	@Override
@@ -162,16 +133,10 @@ public class H2Queue extends JdbcQueue {
 	protected void insert(Element element) throws SQLException {
 		checkConnection();
 
-		PreparedStatement insertStmt = getInsertStmt();
-		try {
+		synchronized (insertStmt) {
 			insertStmt.setString(1, element.uuid);
 			insertStmt.setString(2, element.content);
 			insertStmt.executeUpdate();
-			synchronized (insertStmts) {
-				insertStmts.add(insertStmt);
-			}
-		} catch (Exception e) {
-			insertStmt.close();
 		}
 	}
 
@@ -179,15 +144,9 @@ public class H2Queue extends JdbcQueue {
 	protected void delete(Element element) throws SQLException {
 		checkConnection();
 
-		PreparedStatement deleteStmt = getDeleteStmt();
-		try {
+		synchronized (deleteStmt) {
 			deleteStmt.setString(1, element.uuid);
 			deleteStmt.executeUpdate();
-			synchronized (deleteStmts) {
-				deleteStmts.add(deleteStmt);
-			}
-		} catch (Exception e) {
-			deleteStmt.close();
 		}
 	}
 
