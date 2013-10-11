@@ -65,19 +65,8 @@ public class MessageQueue {
 
 		synchronized (queue) {
 			queue.push(item);
-
-			try {
-				Thread consumer = null;
-				synchronized (waiters) {
-					consumer = waiters.pop();
-				}
-
-				if (consumer != null) {
-					consumer.interrupt();
-				}
-			} catch (NoSuchElementException ignored) {
-			}
 		}
+		notifyWaiter();
 	}
 
 	/**
@@ -88,15 +77,17 @@ public class MessageQueue {
 	public String pop() {
 		String result = null;
 
-		synchronized (queue) {
-			try {
-				Element element = queue.pop();
-				if (element != null) {
-					result = element.content;
-				}
-			} catch (NoSuchElementException ignored) {
-				// just return null
+		try {
+			Element element;
+			synchronized (queue) {
+				element = queue.pop();
 			}
+
+			if (element != null) {
+				result = element.content;
+			}
+		} catch (NoSuchElementException ignored) {
+			// just return null
 		}
 
 		return result;
@@ -111,11 +102,11 @@ public class MessageQueue {
 		String result = null;
 		Thread current = null;
 
-		synchronized (waiters) {
-			result = pop();
+		result = pop();
 
-			if (result == null) {
-				current = Thread.currentThread();
+		if (result == null) {
+			current = Thread.currentThread();
+			synchronized (waiters) {
 				waiters.add(current);
 			}
 		}
@@ -132,6 +123,23 @@ public class MessageQueue {
 		}
 
 		return result;
+	}
+
+	/**
+	 * Wake up a blocked thread
+	 */
+	protected void notifyWaiter() {
+		try {
+			Thread consumer = null;
+			synchronized (waiters) {
+				consumer = waiters.pop();
+			}
+
+			if (consumer != null) {
+				consumer.interrupt();
+			}
+		} catch (NoSuchElementException ignored) {
+		}
 	}
 
 	/**

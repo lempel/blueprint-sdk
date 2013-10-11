@@ -84,18 +84,9 @@ public abstract class JdbcQueue extends MessageQueue {
 			synchronized (queue) {
 				queue.push(item);
 			}
+			notifyWaiter();
 		} catch (SQLException e) {
 			throw new JdbcQueueException(e);
-		}
-
-		synchronized (waiters) {
-			try {
-				Thread consumer = waiters.pop();
-				if (consumer != null) {
-					consumer.interrupt();
-				}
-			} catch (NoSuchElementException ignored) {
-			}
 		}
 	}
 
@@ -104,7 +95,7 @@ public abstract class JdbcQueue extends MessageQueue {
 		String result = null;
 
 		try {
-			Element element = null;
+			Element element;
 			synchronized (queue) {
 				element = queue.pop();
 			}
@@ -117,6 +108,7 @@ public abstract class JdbcQueue extends MessageQueue {
 					synchronized (queue) {
 						queue.push(element);
 					}
+					notifyWaiter();
 					throw new JdbcQueueException(e);
 				}
 			}

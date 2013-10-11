@@ -14,9 +14,12 @@
 package blueprint.sdk.util.queue;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -37,6 +40,9 @@ public class H2Queue extends JdbcQueue {
 	/** table for queue */
 	protected String table = "QUEUE";
 
+	protected List<PreparedStatement> insertStmts = new ArrayList<PreparedStatement>();
+	protected List<PreparedStatement> deleteStmts = new ArrayList<PreparedStatement>();
+
 	/**
 	 * Constructor
 	 * 
@@ -56,13 +62,44 @@ public class H2Queue extends JdbcQueue {
 		synchronized (this) {
 			if (con == null || con.isClosed()) {
 				con = datasrc.getConnection();
+
+				insertStmts.clear();
+				deleteStmts.clear();
 			}
 		}
 	}
 
+	protected PreparedStatement getInsertStmt() throws SQLException {
+		PreparedStatement result = null;
+
+		synchronized (insertStmts) {
+			if (insertStmts.isEmpty()) {
+				result = con.prepareStatement("INSERT INTO " + schema + "." + table + " (UUID, CONTENT) VALUES (?, ?)");
+			} else {
+				result = insertStmts.remove(0);
+			}
+		}
+
+		return result;
+	}
+
+	protected PreparedStatement getDeleteStmt() throws SQLException {
+		PreparedStatement result = null;
+
+		synchronized (deleteStmts) {
+			if (deleteStmts.isEmpty()) {
+				result = con.prepareStatement("DELETE FROM " + schema + "." + table + " WHERE UUID = ?");
+			} else {
+				result = deleteStmts.remove(0);
+			}
+		}
+
+		return result;
+	}
+
 	@Override
 	protected void createTable() throws SQLException {
-		checkConnection();
+		Connection con = datasrc.getConnection();
 
 		Statement stmt = con.createStatement();
 		try {
@@ -76,16 +113,17 @@ public class H2Queue extends JdbcQueue {
 
 			try {
 				stmt.executeUpdate("CREATE TABLE " + schema + "." + table
-						+ " ( UUID CHAR(36) NOT NULL, CONTENT VARCHAR)");
+						+ " ( UUID CHAR(60) NOT NULL, CONTENT VARCHAR)");
 				stmt.executeUpdate("ALTER TABLE " + schema + "." + table + " ADD CONSTRAINT " + table
 						+ "_IDX_01 UNIQUE (UUID)");
+				stmt.executeUpdate("CREATE SEQUENCE " + schema + "." + table + "_SEQ CACHE 1");
 			} catch (SQLException e) {
 				if (e.getErrorCode() != 42101) {
 					throw e;
 				}
 			}
 		} finally {
-			CloseHelper.close(stmt);
+			CloseHelper.close(con, stmt);
 		}
 	}
 
@@ -124,12 +162,16 @@ public class H2Queue extends JdbcQueue {
 	protected void insert(Element element) throws SQLException {
 		checkConnection();
 
-		Statement stmt = con.createStatement();
+		PreparedStatement insertStmt = getInsertStmt();
 		try {
-			stmt.executeUpdate("INSERT INTO " + schema + "." + table + " (UUID, CONTENT) VALUES ('" + element.uuid
-					+ "', '" + element.content + "')");
-		} finally {
-			CloseHelper.close(stmt);
+			insertStmt.setString(1, element.uuid);
+			insertStmt.setString(2, element.content);
+			insertStmt.executeUpdate();
+			synchronized (insertStmts) {
+				insertStmts.add(insertStmt);
+			}
+		} catch (Exception e) {
+			insertStmt.close();
 		}
 	}
 
@@ -137,11 +179,15 @@ public class H2Queue extends JdbcQueue {
 	protected void delete(Element element) throws SQLException {
 		checkConnection();
 
-		Statement stmt = con.createStatement();
+		PreparedStatement deleteStmt = getDeleteStmt();
 		try {
-			stmt.executeUpdate("DELETE FROM " + schema + "." + table + " WHERE UUID = '" + element.uuid + "'");
-		} finally {
-			CloseHelper.close(stmt);
+			deleteStmt.setString(1, element.uuid);
+			deleteStmt.executeUpdate();
+			synchronized (deleteStmts) {
+				deleteStmts.add(deleteStmt);
+			}
+		} catch (Exception e) {
+			deleteStmt.close();
 		}
 	}
 
