@@ -146,13 +146,11 @@ public class KillMeInstead {
 				pwr.println("Verson = " + osm.getVersion());
 				pwr.println("ManagementFactory.getRuntimeMXBean().getName() = "
 						+ ManagementFactory.getRuntimeMXBean().getName());
-				pwr.flush();
 				pwr.close();
 			}
 		} catch (Exception e) {
 			PrintWriter pwr = new PrintWriter(new File("killme.err"));
 			e.printStackTrace(pwr);
-			pwr.flush();
 			pwr.close();
 		}
 	}
