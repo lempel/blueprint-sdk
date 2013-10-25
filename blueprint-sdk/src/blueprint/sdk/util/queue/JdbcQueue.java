@@ -14,6 +14,7 @@
 package blueprint.sdk.util.queue;
 
 import java.sql.SQLException;
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.UUID;
 
@@ -28,6 +29,9 @@ import javax.sql.DataSource;
  * @since 2013. 8. 26.
  */
 public abstract class JdbcQueue extends MessageQueue {
+	/** actual queue */
+	protected LinkedList<JdbcElement> queue = new LinkedList<JdbcElement>();
+
 	/** DataSource for persistence */
 	protected DataSource datasrc;
 
@@ -69,18 +73,39 @@ public abstract class JdbcQueue extends MessageQueue {
 		}
 	}
 
+	/**
+	 * Push an persistent element to queue.
+	 * 
+	 * @param element
+	 *            Element to push
+	 */
 	@Override
 	public void push(String element) {
+		push(element, true);
+	}
+
+	/**
+	 * Push an element to queue.
+	 * 
+	 * @param element
+	 *            Element to push
+	 * @param persistent
+	 *            true: store to Database, false: don't store
+	 */
+	public void push(String element, boolean persistent) {
 		if (element == null) {
 			throw new NullPointerException("Can't push null");
 		}
 
-		Element item = new Element();
+		JdbcElement item = new JdbcElement();
 		item.uuid = UUID.randomUUID().toString();
 		item.content = element;
+		item.persistent = persistent;
 
 		try {
-			insert(item);
+			if (persistent) {
+				insert(item);
+			}
 			synchronized (queue) {
 				queue.push(item);
 			}
@@ -95,14 +120,17 @@ public abstract class JdbcQueue extends MessageQueue {
 		String result = null;
 
 		try {
-			Element element;
+			JdbcElement element;
 			synchronized (queue) {
 				element = queue.pop();
 			}
 
 			if (element != null) {
 				try {
-					delete(element);
+					if (element.persistent) {
+						delete(element);
+					}
+
 					result = element.content;
 				} catch (SQLException e) {
 					synchronized (queue) {
@@ -160,4 +188,16 @@ public abstract class JdbcQueue extends MessageQueue {
 	 *             Can't delete
 	 */
 	protected abstract void delete(Element element) throws SQLException;
+}
+
+/**
+ * Internal element of JdbcQueue
+ * 
+ * @author Sangmin Lee
+ * @since 2013. 10. 25.
+ */
+class JdbcElement extends Element {
+	/** true: store to Database, false: don't store */
+	// default true for load()
+	public boolean persistent = true;
 }

@@ -166,7 +166,7 @@ public class MessageQueue {
 }
 
 /**
- * Internal element of AbstractJdbcQueue
+ * Internal element of MessageQueue
  * 
  * @author Sangmin Lee
  * @since 2013. 8. 27.

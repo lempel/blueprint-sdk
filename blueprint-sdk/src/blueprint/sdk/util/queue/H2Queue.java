@@ -119,7 +119,7 @@ public class H2Queue extends JdbcQueue {
 		try {
 			rset = stmt.executeQuery("SELECT UUID, CONTENT FROM " + schema + "." + table + "");
 			while (rset.next()) {
-				Element item = new Element();
+				JdbcElement item = new JdbcElement();
 				item.uuid = rset.getString(1);
 				item.content = rset.getString(2);
 				queue.add(item);
