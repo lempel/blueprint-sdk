@@ -109,9 +109,7 @@ public class MessageQueue {
 			synchronized (waiters) {
 				waiters.add(current);
 			}
-		}
 
-		if (current != null) {
 			synchronized (current) {
 				try {
 					current.wait();
@@ -136,7 +134,9 @@ public class MessageQueue {
 			}
 
 			if (consumer != null) {
-				consumer.interrupt();
+				synchronized (consumer) {
+					consumer.notify();
+				}
 			}
 		} catch (NoSuchElementException ignored) {
 		}
