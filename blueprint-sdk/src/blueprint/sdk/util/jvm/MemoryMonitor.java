@@ -1,4 +1,5 @@
 /*
+
  License:
 
  blueprint-sdk is licensed under the terms of Eclipse Public License(EPL) v1.0
@@ -64,6 +65,9 @@ public class MemoryMonitor implements Terminatable, Runnable {
 		running = false;
 	}
 
+	/**
+	 * @return current heap usage in percent
+	 */
 	public static int getMemoryUsage() {
 		Runtime rtime = Runtime.getRuntime();
 		long total = rtime.maxMemory();
@@ -72,6 +76,9 @@ public class MemoryMonitor implements Terminatable, Runnable {
 		return (int) (ratio * 100d);
 	}
 
+	/**
+	 * @return true if -Xmx is set
+	 */
 	public static boolean isXmxSet() {
 		boolean result = false;
 
@@ -113,15 +120,14 @@ public class MemoryMonitor implements Terminatable, Runnable {
 					if (percent >= WARNING_USAGE) {
 						warnCount++;
 						if (warnCount >= MAX_WARNINGS) {
-							L.error("LOW FREE MEMORY!! Memory usage is Critical. Over " + WARNING_USAGE
-									+ "% for long time.");
+							L.error("LOW MEMORY!! Memory usage is Critical. " + percent + "%");
 							if (xmx) {
 								L.error("RECOMMEND: 1. Increase -Xmx value");
 							} else {
 								L.error("RECOMMEND: 1. Set -Xmx value");
 							}
 							L.error("RECOMMEND: 2. Check for memory leak");
-							L.error("RECOMMEND: 3. Increase performance or use better machine)");
+							L.error("RECOMMEND: 3. Install more RAM");
 							warnCount = 0;
 						} else {
 							L.warn("Memory usage: " + percent + "% - " + (used / 1024 / 1024) + "M");
