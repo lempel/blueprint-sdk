@@ -42,9 +42,7 @@ public class MessageQueue {
 	 *             Can't delete
 	 */
 	public void clear() {
-		synchronized (queue) {
-			queue.clear();
-		}
+		queue.clear();
 	}
 
 	/**
@@ -63,9 +61,7 @@ public class MessageQueue {
 		item.uuid = UUID.randomUUID().toString();
 		item.content = element;
 
-		synchronized (queue) {
-			queue.push(item);
-		}
+		queue.push(item);
 		notifyWaiter();
 	}
 
@@ -79,9 +75,7 @@ public class MessageQueue {
 
 		try {
 			Element element;
-			synchronized (queue) {
-				element = queue.pop();
-			}
+			element = queue.pop();
 
 			if (element != null) {
 				result = element.content;
@@ -135,7 +129,7 @@ public class MessageQueue {
 
 			if (consumer != null) {
 				synchronized (consumer) {
-					consumer.notify();
+					consumer.notifyAll();
 				}
 			}
 		} catch (NoSuchElementException ignored) {
@@ -148,7 +142,11 @@ public class MessageQueue {
 	public void release() {
 		synchronized (waiters) {
 			for (Thread waiter : waiters) {
-				waiter.interrupt();
+				if (waiter != null) {
+					synchronized (waiter) {
+						waiter.notifyAll();
+					}
+				}
 			}
 
 			waiters.clear();
