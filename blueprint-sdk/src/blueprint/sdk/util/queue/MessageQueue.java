@@ -42,7 +42,9 @@ public class MessageQueue {
 	 *             Can't delete
 	 */
 	public void clear() {
-		queue.clear();
+		synchronized (queue) {
+			queue.clear();
+		}
 	}
 
 	/**
@@ -61,7 +63,9 @@ public class MessageQueue {
 		item.uuid = UUID.randomUUID().toString();
 		item.content = element;
 
-		queue.push(item);
+		synchronized (queue) {
+			queue.push(item);
+		}
 		notifyWaiter();
 	}
 
@@ -75,7 +79,9 @@ public class MessageQueue {
 
 		try {
 			Element element;
-			element = queue.pop();
+			synchronized (queue) {
+				element = queue.pop();
+			}
 
 			if (element != null) {
 				result = element.content;

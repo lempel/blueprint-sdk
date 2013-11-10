@@ -122,7 +122,7 @@ public class H2Queue extends JdbcQueue {
 				JdbcElement item = new JdbcElement();
 				item.uuid = rset.getString(1);
 				item.content = rset.getString(2);
-				queue.add(item);
+				queue.push(item);
 			}
 		} finally {
 			CloseHelper.close(stmt, rset);
