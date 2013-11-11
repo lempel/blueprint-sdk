@@ -13,7 +13,6 @@
 
 package blueprint.sdk.util;
 
-import java.io.File;
 import java.util.UUID;
 
 /**
@@ -35,8 +34,6 @@ public class FilenameUtil {
 	 * @return full path
 	 */
 	public static String generateRandomFileName(final String filepath, final String ext) {
-		String result = null;
-
 		String path = filepath;
 		if (!path.endsWith(fileSeparator)) {
 			path = path + fileSeparator;
@@ -47,18 +44,9 @@ public class FilenameUtil {
 			newExt = "." + newExt;
 		}
 
-		fileNameLoop: while (true) {
-			String uuid = UUID.randomUUID().toString().replaceAll("\\-", "");
+		String uuid = UUID.randomUUID().toString().replaceAll("\\-", "");
 
-			result = path + uuid + newExt;
-			File aFile = new File(result);
-
-			if (!aFile.exists()) {
-				break fileNameLoop;
-			}
-		}
-
-		return result;
+		return path + uuid + newExt;
 	}
 
 	public static String extractFileName(final String filePath) {
