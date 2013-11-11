@@ -147,15 +147,14 @@ public class MessageQueue {
 	 */
 	public void release() {
 		synchronized (waiters) {
-			for (Thread waiter : waiters) {
+			while (!waiters.isEmpty()) {
+				Thread waiter = waiters.pop();
 				if (waiter != null) {
 					synchronized (waiter) {
 						waiter.notifyAll();
 					}
 				}
 			}
-
-			waiters.clear();
 		}
 	}
 
