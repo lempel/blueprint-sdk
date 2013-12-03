@@ -40,7 +40,7 @@
  violated by using your source code. That's why blueprint-sdk is made for.
  Without that, all your contributions are welcomed and appreciated.
  */
-package lempel.blueprint.app.launcher;
+package blueprint.sdk.launcher;
 
 import java.io.File;
 import java.io.IOException;
