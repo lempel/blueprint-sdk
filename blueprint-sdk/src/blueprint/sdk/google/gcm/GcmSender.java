@@ -15,12 +15,11 @@ package blueprint.sdk.google.gcm;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Set;
-
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Sends push message to GCM.
@@ -74,7 +73,7 @@ public class GcmSender {
 	}
 
 	private GcmResponse send(String json) throws IOException, MalformedURLException {
-		HttpsURLConnection http = (HttpsURLConnection) new URL(GCM_URL).openConnection();
+		HttpURLConnection http = (HttpURLConnection) new URL(GCM_URL).openConnection();
 		http.addRequestProperty("Authorization", "key=" + apiKey);
 		http.addRequestProperty("Content-Type", "application/json");
 
