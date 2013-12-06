@@ -74,6 +74,7 @@ public class GcmSender {
 
 	private GcmResponse send(String json) throws IOException, MalformedURLException {
 		HttpURLConnection http = (HttpURLConnection) new URL(GCM_URL).openConnection();
+		http.setRequestMethod("POST");
 		http.addRequestProperty("Authorization", "key=" + apiKey);
 		http.addRequestProperty("Content-Type", "application/json");
 
