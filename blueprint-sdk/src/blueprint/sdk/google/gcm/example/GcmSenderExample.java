@@ -20,6 +20,7 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 
 import blueprint.sdk.google.gcm.GcmResponse;
+import blueprint.sdk.google.gcm.GcmResponseDetail;
 import blueprint.sdk.google.gcm.GcmSender;
 
 /**
@@ -34,15 +35,31 @@ public class GcmSenderExample {
 	public static void main(String[] args) throws MalformedURLException, IOException {
 		// set your apiKey
 		String apiKey = "XXX";
-		// set your registration id
-		String regId = "XXX";
+		// set registration id of android clients
+		String[] regIds = { "XXX", "YYY", "ZZZ" };
 
 		HashMap<String, String> map = new HashMap<String, String>();
 		map.put("test", "Message from GcmSenderExample");
 
 		GcmSender sender = new GcmSender(apiKey);
-		GcmResponse response = sender.send(regId, map, 10);
+		GcmResponse response = sender.send(regIds, map, 10);
 
-		L.info(response.code + " - " + response.message);
+		if (response.code == 200) {
+			if (response.results.size() == regIds.length) {
+				for (int i = 0; i < regIds.length; i++) {
+					GcmResponseDetail result = response.results.get(i);
+
+					if (result.success) {
+						L.info("\tredId = " + regIds[i] + ", message id = " + result.message);
+					} else {
+						L.info("\tredId = " + regIds[i] + ", error message = " + result.message);
+					}
+				}
+			} else {
+				L.error("wrong response. number of reg ids are mismatched.");
+			}
+		} else {
+			L.error("response code = " + response.code);
+		}
 	}
 }

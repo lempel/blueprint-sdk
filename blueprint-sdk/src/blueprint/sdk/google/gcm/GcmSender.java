@@ -14,12 +14,20 @@
 package blueprint.sdk.google.gcm;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
-import java.util.Set;
+
+import org.apache.log4j.Logger;
+
+import blueprint.sdk.google.gcm.bind.Request;
+import blueprint.sdk.google.gcm.bind.Response;
+import blueprint.sdk.util.Validator;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Sends push message to GCM.
@@ -28,7 +36,12 @@ import java.util.Set;
  * @since 2013. 12. 3.
  */
 public class GcmSender {
+	private static final Logger L = Logger.getLogger(GcmSender.class);
+
 	public static String GCM_URL = "https://android.googleapis.com/gcm/send";
+
+	/** jackson ObjectMapper */
+	protected ObjectMapper mapper = new ObjectMapper();
 
 	protected String apiKey;
 
@@ -85,11 +98,114 @@ public class GcmSender {
 
 		http.connect();
 
-		GcmResponse result = new GcmResponse();
-		result.code = http.getResponseCode();
-		result.message = http.getResponseMessage();
+		GcmResponse result = decodeRespons(http);
 
 		return result;
+	}
+
+	/**
+	 * decodes response from GCM
+	 * 
+	 * @param http
+	 * @return
+	 * @throws IOException
+	 */
+	private GcmResponse decodeRespons(HttpURLConnection http) throws IOException {
+		GcmResponse result = new GcmResponse();
+		result.code = getResponseCode(http);
+
+		if (result.code == HttpURLConnection.HTTP_OK) {
+			try {
+				Response response = mapper.readValue((InputStream) http.getContent(), (Class<Response>) Response.class);
+				result.multicastId = response.multicast_id;
+				result.success = response.success;
+				result.failure = response.failure;
+				result.canonicalIds = response.canonical_ids;
+
+				// decode 'results'
+				for (Map<String, String> item : response.results) {
+					GcmResponseDetail detail = new GcmResponseDetail();
+
+					if (item.containsKey("message_id")) {
+						detail.success = true;
+						detail.message = item.get("message_id");
+					} else {
+						detail.success = false;
+						detail.message = item.get("error");
+					}
+
+					result.results.add(detail);
+				}
+			} catch (Exception e) {
+				result.code = GcmResponse.ERR_JSON_BIND;
+
+				L.warn("Can't bind json", e);
+			}
+		} else if (result.code == GcmResponse.ERR_NOT_JSON) {
+			int contentLength = http.getContentLength();
+			String contentType = http.getContentType();
+
+			InputStream ins = (InputStream) http.getContent();
+			byte[] buffer = new byte[contentLength];
+			ins.read(buffer);
+
+			L.warn("response message is not a json. content-type=" + contentType + ", content=" + new String(buffer));
+		} else {
+			L.debug("http error. code = " + http.getResponseCode() + ". message = " + http.getResponseMessage());
+		}
+
+		return result;
+	}
+
+	/**
+	 * gets response code
+	 * 
+	 * @param http
+	 * @return 200: http ok, 6xx: {@link GcmResponse}, others: http error
+	 * @throws IOException
+	 */
+	private int getResponseCode(HttpURLConnection http) throws IOException {
+		int result = http.getResponseCode();
+
+		if (result == HttpURLConnection.HTTP_OK) {
+			int contentLength = http.getContentLength();
+			String contentType = http.getContentType();
+			if (0 == contentLength) {
+				result = GcmResponse.ERR_NO_CONTENT;
+			} else if (Validator.isEmpty(contentType)) {
+				result = GcmResponse.ERR_NO_CONTENT_TYPE;
+			} else if (0 > contentType.indexOf("application/json")) {
+				result = GcmResponse.ERR_NOT_JSON;
+			} else {
+				result = 200;
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * Send to GCM
+	 * 
+	 * @param regIds
+	 *            list of client's registration id
+	 * @param data
+	 *            data to send
+	 * @param retries
+	 *            Number of retry attempts. Can be 0.
+	 * @return
+	 * @throws MalformedURLException
+	 *             Wrong GCM_URL value
+	 * @throws IOException
+	 *             I/O error with GCM_URL
+	 */
+	public GcmResponse send(String[] regIds, Map<String, String> data, int retries) throws MalformedURLException,
+			IOException {
+		Request request = new Request();
+		request.registration_ids = regIds;
+		request.data = data;
+
+		return send(mapper.writeValueAsString(request), retries);
 	}
 
 	/**
@@ -109,20 +225,6 @@ public class GcmSender {
 	 */
 	public GcmResponse send(String regId, Map<String, String> data, int retries) throws MalformedURLException,
 			IOException {
-		StringBuilder builder = new StringBuilder();
-		builder.append("{\"registration_ids\":[\"").append(regId).append("\"],\"data\":{");
-
-		Set<String> keySet = data.keySet();
-		int count = 0;
-		for (String key : keySet) {
-			builder.append("\"").append(key).append("\":\"").append(data.get(key)).append("\"");
-			if (count++ != data.size()) {
-				builder.append(",");
-			}
-		}
-
-		builder.append("}}");
-
-		return send(builder.toString(), retries);
+		return send(new String[] { regId }, data, retries);
 	}
 }
