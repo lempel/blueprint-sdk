@@ -37,6 +37,8 @@ public abstract class Worker<J> extends TerminatableThread {
 	private boolean active = false;
 
 	/**
+	 * Constructor
+	 * 
 	 * @param jobQueue
 	 * @param deathMonitor
 	 */
@@ -78,9 +80,9 @@ public abstract class Worker<J> extends TerminatableThread {
 	/**
 	 * handles a job or client object
 	 * 
-	 * @param clientObject
+	 * @param job
 	 */
-	protected abstract void process(J clientObject);
+	protected abstract void process(J job);
 
 	@Override
 	public void terminate() {

@@ -46,6 +46,8 @@ public class GcmSender {
 	protected String apiKey;
 
 	/**
+	 * Constructor
+	 * 
 	 * @param apiKey
 	 *            API key for GCM
 	 */
@@ -150,8 +152,6 @@ public class GcmSender {
 			ins.read(buffer);
 
 			L.warn("response message is not a json. content-type=" + contentType + ", content=" + new String(buffer));
-		} else {
-			L.debug("http error. code = " + http.getResponseCode() + ". message = " + http.getResponseMessage());
 		}
 
 		return result;
