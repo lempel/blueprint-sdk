@@ -13,7 +13,7 @@
 
 package blueprint.sdk.core.concurrent;
 
-import java.lang.reflect.InvocationTargetException;
+import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
 
 /**
  * A Group of Workers<br>
@@ -24,56 +24,28 @@ import java.lang.reflect.InvocationTargetException;
  * @author Sangmin Lee
  * @since 2008. 11. 25.
  */
-public class SpanningWorkerGroup extends WorkerGroup {
+public class SpanningWorkerGroup<J, Q extends JobQueue<J>> extends WorkerGroup<J, JobQueue<J>> {
 	/** check interval (msec) */
-	private static final int INTERVAL = 10000;
-	/** worker thread increase ratio */
-	private static final float THREAD_INC_RATIO = 0.2f;
-
-	private transient boolean running = false;
-	private transient boolean terminated = false;
+	protected static final int INTERVAL = 1000;
 
 	private long maxThroughput = 0;
+
+	protected Refiller refiller;
 
 	/**
 	 * Constructor<br>
 	 * Creates Workers and JobQueue<br>
 	 * 
+	 * @param jobQueue
 	 * @param workerClass
 	 * @param workerCount
 	 *            Initial number of workers
-	 * @throws InvocationTargetException
-	 *             Worker instantiation failure
-	 * @throws IllegalAccessException
-	 *             Can't access Worker's constructor (it should not happen)
-	 * @throws InstantiationException
-	 *             Worker instantiation failure
-	 * @throws IllegalArgumentException
-	 *             Wrong argument for Worker's constructor (it should not
-	 *             happen)
-	 * @throws NoSuchMethodException
-	 *             workerClass is not an Worker or has no visible constructor
-	 * @throws SecurityException
-	 *             Can't retrieve Worker's constructor
 	 */
-	public SpanningWorkerGroup(final Class<? extends Worker<?>> workerClass, final int workerCount)
-			throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException,
-			SecurityException, NoSuchMethodException {
-		super(workerClass, workerCount);
-	}
+	public SpanningWorkerGroup(final Q jobQueue, final Class<? extends Worker<J>> workerClass, final int workerCount) {
+		super(jobQueue, workerClass, workerCount);
 
-	public boolean isValid() {
-		return running;
-	}
-
-	public boolean isTerminated() {
-		return terminated;
-	}
-
-	public void terminate() {
-		running = false;
-
-		super.terminate();
+		refiller = new Refiller();
+		refiller.start();
 	}
 
 	public void run() {
@@ -96,8 +68,6 @@ public class SpanningWorkerGroup extends WorkerGroup {
 			}
 
 			if (!interrupted) {
-				maintainWorkers();
-
 				// calculate elapsed time
 				long elapsed = System.currentTimeMillis() - start;
 
@@ -134,6 +104,30 @@ public class SpanningWorkerGroup extends WorkerGroup {
 				// decrease the number of threads
 				removeWorkers(newThreads);
 			}
+		}
+	}
+
+	/**
+	 * Refills dead workers
+	 * 
+	 * @author Sangmin Lee
+	 * @since 2013. 12. 11.
+	 */
+	class Refiller extends TerminatableThread {
+		@Override
+		public void run() {
+			running = true;
+			while (running) {
+				synchronized (deathMonitor) {
+					try {
+						deathMonitor.wait();
+					} catch (InterruptedException ignored) {
+					}
+
+					maintainWorkers();
+				}
+			}
+			terminated = true;
 		}
 	}
 }

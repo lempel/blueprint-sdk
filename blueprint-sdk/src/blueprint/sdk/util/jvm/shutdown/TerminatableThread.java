@@ -29,11 +29,27 @@ public class TerminatableThread extends Thread implements Terminatable {
 	/** Sets when terminated */
 	protected boolean terminated = false;
 
+	private boolean useTerminator = true;
+
 	/**
-	 * Constructor;
+	 * Constructor (uses {@link Terminator})
 	 */
 	public TerminatableThread() {
-		Terminator.getInstance().register(this);
+		this(true);
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param useTerminator
+	 *            if set, registers to {@link Terminator}
+	 */
+	public TerminatableThread(boolean useTerminator) {
+		this.useTerminator = useTerminator;
+
+		if (useTerminator) {
+			Terminator.getInstance().register(this);
+		}
 	}
 
 	@Override
@@ -50,6 +66,8 @@ public class TerminatableThread extends Thread implements Terminatable {
 	public void terminate() {
 		running = false;
 
-		Terminator.getInstance().unregister(this);
+		if (useTerminator) {
+			Terminator.getInstance().unregister(this);
+		}
 	}
 }

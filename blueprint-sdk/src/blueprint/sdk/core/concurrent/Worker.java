@@ -15,27 +15,32 @@ package blueprint.sdk.core.concurrent;
 
 import org.apache.log4j.Logger;
 
-import blueprint.sdk.util.Terminatable;
+import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
+import blueprint.sdk.util.queue.Queue;
 
 /**
  * Worker Thread
  * 
- * @param <T> job class
+ * @param <J>
+ *            job class
  * @author Sangmin Lee
  * @since 2007. 07. 25
  */
-public abstract class Worker<T> implements Terminatable, Runnable {
+public abstract class Worker<J> extends TerminatableThread {
 	private static final Logger LOGGER = Logger.getLogger(WorkerGroup.class);
 
-	protected transient JobQueue<T> jobQueue = null;
+	protected Queue<J> jobQueue = null;
 
-	private transient boolean running = false;
+	/** notify this when terminated */
+	protected Object deathMonitor;
 
-	private transient boolean terminated = false;
+	private boolean active = false;
 
-	private transient boolean active = false;
-
-	public Worker(final JobQueue<T> jobQueue) {
+	/**
+	 * @param jobQueue
+	 * @param deathMonitor
+	 */
+	public Worker(final Queue<J> jobQueue, final Object deathMonitor) {
 		this.jobQueue = jobQueue;
 	}
 
@@ -46,19 +51,23 @@ public abstract class Worker<T> implements Terminatable, Runnable {
 		thr.start();
 	}
 
+	@Override
 	public void run() {
 		running = true;
 
 		while (running) {
 			try {
 				// blocks until queue have something to pop
-				T job = jobQueue.pop();
+				J job = jobQueue.pop();
 				active = true;
 				process(job);
-			} catch (InterruptedException e) {
+			} catch (Exception e) {
 				LOGGER.error(e.toString());
+				terminate();
 			} finally {
-				jobQueue.increaseProcessedJobCounter();
+				if (jobQueue instanceof JobQueue) {
+					((JobQueue<?>) jobQueue).increaseProcessedJobCounter();
+				}
 				active = false;
 			}
 		}
@@ -71,24 +80,20 @@ public abstract class Worker<T> implements Terminatable, Runnable {
 	 * 
 	 * @param clientObject
 	 */
-	protected abstract void process(T clientObject);
+	protected abstract void process(J clientObject);
 
-	public boolean isRunning() {
-		return running;
-	}
-
-	public boolean isValid() {
-		return isRunning();
-	}
-
-	public boolean isTerminated() {
-		return terminated;
-	}
-
+	@Override
 	public void terminate() {
 		running = false;
+
+		synchronized (deathMonitor) {
+			deathMonitor.notifyAll();
+		}
 	}
 
+	/**
+	 * @return true if current worker is processing a job
+	 */
 	public boolean isActive() {
 		return active;
 	}

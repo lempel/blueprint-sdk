@@ -24,7 +24,7 @@ import java.util.UUID;
  * @author Sangmin Lee
  * @since 2013. 9. 4.
  */
-public class MessageQueue {
+public class MessageQueue implements Queue<String> {
 	/** actual queue */
 	protected LinkedList<Element> queue = new LinkedList<Element>();
 

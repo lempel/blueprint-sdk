@@ -17,19 +17,19 @@ import java.util.List;
 import java.util.Vector;
 
 import blueprint.sdk.util.Counter;
+import blueprint.sdk.util.queue.Queue;
 
 /**
  * JobQueue for Workers.<br>
  * A Worker Group shares a JobQueue.<br>
  * <b>Thread Safe</b><br>
  * 
- * @param <T> job class
+ * @param <T>
+ *            job class
  * @author Sangmin Lee
  * @since 2008. 11. 25.
  */
-public class JobQueue<T> {
-	// TODO replace with java.util.concurrent.LinkedBlockingQueue
-	
+public class JobQueue<T> implements Queue<T> {
 	/** mutex for exclusion */
 	private final Mutex mtx = new Mutex();
 	/** mutex for lock */
@@ -50,51 +50,58 @@ public class JobQueue<T> {
 	 * push a job Object to queue<br>
 	 * 
 	 * @param aJob
-	 * @throws InterruptedException
-	 *             mutex exception
 	 */
-	public void push(final T aJob) throws InterruptedException {
-		mtx.acquire();
+	public void push(final T aJob) {
+		try {
+			mtx.acquire();
 
-		queue.add(aJob);
+			queue.add(aJob);
 
-		// if lock is not in use (i.e. all threads are busy)
-		if (!lock.isInuse()) {
-			synchronized (allBusyTrapLock) {
-				allBusyTrap = true;
+			// if lock is not in use (i.e. all threads are busy)
+			if (!lock.isInuse()) {
+				synchronized (allBusyTrapLock) {
+					allBusyTrap = true;
+				}
 			}
+
+			// release lock mutex
+			lock.release();
+
+			mtx.release();
+		} catch (InterruptedException e) {
+			// FIXME Temporary fix. must remove Mutex with something else.
+			throw new RuntimeException(e);
 		}
-
-		// release lock mutex
-		lock.release();
-
-		mtx.release();
 	}
 
 	/**
 	 * pops a job Object from queue
 	 * 
 	 * @return a job Object
-	 * @throws InterruptedException
-	 *             mutex exception
 	 */
-	public T pop() throws InterruptedException {
-		mtx.acquire();
+	public T pop() {
+		T aJob = null;
 
-		T aJob;
-		while (queue.size() <= 0) {
-			// release exclusion mutex
-			mtx.release();
-
-			// acquire lock mutex
-			lock.acquire();
-
-			// re-acquire exclusion mutex to pop
+		try {
 			mtx.acquire();
-		}
-		aJob = queue.remove(0);
 
-		mtx.release();
+			while (queue.size() <= 0) {
+				// release exclusion mutex
+				mtx.release();
+
+				// acquire lock mutex
+				lock.acquire();
+
+				// re-acquire exclusion mutex to pop
+				mtx.acquire();
+			}
+			aJob = queue.remove(0);
+
+			mtx.release();
+		} catch (InterruptedException e) {
+			// FIXME Temporary fix. must remove Mutex with something else.
+			throw new RuntimeException(e);
+		}
 
 		return aJob;
 	}
@@ -167,19 +174,20 @@ public class JobQueue<T> {
 
 	/**
 	 * clears queue
-	 * 
-	 * @throws InterruptedException
-	 *             mutex exception
-	 * 
 	 */
-	public void clear() throws InterruptedException {
-		mtx.acquire();
+	public void clear() {
+		try {
+			mtx.acquire();
 
-		queue.clear();
-		resetProcessedJobs();
-		allBusyTrap = false;
+			queue.clear();
+			resetProcessedJobs();
+			allBusyTrap = false;
 
-		mtx.release();
+			mtx.release();
+		} catch (InterruptedException e) {
+			// FIXME Temporary fix. must remove Mutex with something else.
+			throw new RuntimeException(e);
+		}
 	}
 
 	/*

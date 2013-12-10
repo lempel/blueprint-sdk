@@ -21,8 +21,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import blueprint.sdk.util.Terminatable;
+import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
 import blueprint.sdk.util.jvm.shutdown.Terminator;
+import blueprint.sdk.util.queue.Queue;
 
 /**
  * A Group of Workers<br>
@@ -30,61 +31,42 @@ import blueprint.sdk.util.jvm.shutdown.Terminator;
  * <br>
  * If you want to use automatic thread spanning feature, call start() method.<br>
  * 
+ * @param <J>
+ *            Job Type
+ * @param <Q>
+ *            Queue Type
  * @author Sangmin Lee
  * @since 2008. 11. 25.
  */
-public class WorkerGroup implements Terminatable, Runnable {
+public class WorkerGroup<J, Q extends Queue<J>> extends TerminatableThread {
 	private static final Logger L = Logger.getLogger(WorkerGroup.class);
 
 	/** check interval (msec) */
-	private static final int INTERVAL = 1000;
+	protected static final int INTERVAL = 1000;
 	/** worker thread increase ratio */
-	private static final float THREAD_INC_RATIO = 0.2f;
+	protected static final float THREAD_INC_RATIO = 0.2f;
 
-	protected final Class<? extends Worker<?>> workerClass;
-	protected transient final JobQueue<Object> jobQueue;
-	protected transient final List<Worker<?>> workers;
-
-	private transient boolean running = false;
-	private transient boolean terminated = false;
+	protected final Class<? extends Worker<J>> workerClass;
+	protected Q jobQueue;
+	protected List<Worker<J>> workers;
+	/** monitor for dead workers */
+	protected Object deathMonitor = new Object();
 
 	/**
-	 * Constructor<br>
-	 * Creates Workers and JobQueue<br>
+	 * Constructor
 	 * 
+	 * @param jobQueue
 	 * @param workerClass
 	 * @param workerCount
 	 *            Initial number of workers
-	 * @throws InvocationTargetException
-	 *             Worker instantiation failure
-	 * @throws IllegalAccessException
-	 *             Can't access Worker's constructor (it should not happen)
-	 * @throws InstantiationException
-	 *             Worker instantiation failure
-	 * @throws IllegalArgumentException
-	 *             Wrong argument for Worker's constructor (it should not
-	 *             happen)
-	 * @throws NoSuchMethodException
-	 *             workerClass is not an Worker or has no visible constructor
-	 * @throws SecurityException
-	 *             Can't retrieve Worker's constructor
 	 */
-	public WorkerGroup(final Class<? extends Worker<?>> workerClass, final int workerCount)
-			throws IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException,
-			SecurityException, NoSuchMethodException {
-		L.info("creating worker group - class: " + workerClass + ", count: " + workerCount);
-
+	public WorkerGroup(final Q jobQueue, final Class<? extends Worker<J>> workerClass, final int workerCount) {
 		// register to shutdown hook (Terminator)
 		Terminator.getInstance().register(this);
 
-		this.jobQueue = new JobQueue<Object>();
-		this.workers = new ArrayList<Worker<?>>(workerCount);
+		this.jobQueue = jobQueue;
+		this.workers = new ArrayList<Worker<J>>(workerCount);
 		this.workerClass = workerClass;
-
-		// instantiate & start workers
-		for (int i = 0; i < workerCount; i++) {
-			newWorker();
-		}
 
 		L.info("worker group created - class: " + workerClass + ", count: " + workerCount);
 	}
@@ -99,8 +81,8 @@ public class WorkerGroup implements Terminatable, Runnable {
 	 */
 	protected void newWorker() throws NoSuchMethodException, InstantiationException, IllegalAccessException,
 			InvocationTargetException {
-		Worker<?> aWorker;
-		Constructor<? extends Worker<?>> cons = workerClass.getConstructor(JobQueue.class);
+		Worker<J> aWorker;
+		Constructor<? extends Worker<J>> cons = workerClass.getConstructor(Queue.class, Object.class);
 		aWorker = cons.newInstance(jobQueue);
 		workers.add(aWorker);
 		aWorker.start();
@@ -152,20 +134,17 @@ public class WorkerGroup implements Terminatable, Runnable {
 		L.info("worker removed - class: " + workerClass + ", count: " + removed);
 	}
 
-	public boolean isValid() {
-		return running;
-	}
-
-	public boolean isTerminated() {
-		return terminated;
-	}
-
+	@Override
 	public void terminate() {
 		running = false;
 
+		synchronized (deathMonitor) {
+			deathMonitor.notifyAll();
+		}
+
 		if (workers != null) {
 			synchronized (workers) {
-				Iterator<Worker<?>> iter = workers.iterator();
+				Iterator<Worker<J>> iter = workers.iterator();
 				while (iter.hasNext()) {
 					iter.next().terminate();
 				}
@@ -173,7 +152,7 @@ public class WorkerGroup implements Terminatable, Runnable {
 		}
 	}
 
-	public void addJob(final Object job) throws InterruptedException {
+	public void addJob(final J job) throws InterruptedException {
 		jobQueue.push(job);
 	}
 
@@ -190,25 +169,18 @@ public class WorkerGroup implements Terminatable, Runnable {
 		thr.start();
 	}
 
+	@Override
 	public void run() {
 		running = true;
-		boolean interrupted = false;
-
-		// don't count
-		jobQueue.setCount(false);
 
 		while (running) {
-			try {
-				// reset interrupted flag & keep start time
-				interrupted = false;
+			maintainWorkers();
 
-				Thread.sleep(INTERVAL);
-			} catch (InterruptedException ignored) {
-				interrupted = true;
-			}
-
-			if (!interrupted) {
-				maintainWorkers();
+			synchronized (deathMonitor) {
+				try {
+					deathMonitor.wait();
+				} catch (InterruptedException ignored) {
+				}
 			}
 		}
 
@@ -222,7 +194,7 @@ public class WorkerGroup implements Terminatable, Runnable {
 		synchronized (workers) {
 			int workerCount = workers.size();
 
-			Iterator<Worker<?>> iter = workers.iterator();
+			Iterator<Worker<J>> iter = workers.iterator();
 			while (iter.hasNext()) {
 				Worker<?> worker = iter.next();
 
@@ -249,7 +221,7 @@ public class WorkerGroup implements Terminatable, Runnable {
 	protected int getActiveWorkerCount() {
 		int result = 0;
 
-		Iterator<Worker<?>> iter = workers.iterator();
+		Iterator<Worker<J>> iter = workers.iterator();
 		while (iter.hasNext()) {
 			if (iter.next().isActive()) {
 				result++;
