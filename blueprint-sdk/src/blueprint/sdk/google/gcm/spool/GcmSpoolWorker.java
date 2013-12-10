@@ -39,6 +39,8 @@ public class GcmSpoolWorker extends Worker<String> {
 	 *            API Key for GCM
 	 * @param retries
 	 *            number of retry attempts
+	 * @param errHandler
+	 *            error handler
 	 */
 	public GcmSpoolWorker(Queue<String> jobQueue, Object deathMonitor, String apiKey, int retries,
 			GcmErrorHandler errHandler) {
@@ -53,6 +55,7 @@ public class GcmSpoolWorker extends Worker<String> {
 	protected void process(String job) {
 		try {
 			GcmResponse response = sender.send(job, retries);
+
 			errHandler.handlerGcmError(job, response);
 		} catch (IOException e) {
 			errHandler.handleIoError(job, e);

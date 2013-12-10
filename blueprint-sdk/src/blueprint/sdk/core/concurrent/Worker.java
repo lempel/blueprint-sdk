@@ -27,7 +27,7 @@ import blueprint.sdk.util.queue.Queue;
  * @since 2007. 07. 25
  */
 public abstract class Worker<J> extends TerminatableThread {
-	private static final Logger LOGGER = Logger.getLogger(WorkerGroup.class);
+	private static final Logger L = Logger.getLogger(WorkerGroup.class);
 
 	protected Queue<J> jobQueue = null;
 
@@ -60,11 +60,11 @@ public abstract class Worker<J> extends TerminatableThread {
 		while (running) {
 			try {
 				// blocks until queue have something to pop
-				J job = jobQueue.pop();
+				J job = jobQueue.take();
 				active = true;
 				process(job);
 			} catch (Exception e) {
-				LOGGER.error(e.toString());
+				L.error("Can't process a job", e);
 				terminate();
 			} finally {
 				if (jobQueue instanceof JobQueue) {

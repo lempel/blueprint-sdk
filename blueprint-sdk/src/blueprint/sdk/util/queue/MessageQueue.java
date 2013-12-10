@@ -13,7 +13,6 @@
 
 package blueprint.sdk.util.queue;
 
-import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -35,25 +34,14 @@ public class MessageQueue implements Queue<String> {
 		super();
 	}
 
-	/**
-	 * Clears queue
-	 * 
-	 * @throws SQLException
-	 *             Can't delete
-	 */
+	@Override
 	public void clear() {
 		synchronized (queue) {
 			queue.clear();
 		}
 	}
 
-	/**
-	 * Push an element to queue
-	 * 
-	 * @param element
-	 * @throws NullPointerException
-	 *             null element
-	 */
+	@Override
 	public void push(String element) {
 		if (element == null) {
 			throw new NullPointerException("Can't push null");
@@ -93,11 +81,7 @@ public class MessageQueue implements Queue<String> {
 		return result;
 	}
 
-	/**
-	 * Retrieves an element from queue. (blocks if queue is empty)
-	 * 
-	 * @return queue element or null(interrupted)
-	 */
+	@Override
 	public String take() {
 		String result = null;
 		Thread current = null;
@@ -158,9 +142,7 @@ public class MessageQueue implements Queue<String> {
 		}
 	}
 
-	/**
-	 * @return queue size
-	 */
+	@Override
 	public int size() {
 		synchronized (queue) {
 			return queue.size();

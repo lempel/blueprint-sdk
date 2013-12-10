@@ -41,6 +41,8 @@ public class GcmSenderExample {
 		HashMap<String, String> map = new HashMap<String, String>();
 		map.put("test", "Message from GcmSenderExample");
 
+		GcmSender.GCM_URL = "http://localhost:8080/gcmProxy";
+		// GcmSender.GCM_URL = "http://localhost:8080/gcmDummy";
 		GcmSender sender = new GcmSender(apiKey);
 		GcmResponse response = sender.send(regIds, map, 10);
 

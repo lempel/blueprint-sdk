@@ -31,6 +31,13 @@ import blueprint.sdk.util.queue.Queue;
  * @since 2013. 12. 11.
  */
 public class GcmSpoolWorkerGroup<J, Q> extends WorkerGroup<J, Queue<J>> {
+	/** API Key for GCM */
+	protected String apiKey;
+	/** number of retry attempts */
+	protected int retries;
+	/** error handler */
+	protected GcmErrorHandler errHandler;
+
 	/**
 	 * Constructor
 	 * 
@@ -38,9 +45,22 @@ public class GcmSpoolWorkerGroup<J, Q> extends WorkerGroup<J, Queue<J>> {
 	 * @param workerClass
 	 * @param workerCount
 	 *            Initial number of workers
+	 * @param apiKey
+	 *            API Key for GCM
+	 * @param errHandler
+	 *            error handler
+	 * @param retries
+	 *            number of retry attempts
+	 * @throws Exception
+	 *             Can't create workers
 	 */
-	public GcmSpoolWorkerGroup(Queue<J> jobQueue, Class<? extends Worker<J>> workerClass, int workerCount) {
+	public GcmSpoolWorkerGroup(Queue<J> jobQueue, Class<? extends Worker<J>> workerClass, int workerCount,
+			String apiKey, int retries, GcmErrorHandler errHandler) throws Exception {
 		super(jobQueue, workerClass, workerCount);
+
+		this.apiKey = apiKey;
+		this.retries = retries;
+		this.errHandler = errHandler;
 	}
 
 	@Override
@@ -49,7 +69,7 @@ public class GcmSpoolWorkerGroup<J, Q> extends WorkerGroup<J, Queue<J>> {
 		Worker<J> aWorker;
 		Constructor<? extends Worker<J>> cons = workerClass.getConstructor(Queue.class, Object.class, String.class,
 				int.class, GcmErrorHandler.class);
-		aWorker = cons.newInstance(jobQueue);
+		aWorker = cons.newInstance(jobQueue, deathMonitor, apiKey, retries, errHandler);
 		workers.add(aWorker);
 		aWorker.start();
 	}

@@ -13,10 +13,15 @@
 
 package blueprint.sdk.google.gcm.spool;
 
+import java.sql.SQLException;
+
 import javax.sql.DataSource;
+
+import org.apache.log4j.Logger;
 
 import blueprint.sdk.core.concurrent.Worker;
 import blueprint.sdk.core.concurrent.WorkerGroup;
+import blueprint.sdk.google.gcm.GcmSender;
 import blueprint.sdk.util.Terminatable;
 import blueprint.sdk.util.queue.H2Queue;
 import blueprint.sdk.util.queue.Queue;
@@ -28,11 +33,11 @@ import blueprint.sdk.util.queue.Queue;
  * @since 2013. 12. 10.
  */
 public class GcmSpool implements Terminatable {
+	private static final Logger L = Logger.getLogger(GcmSpool.class);
+
 	protected H2Queue queue;
 
 	protected boolean terminated = false;
-
-	protected GcmErrorHandler errHandler;
 
 	protected WorkerGroup<String, Queue<String>> workerGroup;
 
@@ -41,10 +46,16 @@ public class GcmSpool implements Terminatable {
 	 * 
 	 * @param datasrc
 	 *            DataSource for queue
+	 * @param apiKey
+	 *            API Key for GCM
+	 * @param retries
+	 *            number of retry attempts
 	 * @param workerCount
+	 * @throws SQLException
+	 *             Can't initialize {@link H2Queue} or {@link GcmSpoolWorker}
 	 */
-	public GcmSpool(DataSource datasrc, int workerCount) {
-		this(datasrc, new GcmErrorHandler(), GcmSpoolWorker.class, workerCount);
+	public GcmSpool(DataSource datasrc, String apiKey, int retries, int workerCount) throws Exception {
+		this(datasrc, apiKey, retries, new GcmErrorHandler(), GcmSpoolWorker.class, workerCount);
 	}
 
 	/**
@@ -52,16 +63,27 @@ public class GcmSpool implements Terminatable {
 	 * 
 	 * @param datasrc
 	 *            DataSource for queue
+	 * @param apiKey
+	 *            API Key for GCM
+	 * @param retries
+	 *            number of retry attempts
 	 * @param errHandler
+	 *            error handler
 	 * @param workerClass
 	 * @param workerCount
+	 * @throws Exception
+	 *             Can't initialize {@link H2Queue} or {@link GcmSpoolWorker}
 	 */
-	public GcmSpool(DataSource datasrc, GcmErrorHandler errHandler, Class<? extends Worker<String>> workerClass,
-			int workerCount) {
-		queue = new H2Queue(datasrc);
+	public GcmSpool(DataSource datasrc, String apiKey, int retries, GcmErrorHandler errHandler,
+			Class<? extends Worker<String>> workerClass, int workerCount) throws Exception {
+		L.info("Current destination = " + GcmSender.GCM_URL);
 
-		this.errHandler = errHandler;
-		workerGroup = new GcmSpoolWorkerGroup<String, Queue<String>>(queue, workerClass, workerCount);
+		queue = new H2Queue(datasrc);
+		queue.init();
+
+		workerGroup = new GcmSpoolWorkerGroup<String, Queue<String>>(queue, workerClass, workerCount, apiKey, retries,
+				errHandler);
+		workerGroup.start();
 	}
 
 	@Override

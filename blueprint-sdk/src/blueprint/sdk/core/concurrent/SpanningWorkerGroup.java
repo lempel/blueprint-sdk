@@ -13,6 +13,8 @@
 
 package blueprint.sdk.core.concurrent;
 
+import org.apache.log4j.Logger;
+
 import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
 
 /**
@@ -25,6 +27,8 @@ import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
  * @since 2008. 11. 25.
  */
 public class SpanningWorkerGroup<J, Q extends JobQueue<J>> extends WorkerGroup<J, JobQueue<J>> {
+	private static final Logger L = Logger.getLogger(SpanningWorkerGroup.class);
+
 	/** check interval (msec) */
 	protected static final int INTERVAL = 1000;
 
@@ -40,8 +44,11 @@ public class SpanningWorkerGroup<J, Q extends JobQueue<J>> extends WorkerGroup<J
 	 * @param workerClass
 	 * @param workerCount
 	 *            Initial number of workers
+	 * @throws Exception
+	 *             Can't create workers
 	 */
-	public SpanningWorkerGroup(final Q jobQueue, final Class<? extends Worker<J>> workerClass, final int workerCount) {
+	public SpanningWorkerGroup(final Q jobQueue, final Class<? extends Worker<J>> workerClass, final int workerCount)
+			throws Exception {
 		super(jobQueue, workerClass, workerCount);
 
 		refiller = new Refiller();
@@ -49,10 +56,25 @@ public class SpanningWorkerGroup<J, Q extends JobQueue<J>> extends WorkerGroup<J
 	}
 
 	public void run() {
-		running = true;
+		try {
+			// instantiate & start workers
+			for (int i = 0; i < initialWorkers; i++) {
+				newWorker();
+			}
+
+			running = true;
+
+			// if initial number of workers are too small, increase it first
+			if (workers.size() * THREAD_INC_RATIO < 1) {
+				int newThreads = (int) (1.0f / THREAD_INC_RATIO) - workers.size();
+				addWorkers(newThreads);
+			}
+		} catch (Exception e) {
+			L.error("Can't create workers. Terminating " + getClass().getSimpleName(), e);
+		}
+
 		boolean interrupted = false;
 		long start = 0L;
-
 		jobQueue.setCount(true);
 
 		while (running) {

@@ -21,11 +21,11 @@ package blueprint.sdk.util.queue;
  */
 public interface Queue<T> {
 	/**
-	 * Retrieves an element from queue.
+	 * Retrieves an element from queue. (blocks if queue is empty)
 	 * 
-	 * @return queue element or null(queue is empty)
+	 * @return queue element or null(interrupted)
 	 */
-	T pop();
+	T take();
 
 	/**
 	 * Push an element to queue
@@ -37,7 +37,7 @@ public interface Queue<T> {
 	void push(T element);
 
 	/**
-	 * Clear all elements
+	 * Clears queue
 	 */
 	void clear();
 

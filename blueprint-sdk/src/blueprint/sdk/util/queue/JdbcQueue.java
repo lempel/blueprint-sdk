@@ -74,12 +74,6 @@ public abstract class JdbcQueue extends MessageQueue {
 		}
 	}
 
-	/**
-	 * Push an persistent element to queue.
-	 * 
-	 * @param element
-	 *            Element to push
-	 */
 	@Override
 	public void push(String element) {
 		push(element, true);

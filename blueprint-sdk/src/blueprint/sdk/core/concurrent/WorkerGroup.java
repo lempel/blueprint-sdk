@@ -47,6 +47,7 @@ public class WorkerGroup<J, Q extends Queue<J>> extends TerminatableThread {
 	protected static final float THREAD_INC_RATIO = 0.2f;
 
 	protected final Class<? extends Worker<J>> workerClass;
+	protected final int initialWorkers;
 	protected Q jobQueue;
 	protected List<Worker<J>> workers;
 	/** monitor for dead workers */
@@ -67,6 +68,10 @@ public class WorkerGroup<J, Q extends Queue<J>> extends TerminatableThread {
 		this.jobQueue = jobQueue;
 		this.workers = new ArrayList<Worker<J>>(workerCount);
 		this.workerClass = workerClass;
+		initialWorkers = workerCount;
+
+		setName(this.getClass().getName());
+		setDaemon(true);
 
 		L.info("worker group created - class: " + workerClass + ", count: " + workerCount);
 	}
@@ -83,7 +88,7 @@ public class WorkerGroup<J, Q extends Queue<J>> extends TerminatableThread {
 			InvocationTargetException {
 		Worker<J> aWorker;
 		Constructor<? extends Worker<J>> cons = workerClass.getConstructor(Queue.class, Object.class);
-		aWorker = cons.newInstance(jobQueue);
+		aWorker = cons.newInstance(jobQueue, deathMonitor);
 		workers.add(aWorker);
 		aWorker.start();
 	}
@@ -156,22 +161,18 @@ public class WorkerGroup<J, Q extends Queue<J>> extends TerminatableThread {
 		jobQueue.push(job);
 	}
 
-	public void start() {
-		// if initial number of workers are too small, increase it first
-		if (workers.size() * THREAD_INC_RATIO < 1) {
-			int newThreads = (int) (1.0f / THREAD_INC_RATIO) - workers.size();
-			addWorkers(newThreads);
-		}
-
-		Thread thr = new Thread(this);
-		thr.setName(this.getClass().getName());
-		thr.setDaemon(true);
-		thr.start();
-	}
-
 	@Override
 	public void run() {
-		running = true;
+		try {
+			// instantiate & start workers
+			for (int i = 0; i < initialWorkers; i++) {
+				newWorker();
+			}
+
+			running = true;
+		} catch (Exception e) {
+			L.error("Can't create workers. Terminating " + getClass().getSimpleName(), e);
+		}
 
 		while (running) {
 			maintainWorkers();

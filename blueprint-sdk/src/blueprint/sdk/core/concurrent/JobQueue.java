@@ -79,7 +79,7 @@ public class JobQueue<T> implements Queue<T> {
 	 * 
 	 * @return a job Object
 	 */
-	public T pop() {
+	public T take() {
 		T aJob = null;
 
 		try {
