@@ -97,6 +97,7 @@ public class Config {
 
 		try {
 			root = builder.parse(uri);
+			context = JXPathContext.newContext(root);
 		} catch (Exception e) {
 			throw new ConfigException("Can't parse config xml", e);
 		}
