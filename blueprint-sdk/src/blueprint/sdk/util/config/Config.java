@@ -14,21 +14,21 @@
 package blueprint.sdk.util.config;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.Pointer;
 import org.apache.log4j.Logger;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
+import blueprint.sdk.util.JXPathHelper;
 import blueprint.sdk.util.Validator;
 
 /**
@@ -41,16 +41,16 @@ public class Config {
 	/** logger */
 	private static final Logger L = Logger.getLogger(Config.class);
 
-	/** configuration의 uri */
+	/** uri of configuration */
 	protected String uri;
 
 	protected DocumentBuilder builder;
 
-	/** config의 root Node */
+	/** root Node of config xml */
 	protected Node root;
 
-	/** XPath evaluator */
-	protected XPath eval = XPathFactory.newInstance().newXPath();
+	/** root as JXPathContext */
+	protected JXPathContext context;
 
 	/**
 	 * Constructor
@@ -101,14 +101,9 @@ public class Config {
 			throw new ConfigException("Can't parse config xml", e);
 		}
 
-		String configName = null;
-		try {
-			configName = eval.evaluate("config/@name", root);
-			if (Validator.isEmpty(configName)) {
-				configName = "no-name";
-			}
-		} catch (XPathExpressionException e) {
-			throw new ConfigException("Wrong XPath", e);
+		String configName = JXPathHelper.evaluate("config/@name", context);
+		if (Validator.isEmpty(configName)) {
+			configName = "no-name";
 		}
 
 		L.info("configuration '" + configName + "' is loaded");
@@ -122,7 +117,7 @@ public class Config {
 	 * @throws XPathExpressionException
 	 */
 	public String getString(String xpath) throws XPathExpressionException {
-		String result = eval.evaluate(xpath, root);
+		String result = JXPathHelper.evaluate(xpath, context);
 		result = resolveProperty(result);
 
 		warnEmptyValue(xpath, result);
@@ -185,16 +180,17 @@ public class Config {
 	public String[] getStringArray(String xpath) throws XPathExpressionException {
 		List<String> result = new ArrayList<String>(10);
 
-		NodeList nodes = (NodeList) eval.evaluate(xpath, root, XPathConstants.NODESET);
-		if (nodes == null) {
+		Iterator<Pointer> nodeIter = JXPathHelper.evaluateIteratorPointers(xpath, context);
+		while (nodeIter.hasNext()) {
+			Pointer nodePtr = nodeIter.next();
+
+			String value = (String) nodePtr.getValue();
+			value = resolveProperty(value);
+			result.add(value);
+		}
+
+		if (result.size() == 0) {
 			warnEmptyValue(xpath, null);
-		} else {
-			int iMax = nodes.getLength();
-			for (int i = 0; i < iMax; i++) {
-				String value = nodes.item(i).getTextContent();
-				value = resolveProperty(value);
-				result.add(value);
-			}
 		}
 
 		return result.toArray(new String[result.size()]);
@@ -210,20 +206,21 @@ public class Config {
 	public Boolean[] getBooleanArray(String xpath) throws XPathExpressionException {
 		List<Boolean> result = new ArrayList<Boolean>(10);
 
-		NodeList nodes = (NodeList) eval.evaluate(xpath, root, XPathConstants.NODESET);
-		if (nodes == null) {
-			warnEmptyValue(xpath, null);
-		} else {
-			int iMax = nodes.getLength();
-			for (int i = 0; i < iMax; i++) {
-				try {
-					String value = nodes.item(i).getTextContent();
-					value = resolveProperty(value);
-					result.add(Boolean.parseBoolean(value));
-				} catch (NumberFormatException e) {
-					throw new XPathExpressionException("evaluated result of '" + xpath + "' is not a Boolean");
-				}
+		Iterator<Pointer> nodeIter = JXPathHelper.evaluateIteratorPointers(xpath, context);
+		while (nodeIter.hasNext()) {
+			Pointer nodePtr = nodeIter.next();
+
+			String value = (String) nodePtr.getValue();
+			value = resolveProperty(value);
+			try {
+				result.add(Boolean.parseBoolean(value));
+			} catch (NumberFormatException e) {
+				throw new XPathExpressionException("evaluated result of '" + xpath + "' is not a Boolean");
 			}
+		}
+
+		if (result.size() == 0) {
+			warnEmptyValue(xpath, null);
 		}
 
 		return result.toArray(new Boolean[result.size()]);
@@ -239,34 +236,24 @@ public class Config {
 	public Integer[] getIntArray(String xpath) throws XPathExpressionException {
 		List<Integer> result = new ArrayList<Integer>(10);
 
-		NodeList nodes = (NodeList) eval.evaluate(xpath, root, XPathConstants.NODESET);
-		if (nodes == null) {
-			warnEmptyValue(xpath, null);
-		} else {
-			int iMax = nodes.getLength();
-			for (int i = 0; i < iMax; i++) {
-				try {
-					String value = nodes.item(i).getTextContent();
-					value = resolveProperty(value);
-					result.add(Integer.parseInt(value));
-				} catch (NumberFormatException e) {
-					throw new XPathExpressionException("evaluated result of '" + xpath + "' is not an Integer");
-				}
+		Iterator<Pointer> nodeIter = JXPathHelper.evaluateIteratorPointers(xpath, context);
+		while (nodeIter.hasNext()) {
+			Pointer nodePtr = nodeIter.next();
+
+			String value = (String) nodePtr.getValue();
+			value = resolveProperty(value);
+			try {
+				result.add(Integer.parseInt(value));
+			} catch (NumberFormatException e) {
+				throw new XPathExpressionException("evaluated result of '" + xpath + "' is not an Integer");
 			}
 		}
 
-		return result.toArray(new Integer[result.size()]);
-	}
+		if (result.size() == 0) {
+			warnEmptyValue(xpath, null);
+		}
 
-	/**
-	 * Evaluate and return NodeList
-	 * 
-	 * @param xpath
-	 * @return
-	 * @throws XPathExpressionException
-	 */
-	public NodeList getNodeList(String xpath) throws XPathExpressionException {
-		return (NodeList) eval.evaluate(xpath, root, XPathConstants.NODESET);
+		return result.toArray(new Integer[result.size()]);
 	}
 
 	/**
