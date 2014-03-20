@@ -128,6 +128,7 @@ public class Cache<T> {
 					cache.put(key, item);
 				} else if (isAlive(item)) {
 					result = item.element;
+					item.element = element;
 				}
 			}
 
