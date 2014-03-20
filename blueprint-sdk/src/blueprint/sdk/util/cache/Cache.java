@@ -13,10 +13,12 @@
 
 package blueprint.sdk.util.cache;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import blueprint.sdk.util.Validator;
+import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
 
 /**
  * Very simple Object cache with lazy eviction.
@@ -33,18 +35,53 @@ public class Cache<T> {
 	/** time to live (in milli-seconds, 0 = no eviction) */
 	protected long timeToLive;
 
+	/** active evictor */
+	protected CacheEvictor evictor;
+
 	/**
+	 * Create an instance of Cache with very lazy eviction policy.<br>
+	 * Expired items will be evicte by {@link Cache#get(String)}.<br>
+	 * 
+	 * @param timeToLive
+	 *            time to live (in seconds, 0 = no eviction)
+	 */
+	public Cache(long timeToLive) {
+		this(5, timeToLive);
+	}
+
+	/**
+	 * Create an instance of Cache with very lazy eviction policy.<br>
+	 * Expired items will be evicte by {@link Cache#get(String)}.<br>
+	 * 
 	 * @param initialSize
 	 *            initial size of cache
 	 * @param timeToLive
 	 *            time to live (in seconds, 0 = no eviction)
 	 */
-	public Cache(int initialSize, int timeToLive) {
+	public Cache(int initialSize, long timeToLive) {
 		super();
 
-		cache = new HashMap<String, CacheItem<T>>(initialSize);
+		cache = new ConcurrentHashMap<String, CacheItem<T>>(initialSize);
 
 		this.timeToLive = timeToLive * 1000;
+	}
+
+	/**
+	 * Create an instance of Cache with very lazy eviction policy.<br>
+	 * Evictor thread would periodically evict expired items.<br>
+	 * 
+	 * @param initialSize
+	 *            initial size of cache
+	 * @param timeToLive
+	 *            time to live (in seconds, 0 = no eviction)
+	 * @param useActiveEvictor
+	 *            true: create an evictor thread
+	 */
+	public Cache(int initialSize, long timeToLive, boolean useActiveEvictor) {
+		this(initialSize, timeToLive);
+
+		evictor = new CacheEvictor(cache, timeToLive);
+		evictor.start();
 	}
 
 	/**
@@ -129,6 +166,10 @@ public class Cache<T> {
 	 * @return false if item is expired or null
 	 */
 	protected boolean isAlive(CacheItem<T> item) {
+		return isAlive(item, timeToLive);
+	}
+
+	protected static boolean isAlive(CacheItem<?> item, long timeToLive) {
 		boolean result = false;
 
 		if (item != null && item.timestamp >= (System.currentTimeMillis() - timeToLive)) {
@@ -143,5 +184,46 @@ public class Cache<T> {
 	 */
 	public int getTimeToLive() {
 		return (int) (timeToLive / 1000);
+	}
+
+	/**
+	 * Evictor thread for {@link Cache}
+	 * 
+	 * @author Sangmin Lee
+	 * @since 2014. 3. 20.
+	 */
+	private class CacheEvictor extends TerminatableThread {
+		private Map<String, CacheItem<T>> cache;
+		private long timeToLive;
+		private long interval;
+
+		/**
+		 * @param cache
+		 * @param timeToLive
+		 */
+		public CacheEvictor(Map<String, CacheItem<T>> cache, long timeToLive) {
+			this.cache = cache;
+			this.timeToLive = timeToLive;
+			interval = timeToLive / 3;
+		}
+
+		@Override
+		public void run() {
+			while (running && !terminated) {
+				try {
+					sleep(interval);
+
+					Set<String> keys = cache.keySet();
+					for (String key : keys) {
+						CacheItem<T> item = cache.get(key);
+
+						if (!Cache.isAlive(item, timeToLive)) {
+							cache.remove(key);
+						}
+					}
+				} catch (InterruptedException ignored) {
+				}
+			}
+		}
 	}
 }
