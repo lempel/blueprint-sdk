@@ -15,4 +15,7 @@ Sub-Projects:<br>
 <br>
 blueprint-sdk (https://github.com/lempel/blueprint-sdk.git)<br>
 blueprint-sdk-logger (https://github.com/lempel/blueprint-sdk-logger.git)<br>
+<br>
+If you have any questions for me:
+<a href="https://plus.google.com/communities/103101773682887019574">Google Plus Comminity for blueprint-sdk</a>
 <p>
