@@ -118,7 +118,7 @@ public final class Validator {
 	 * substitutes null String
 	 * 
 	 * @param value
-	 * @return
+	 * @return validated String
 	 */
 	public static String nvl(String value, String subst) {
 		String result;
@@ -136,7 +136,7 @@ public final class Validator {
 	 * substitutes null String with empty String
 	 * 
 	 * @param value
-	 * @return
+	 * @return validated String
 	 */
 	public static String nvl(String value) {
 		String result;

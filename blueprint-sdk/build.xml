@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="blueprint-sdk" default="default" basedir=".">
-	<target name="default" depends="clean, setup, compile, jar" />
+	<target name="default" depends="clean, setup, compile, javadoc, jar" />
 
 	<!-- variables -->
 	<property name="jdk" value="1.6" />
 	<property name="build" value="bin" />
 	<property name="classes" value="${build}" />
 	<property name="src" value="src" />
+	<property name="apidoc" value="apidoc" />
 	<property name="dist" location="." />
 
 	<!-- classpath -->
@@ -19,7 +20,6 @@
 			</fileset>
 		</path>
 	</path>
-
 	<!-- clean up -->
 	<target name="clean">
 		<delete dir="${build}" />
@@ -32,18 +32,37 @@
 
 	<!-- compile -->
 	<target name="compile">
-	    		<javac classpathref="build.classpath" source="${jdk}" target="${jdk}" srcdir="${src}" destdir="${classes}" deprecation="on" debug="on" includeantruntime="false" />
+		<javac classpathref="build.classpath" source="${jdk}" target="${jdk}"
+			srcdir="${src}" destdir="${classes}" deprecation="on" debug="on"
+			includeantruntime="false" />
 	</target>
+
+	<!-- javadoc -->
+	<target name="javadoc">
+		<javadoc destdir="${apidoc}" author="true" version="true" use="true">
+			<packageset dir="${src}" defaultexcludes="yes">
+				<include name="blueprint/**" />
+			</packageset>
+		</javadoc>
+	</target>
+
 	<!-- jar -->
 	<target name="jar" unless="-jar">
 		<manifest file="MANIFEST.MF">
 			<attribute name="Built-By" value="Sangmin Lee" />
 		</manifest>
 
-		<jar jarfile="${dist}/blueprint-sdk.jar" filesonly="true" manifest="MANIFEST.MF">
+		<jar jarfile="${dist}/blueprint-sdk.jar" filesonly="true"
+			manifest="MANIFEST.MF">
 			<fileset dir="${classes}" />
+		</jar>
+		
+		<jar jarfile="${dist}/blueprint-sdk-javadoc.jar" filesonly="true"
+			manifest="MANIFEST.MF">
+			<fileset dir="${apidoc}" />
 		</jar>
 
 		<delete file="MANIFEST.MF" />
+		<delete dir="apidoc" />
 	</target>
 </project>

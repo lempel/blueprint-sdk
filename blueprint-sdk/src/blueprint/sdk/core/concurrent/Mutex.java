@@ -72,8 +72,7 @@ public class Mutex {
 	 * returns whether this mutex is in use or not<br>
 	 * <b>CAUTION:</b> this method is <b>not thread safe</b><br>
 	 * 
-	 * @author Sangmin Lee
-	 * @return
+	 * @return true: in use
 	 */
 	protected boolean isInuse() {
 		return inuse;

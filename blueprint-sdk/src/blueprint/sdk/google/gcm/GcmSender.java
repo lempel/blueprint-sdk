@@ -62,7 +62,7 @@ public class GcmSender {
 	 *            JSON message to send
 	 * @param retries
 	 *            Number of retry attempts. Can be 0.
-	 * @return
+	 * @return response from GCM
 	 * @throws MalformedURLException
 	 *             Wrong GCM_URL value
 	 * @throws IOException
@@ -109,7 +109,7 @@ public class GcmSender {
 	 * decodes response from GCM
 	 * 
 	 * @param http
-	 * @return
+	 * @return response from GCM
 	 * @throws IOException
 	 */
 	private GcmResponse decodeRespons(HttpURLConnection http) throws IOException {
@@ -193,7 +193,7 @@ public class GcmSender {
 	 *            data to send
 	 * @param retries
 	 *            Number of retry attempts. Can be 0.
-	 * @return
+	 * @return response from GCM
 	 * @throws MalformedURLException
 	 *             Wrong GCM_URL value
 	 * @throws IOException
@@ -217,7 +217,7 @@ public class GcmSender {
 	 *            data to send
 	 * @param retries
 	 *            Number of retry attempts. Can be 0.
-	 * @return
+	 * @return response from GCM
 	 * @throws MalformedURLException
 	 *             Wrong GCM_URL value
 	 * @throws IOException

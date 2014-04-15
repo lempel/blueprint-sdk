@@ -183,7 +183,7 @@ public class LoadHandler extends AbstractHandler {
 	 * add jar/zip files
 	 * 
 	 * @param path
-	 * @return
+	 * @return classpath of found libraries
 	 */
 	protected String addJarFiles(final String path) {
 		String result;

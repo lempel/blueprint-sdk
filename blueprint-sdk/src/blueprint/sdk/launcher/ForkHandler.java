@@ -196,7 +196,7 @@ public class ForkHandler extends AbstractHandler {
 	 * find jar/zip files
 	 * 
 	 * @param path
-	 * @return
+	 * @return classpath of found libraries
 	 */
 	protected String searchJarFiles(final String path) {
 		String result;
@@ -240,9 +240,7 @@ public class ForkHandler extends AbstractHandler {
  * Shutdown Hook to destroy child process
  * 
  * @author Sangmin Lee
- * @version $Revision$
  * @since 2007. 12. 12
- * @last $Date$
  */
 class ShutdownHook extends Thread {
 	private transient Process child;

@@ -70,7 +70,7 @@ public class Config {
 	}
 
 	/**
-	 * @return configuration의 uri
+	 * @return configuration's uri
 	 */
 	public String getUri() {
 		return uri;

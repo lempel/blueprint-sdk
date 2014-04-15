@@ -43,7 +43,7 @@ public class CharsetUtil {
 	 * 8859_1 -> KSC5601 (Unicode to EUC-KR)
 	 * 
 	 * @param str
-	 * @return
+	 * @return transcoded String
 	 * @throws UnsupportedEncodingException
 	 */
 	public static String from8859to5601(final String str) throws UnsupportedEncodingException {
@@ -54,7 +54,7 @@ public class CharsetUtil {
 	 * KSC5601 -> 8859_1 (EUC-KR to Unicode)
 	 * 
 	 * @param str
-	 * @return
+	 * @return transcoded String
 	 * @throws UnsupportedEncodingException
 	 */
 	public static String from5601to8859(final String str) throws UnsupportedEncodingException {

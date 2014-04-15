@@ -21,10 +21,8 @@ package blueprint.sdk.util;
  */
 public final class MillisecUtil {
 	/**
-	 * converts second to millisecond
-	 * 
-	 * @param sec
-	 * @return
+	 * @param sec time as second 
+	 * @return time as millisecond
 	 */
 	public static long sec2msec(int sec) {
 		return sec * 1000;
@@ -33,8 +31,8 @@ public final class MillisecUtil {
 	/**
 	 * converts minute to millisecond
 	 * 
-	 * @param min
-	 * @return
+	 * @param min time as minute
+	 * @return time as millisecond
 	 */
 	public static long min2msec(int min) {
 		return sec2msec(min * 60);
@@ -43,8 +41,8 @@ public final class MillisecUtil {
 	/**
 	 * converts hour to millisecond
 	 * 
-	 * @param hour
-	 * @return
+	 * @param hour time as hour
+	 * @return time as millisecond
 	 */
 	public static long hour2msec(int hour) {
 		return min2msec(hour * 60);
@@ -53,8 +51,8 @@ public final class MillisecUtil {
 	/**
 	 * converts day to millisecond
 	 * 
-	 * @param day
-	 * @return
+	 * @param day time as day
+	 * @return time as millisecond
 	 */
 	public static long day2msec(int day) {
 		return hour2msec(day * 24);

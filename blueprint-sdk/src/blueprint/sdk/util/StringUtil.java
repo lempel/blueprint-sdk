@@ -29,7 +29,7 @@ public class StringUtil {
 	 * convert bye[] to hexa decimal expression in String
 	 * 
 	 * @param data
-	 * @return
+	 * @return hexa decimal expression
 	 */
 	public static String toHex(final byte[] data) {
 		StringBuilder buffer = new StringBuilder(data.length * 2);
@@ -45,7 +45,7 @@ public class StringUtil {
 	 * convert bye[] to hexa decimal dump
 	 * 
 	 * @param data
-	 * @return
+	 * @return hexa decimal expression
 	 */
 	public static String toHexDump(final byte[] data) {
 		// 72bytes per line
@@ -105,7 +105,7 @@ public class StringUtil {
 	 * Some ASCII characters can mess-up console as you know.<br>
 	 * 
 	 * @param src
-	 * @return
+	 * @return console-friendly String
 	 */
 	public static String sanitize(final String src) {
 		byte[] srcBytes;

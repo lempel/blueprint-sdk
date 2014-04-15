@@ -39,7 +39,7 @@ public abstract class JdbcQueue extends MessageQueue {
 	/**
 	 * Constructor
 	 * 
-	 * @param dsrc
+	 * @param datasrc
 	 *            DataSource for persistence
 	 */
 	public JdbcQueue(DataSource datasrc) {

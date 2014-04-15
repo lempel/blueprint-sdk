@@ -30,7 +30,7 @@ public class ByteArrayFactory {
 	 *            each array's size
 	 * @param maxArrays
 	 *            maximum number of arrays to preserve
-	 * @return
+	 * @return instance of a pool
 	 */
 	public static synchronized ByteArrayPool getInstance(final int arraySize, final int maxArrays) {
 		ByteArrayPool result;

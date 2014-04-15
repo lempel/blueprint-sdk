@@ -89,7 +89,7 @@ public class JXPathHelper {
 
 	/**
 	 * @param xpath
-	 * @param target
+	 * @param context
 	 * @return Pointer or null(not found)
 	 */
 	public static Node evaluateNode(String xpath, JXPathContext context) {
@@ -117,7 +117,7 @@ public class JXPathHelper {
 
 	/**
 	 * @param xpath
-	 * @param target
+	 * @param context
 	 * @return Itertor or null(not found)
 	 */
 	@SuppressWarnings("unchecked")
@@ -145,7 +145,7 @@ public class JXPathHelper {
 	/**
 	 * @param expr
 	 *            JXPathContext.compile(String xpath);
-	 * @param target
+	 * @param context
 	 * @return Iterator or null(not found)
 	 */
 	@SuppressWarnings("unchecked")
@@ -171,7 +171,7 @@ public class JXPathHelper {
 
 	/**
 	 * @param xpath
-	 * @param target
+	 * @param context
 	 * @return Iterator or null(not found)
 	 */
 	@SuppressWarnings("unchecked")
@@ -199,7 +199,7 @@ public class JXPathHelper {
 	/**
 	 * @param expr
 	 *            JXPathContext.compile(String xpath);
-	 * @param target
+	 * @param context
 	 * @return Iterator or null(not found)
 	 */
 	@SuppressWarnings("unchecked")

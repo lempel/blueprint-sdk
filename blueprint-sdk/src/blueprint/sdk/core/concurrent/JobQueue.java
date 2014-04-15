@@ -107,9 +107,7 @@ public class JobQueue<T> implements Queue<T> {
 	}
 
 	/**
-	 * returns size of queue
-	 * 
-	 * @return
+	 * @return size of queue
 	 */
 	public int size() {
 		return queue.size();
@@ -157,9 +155,7 @@ public class JobQueue<T> implements Queue<T> {
 	}
 
 	/**
-	 * returns processed jobs count
-	 * 
-	 * @return
+	 * @return processed jobs count
 	 */
 	protected long getProcessedJobs() {
 		return processedJobs.count();

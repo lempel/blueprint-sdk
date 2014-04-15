@@ -61,7 +61,7 @@ public final class HandlerFactory {
 	 * returns an instance of handler for given configuration
 	 * 
 	 * @param config
-	 * @return
+	 * @return instance of handler
 	 * @throws XPathExpressionException
 	 */
 	public static AbstractHandler getInstance(final Config config) throws XPathExpressionException {

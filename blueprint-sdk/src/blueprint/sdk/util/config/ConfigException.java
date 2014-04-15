@@ -1,7 +1,7 @@
 package blueprint.sdk.util.config;
 
 /**
- * Config 내부에서 발생하는 Exception
+ * Exception in {@link Config}
  * 
  * @author Sangmin Lee
  * @since 2013. 6. 18.
@@ -13,7 +13,7 @@ public class ConfigException extends Exception {
 	 * Constructor
 	 * 
 	 * @param message
-	 *            상세 메시지
+	 *            detailed message
 	 */
 	public ConfigException(String message) {
 		super(message);
@@ -23,9 +23,9 @@ public class ConfigException extends Exception {
 	 * Constructor
 	 * 
 	 * @param message
-	 *            상세 메시지
+	 *            detailed message
 	 * @param cause
-	 *            발생 원인
+	 *            cause
 	 */
 	public ConfigException(String message, Throwable cause) {
 		super(message, cause);
@@ -35,7 +35,7 @@ public class ConfigException extends Exception {
 	 * Constructor
 	 * 
 	 * @param cause
-	 *            발생 원인
+	 *            cause
 	 */
 	public ConfigException(Throwable cause) {
 		super(cause);

@@ -94,7 +94,7 @@ public class JavaProcesses {
 	}
 
 	/**
-	 * @return
+	 * @return host of JVMs
 	 * @throws MonitorException
 	 */
 	public MonitoredHost getMonitoredHost() throws MonitorException {
@@ -105,7 +105,7 @@ public class JavaProcesses {
 	 * @param monitoredHost
 	 *            host
 	 * @param info
-	 * @return
+	 * @return target VM
 	 */
 	public static MonitoredVm getMonitoredVm(MonitoredHost monitoredHost, VmInfo info) {
 		MonitoredVm result = null;

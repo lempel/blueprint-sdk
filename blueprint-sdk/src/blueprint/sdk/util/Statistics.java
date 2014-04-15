@@ -17,8 +17,8 @@ package blueprint.sdk.util;
  * Statistics Utility<br>
  * Simple yet...<br>
  * 
- * @version $Revision$
  * @since 2009. 2. 25.
+ * @author Sangmin Lee
  */
 public class Statistics {
 	private long sum = 0;

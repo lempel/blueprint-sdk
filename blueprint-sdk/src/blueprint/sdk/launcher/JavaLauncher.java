@@ -66,9 +66,7 @@ import blueprint.sdk.util.config.Config;
  * create a 'trace.properties' file on working directory<br>
  * 
  * @author Sangmin Lee
- * @version $Revision$
  * @since 2007. 12. 12
- * @last $Date$
  */
 public class JavaLauncher {
 	/** logger */
