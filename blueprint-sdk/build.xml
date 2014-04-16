@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="blueprint-sdk" default="default" basedir=".">
-	<target name="default" depends="clean, setup, compile, javadoc, jar" />
+	<target name="default" depends="clean, setup, compile_java7, javadoc, jar" />
+	<target name="java6" depends="clean, setup, compile_java6, javadoc, jar" />
 
 	<!-- variables -->
-	<property name="jdk" value="1.6" />
+	<property name="jdk6" value="1.6" />
+	<property name="jdk7" value="1.7" />
 	<property name="build" value="bin" />
 	<property name="classes" value="${build}" />
 	<property name="src" value="src" />
@@ -31,8 +33,15 @@
 	</target>
 
 	<!-- compile -->
-	<target name="compile">
-		<javac classpathref="build.classpath" source="${jdk}" target="${jdk}"
+	<target name="compile_java6">
+		<javac classpathref="build.classpath" source="${jdk6}" target="${jdk6}"
+			srcdir="${src}" destdir="${classes}" deprecation="on" debug="on"
+			includeantruntime="false" />
+	</target>
+
+	<!-- compile -->
+	<target name="compile_java7">
+		<javac classpathref="build.classpath" source="${jdk7}" target="${jdk7}"
 			srcdir="${src}" destdir="${classes}" deprecation="on" debug="on"
 			includeantruntime="false" />
 	</target>
