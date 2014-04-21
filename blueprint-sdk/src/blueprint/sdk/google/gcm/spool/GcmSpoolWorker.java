@@ -21,6 +21,7 @@ import blueprint.sdk.google.gcm.GcmSender;
 import blueprint.sdk.util.queue.Queue;
 
 /**
+ * Worker for GcmSpool.
  * 
  * @author Sangmin Lee
  * @since 2013. 12. 11.

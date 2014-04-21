@@ -17,6 +17,8 @@ import java.util.Calendar;
 
 
 /**
+ * Pre-formatted timestamps.
+ * 
  * @author Sangmin Lee
  * @since 2002. 07. 30
  */

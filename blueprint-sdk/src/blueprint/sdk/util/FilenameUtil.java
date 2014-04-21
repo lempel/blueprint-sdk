@@ -16,6 +16,8 @@ package blueprint.sdk.util;
 import java.util.UUID;
 
 /**
+ * Handles filenames.
+ * 
  * @author Sangmin Lee
  * @since 2002. 07. 30
  */

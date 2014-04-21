@@ -16,7 +16,7 @@ package blueprint.sdk.util.debug;
 import org.apache.log4j.Logger;
 
 /**
- * Prints current threads stack trace at anytime..
+ * Prints current thread's stack trace at anytime..
  * 
  * @author Sangmin Lee
  * @since 2013. 9. 5.
