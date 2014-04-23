@@ -124,9 +124,11 @@ public class ConcurrentFileSystem extends GenericFileSystem {
 		// can't rename if newPath is currently opened
 		if (newMonitor == null) {
 			synchronized (orgMonitor) {
-				result = super.renameFile(orgPath, newPath);
-
-				releaseMonitor(orgPath);
+				try {
+					result = super.renameFile(orgPath, newPath);
+				} finally {
+					releaseMonitor(orgPath);
+				}
 			}
 		}
 
@@ -139,9 +141,11 @@ public class ConcurrentFileSystem extends GenericFileSystem {
 
 		Object monitor = newMonitor(path);
 		synchronized (monitor) {
-			result = super.readFile(path);
-
-			releaseMonitor(path);
+			try {
+				result = super.readFile(path);
+			} finally {
+				releaseMonitor(path);
+			}
 		}
 
 		return result;
@@ -152,9 +156,11 @@ public class ConcurrentFileSystem extends GenericFileSystem {
 		Object monitor = newMonitor(path);
 
 		synchronized (monitor) {
-			super.writeToFile(path, contents, append);
-
-			releaseMonitor(path);
+			try {
+				super.writeToFile(path, contents, append);
+			} finally {
+				releaseMonitor(path);
+			}
 		}
 	}
 }
