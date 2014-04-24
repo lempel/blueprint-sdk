@@ -109,30 +109,7 @@ public class ConcurrentFileSystem extends GenericFileSystem {
 
 	@Override
 	public boolean renameFile(String orgPath, String newPath) {
-		boolean result = false;
-		Object orgMonitor;
-		Object newMonitor;
-
-		openFilesLock.lock();
-		try {
-			orgMonitor = newMonitor(orgPath);
-			newMonitor = getMonitor(newPath);
-		} finally {
-			openFilesLock.unlock();
-		}
-
-		// can't rename if newPath is currently opened
-		if (newMonitor == null) {
-			synchronized (orgMonitor) {
-				try {
-					result = super.renameFile(orgPath, newPath);
-				} finally {
-					releaseMonitor(orgPath);
-				}
-			}
-		}
-
-		return result;
+		throw new RuntimeException("Not implemented yet");
 	}
 
 	@Override
