@@ -42,6 +42,10 @@ public class CachedFileSystem extends ConcurrentFileSystem {
 
 	@Override
 	public boolean deleteFile(String path) {
+		if (path == null) {
+			throw new NullPointerException("specified path is null");
+		}
+
 		synchronized (cache) {
 			cache.remove(path);
 		}
@@ -65,6 +69,10 @@ public class CachedFileSystem extends ConcurrentFileSystem {
 
 	@Override
 	public byte[] readFile(String path) throws IOException {
+		if (path == null) {
+			throw new NullPointerException("specified path is null");
+		}
+
 		byte[] result = cache.get(path);
 
 		if (result == null) {
@@ -79,6 +87,10 @@ public class CachedFileSystem extends ConcurrentFileSystem {
 
 	@Override
 	public void writeToFile(String path, byte[] contents, boolean append) throws IOException {
+		if (path == null) {
+			throw new NullPointerException("specified path is null");
+		}
+
 		super.writeToFile(path, contents, append);
 
 		synchronized (cache) {

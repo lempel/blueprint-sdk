@@ -1,18 +1,34 @@
+/*
+ License:
+
+ blueprint-sdk is licensed under the terms of Eclipse Public License(EPL) v1.0
+ (http://www.eclipse.org/legal/epl-v10.html)
+
+
+ Distribution:
+
+ Repository - https://github.com/lempel/blueprint-sdk.git
+ Blog - http://lempel.egloos.com
+ */
+
 package blueprint.sdk.core.concurrent.lock;
 
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 
 /**
- * Non-reentrant mutual exclusion lock
+ * Mutex with timestamp.<br/>
+ * <br/>
+ * Timestamp will be updated by every invocation of {@link Sync#tryAcquire(int)}
+ * and {@link Sync#tryRelease(int)} with {@link System#currentTimeMillis()}<br/>
  * 
  * @author Sangmin Lee
  * @since 2014. 4. 25.
  */
-public class Mutex {
+public class StampedMutex {
 	/** synchronizer */
 	protected Sync sync;
 
-	public Mutex() {
+	public StampedMutex() {
 		sync = new Sync();
 	}
 
@@ -38,6 +54,13 @@ public class Mutex {
 	}
 
 	/**
+	 * @return current timestamp
+	 */
+	public long getTimestamp() {
+		return sync.timestamp;
+	}
+
+	/**
 	 * Synchronizer for {@link Mutex}
 	 * 
 	 * @author Sangmin Lee
@@ -45,6 +68,8 @@ public class Mutex {
 	 */
 	class Sync extends AbstractQueuedSynchronizer {
 		private static final long serialVersionUID = 3584438822993449109L;
+
+		long timestamp = System.currentTimeMillis();
 
 		@Override
 		protected boolean tryAcquire(int arg) {
@@ -55,6 +80,7 @@ public class Mutex {
 				result = true;
 			}
 
+			timestamp = System.currentTimeMillis();
 			return result;
 		}
 
@@ -67,12 +93,20 @@ public class Mutex {
 			setExclusiveOwnerThread(null);
 			setState(0);
 
+			timestamp = System.currentTimeMillis();
 			return true;
 		}
 
 		@Override
 		protected boolean isHeldExclusively() {
 			return getState() == 1;
+		}
+
+		/**
+		 * @return current timestamp
+		 */
+		long getTimestamp() {
+			return timestamp;
 		}
 	}
 }

@@ -33,6 +33,10 @@ public class GenericFileSystem extends FileSystem {
 
 	@Override
 	public boolean deleteFile(String path) {
+		if (path == null) {
+			throw new NullPointerException("specified path is null");
+		}
+
 		boolean result = false;
 		File target = new File(path);
 		if (target.exists()) {
@@ -43,24 +47,36 @@ public class GenericFileSystem extends FileSystem {
 
 	@Override
 	public boolean renameFile(String orgPath, String newPath) {
-		File target = new File(orgPath);
-		return target.renameTo(new File(newPath));
+		if (orgPath == null || newPath == null) {
+			throw new NullPointerException("at least one of specified path is null");
+		}
+
+		boolean result = false;
+
+		if (!orgPath.equals(newPath)) {
+			File target = new File(orgPath);
+			result = target.renameTo(new File(newPath));
+		}
+
+		return result;
 	}
 
 	@Override
 	public byte[] readFile(String path) throws IOException {
+		if (path == null) {
+			throw new NullPointerException("specified path is null");
+		}
+
 		byte[] result = null;
 
-		if (exists(path)) {
-			FileInputStream fis = null;
-			try {
-				fis = new FileInputStream(path);
-				result = new byte[fis.available()];
-				fis.read(result);
-			} finally {
-				if (fis != null) {
-					fis.close();
-				}
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(path);
+			result = new byte[fis.available()];
+			fis.read(result);
+		} finally {
+			if (fis != null) {
+				fis.close();
 			}
 		}
 
@@ -69,6 +85,10 @@ public class GenericFileSystem extends FileSystem {
 
 	@Override
 	public void writeToFile(String path, byte[] contents, boolean append) throws IOException {
+		if (path == null) {
+			throw new NullPointerException("specified path is null");
+		}
+
 		BufferedOutputStream bos = null;
 		try {
 			bos = new BufferedOutputStream(new FileOutputStream(path, append));
