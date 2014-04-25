@@ -1,80 +1,78 @@
 package blueprint.sdk.core.concurrent;
 
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
+
 /**
- * non-reentrant mutual exclusion lock
+ * Non-reentrant mutual exclusion lock
  * 
- * @author Doug Lea
- * @since 1998.6.11.
+ * @author Sangmin Lee
+ * @since 2014. 4. 25.
  */
 public class Mutex {
-	/** The lock status * */
-	private transient boolean inuse = false;
+	/** synchronizer */
+	protected Sync sync;
 
-	public void acquire() throws InterruptedException {
-		if (Thread.interrupted()) {
-			throw new InterruptedException();
-		}
-		synchronized (this) {
-			try {
-				while (inuse) {
-					wait();
-				}
-				inuse = true;
-			} catch (InterruptedException ex) {
-				notify();
-				throw ex;
-			}
-		}
-	}
-
-	public void release() {
-		synchronized (this) {
-			inuse = false;
-			notify();
-		}
-	}
-
-	public boolean attempt(final long msecs) throws InterruptedException {
-		if (Thread.interrupted()) {
-			throw new InterruptedException();
-		}
-		synchronized (this) {
-			if (!inuse) {
-				inuse = true;
-				return true;
-			} else if (msecs <= 0) {
-				return false;
-			} else {
-				long waitTime = msecs;
-				long start = System.currentTimeMillis();
-				try {
-					for (;;) {
-						wait(waitTime);
-						if (inuse) {
-							waitTime = msecs - (System.currentTimeMillis() - start);
-							if (waitTime <= 0) {
-								return false;
-							}
-						} else {
-							inuse = true;
-							return true;
-						}
-					}
-				} catch (InterruptedException ex) {
-					notify();
-					throw ex;
-				}
-			}
-		}
+	public Mutex() {
+		sync = new Sync();
 	}
 
 	/**
-	 * returns whether this mutex is in use or not<br>
-	 * <b>CAUTION:</b> this method is <b>not thread safe</b><br>
-	 * 
-	 * @return true: in use
+	 * Acquires lock
 	 */
-	protected boolean isInuse() {
-		return inuse;
+	public void lock() {
+		sync.acquire(1);
+	}
+
+	/**
+	 * Releases lock
+	 */
+	public void unlock() {
+		sync.release(1);
+	}
+
+	/**
+	 * @return true if locked
+	 */
+	public boolean isLocked() {
+		return sync.isHeldExclusively();
+	}
+
+	/**
+	 * Synchronizer for {@link Mutex}
+	 * 
+	 * @author Sangmin Lee
+	 * @since 2014. 4. 24.
+	 */
+	class Sync extends AbstractQueuedSynchronizer {
+		private static final long serialVersionUID = 3584438822993449109L;
+
+		@Override
+		protected boolean tryAcquire(int arg) {
+			boolean result = false;
+
+			if (getState() == 0 && compareAndSetState(0, arg)) {
+				setExclusiveOwnerThread(Thread.currentThread());
+				result = true;
+			}
+
+			return result;
+		}
+
+		@Override
+		protected boolean tryRelease(int arg) {
+			boolean result = false;
+
+			if (getState() == 1 && compareAndSetState(1, arg)) {
+				setExclusiveOwnerThread(null);
+				result = true;
+			}
+
+			return result;
+		}
+
+		@Override
+		protected boolean isHeldExclusively() {
+			return getState() == 1;
+		}
 	}
 }

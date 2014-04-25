@@ -52,25 +52,22 @@ public class JobQueue<T> implements Queue<T> {
 	 * @param aJob
 	 */
 	public void push(final T aJob) {
-		try {
-			mtx.acquire();
+		mtx.lock();
 
+		try {
 			queue.add(aJob);
 
 			// if lock is not in use (i.e. all threads are busy)
-			if (!lock.isInuse()) {
+			if (!lock.isLocked()) {
 				synchronized (allBusyTrapLock) {
 					allBusyTrap = true;
 				}
 			}
 
 			// release lock mutex
-			lock.release();
-
-			mtx.release();
-		} catch (InterruptedException e) {
-			// FIXME Temporary fix. must remove Mutex with something else.
-			throw new RuntimeException(e);
+			lock.unlock();
+		} finally {
+			mtx.unlock();
 		}
 	}
 
@@ -82,25 +79,22 @@ public class JobQueue<T> implements Queue<T> {
 	public T take() {
 		T aJob = null;
 
+		mtx.lock();
 		try {
-			mtx.acquire();
-
 			while (queue.size() <= 0) {
 				// release exclusion mutex
-				mtx.release();
+				mtx.unlock();
 
 				// acquire lock mutex
-				lock.acquire();
+				lock.lock();
 
 				// re-acquire exclusion mutex to pop
-				mtx.acquire();
+				mtx.lock();
 			}
-			aJob = queue.remove(0);
 
-			mtx.release();
-		} catch (InterruptedException e) {
-			// FIXME Temporary fix. must remove Mutex with something else.
-			throw new RuntimeException(e);
+			aJob = queue.remove(0);
+		} finally {
+			mtx.unlock();
 		}
 
 		return aJob;
@@ -172,17 +166,13 @@ public class JobQueue<T> implements Queue<T> {
 	 * clears queue
 	 */
 	public void clear() {
+		mtx.lock();
 		try {
-			mtx.acquire();
-
 			queue.clear();
 			resetProcessedJobs();
 			allBusyTrap = false;
-
-			mtx.release();
-		} catch (InterruptedException e) {
-			// FIXME Temporary fix. must remove Mutex with something else.
-			throw new RuntimeException(e);
+		} finally {
+			mtx.unlock();
 		}
 	}
 
