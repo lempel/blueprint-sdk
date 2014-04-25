@@ -18,8 +18,8 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 /**
  * Mutex with timestamp.<br/>
  * <br/>
- * Timestamp will be updated by every invocation of {@link Sync#tryAcquire(int)}
- * and {@link Sync#tryRelease(int)} with {@link System#currentTimeMillis()}<br/>
+ * Timestamp will be updated by every invocation of {@link StampedMutex.Sync#tryAcquire(int)}
+ * and {@link StampedMutex.Sync#tryRelease(int)} with {@link System#currentTimeMillis()}<br/>
  * 
  * @author Sangmin Lee
  * @since 2014. 4. 25.

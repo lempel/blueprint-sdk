@@ -29,8 +29,6 @@ public class CachedFileSystem extends ConcurrentFileSystem {
 	protected Cache<byte[]> cache;
 
 	/**
-	 * @param root
-	 *            root path
 	 * @param ttl
 	 *            TTL in millisecond
 	 */
