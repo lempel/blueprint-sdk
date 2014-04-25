@@ -149,15 +149,14 @@ public class WorkerGroup<J, Q extends Queue<J>> extends TerminatableThread {
 
 		if (workers != null) {
 			synchronized (workers) {
-				Iterator<Worker<J>> iter = workers.iterator();
-				while (iter.hasNext()) {
-					iter.next().terminate();
+				for (Worker<J> worker : workers) {
+					worker.terminate();
 				}
 			}
 		}
 	}
 
-	public void addJob(final J job) throws InterruptedException {
+	public void addJob(final J job) {
 		jobQueue.push(job);
 	}
 

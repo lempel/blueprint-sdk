@@ -53,7 +53,6 @@ public class JobQueue<T> implements Queue<T> {
 	 */
 	public void push(final T aJob) {
 		mtx.lock();
-
 		try {
 			queue.add(aJob);
 
@@ -64,8 +63,12 @@ public class JobQueue<T> implements Queue<T> {
 				}
 			}
 
-			// release lock mutex
-			lock.unlock();
+			try {
+				// release lock mutex
+				lock.unlock();
+			} catch (IllegalMonitorStateException ignored) {
+				// can happen if there's no waiting worker
+			}
 		} finally {
 			mtx.unlock();
 		}

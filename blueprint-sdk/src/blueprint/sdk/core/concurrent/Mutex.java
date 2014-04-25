@@ -50,7 +50,7 @@ public class Mutex {
 		protected boolean tryAcquire(int arg) {
 			boolean result = false;
 
-			if (getState() == 0 && compareAndSetState(0, arg)) {
+			if (compareAndSetState(0, arg)) {
 				setExclusiveOwnerThread(Thread.currentThread());
 				result = true;
 			}
@@ -60,14 +60,13 @@ public class Mutex {
 
 		@Override
 		protected boolean tryRelease(int arg) {
-			boolean result = false;
-
-			if (getState() == 1 && compareAndSetState(1, arg)) {
-				setExclusiveOwnerThread(null);
-				result = true;
+			if (getState() == 0) {
+				throw new IllegalMonitorStateException();
 			}
+			setExclusiveOwnerThread(null);
+			setState(0);
 
-			return result;
+			return true;
 		}
 
 		@Override
