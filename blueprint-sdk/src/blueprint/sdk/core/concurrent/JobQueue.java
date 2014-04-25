@@ -16,6 +16,7 @@ package blueprint.sdk.core.concurrent;
 import java.util.List;
 import java.util.Vector;
 
+import blueprint.sdk.core.concurrent.lock.Mutex;
 import blueprint.sdk.util.Counter;
 import blueprint.sdk.util.queue.Queue;
 

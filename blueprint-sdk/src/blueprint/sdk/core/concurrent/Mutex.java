@@ -1,77 +1,81 @@
 package blueprint.sdk.core.concurrent;
 
-import java.util.concurrent.locks.AbstractQueuedSynchronizer;
-
 /**
- * Non-reentrant mutual exclusion lock
+ * non-reentrant mutual exclusion lock
  * 
- * @author Sangmin Lee
- * @since 2014. 4. 25.
+ * @deprecated Please use {@link blueprint.sdk.core.concurrent.lock.Mutex}
+ * @author Doug Lea
+ * @since 1998.6.11.
  */
 public class Mutex {
-	/** synchronizer */
-	protected Sync sync;
+	/** The lock status * */
+	private transient boolean inuse = false;
 
-	public Mutex() {
-		sync = new Sync();
+	public void acquire() throws InterruptedException {
+		if (Thread.interrupted()) {
+			throw new InterruptedException();
+		}
+		synchronized (this) {
+			try {
+				while (inuse) {
+					wait();
+				}
+				inuse = true;
+			} catch (InterruptedException ex) {
+				notify();
+				throw ex;
+			}
+		}
+	}
+
+	public void release() {
+		synchronized (this) {
+			inuse = false;
+			notify();
+		}
+	}
+
+	public boolean attempt(final long msecs) throws InterruptedException {
+		if (Thread.interrupted()) {
+			throw new InterruptedException();
+		}
+		synchronized (this) {
+			if (!inuse) {
+				inuse = true;
+				return true;
+			} else if (msecs <= 0) {
+				return false;
+			} else {
+				long waitTime = msecs;
+				long start = System.currentTimeMillis();
+				try {
+					for (;;) {
+						wait(waitTime);
+						if (inuse) {
+							waitTime = msecs - (System.currentTimeMillis() - start);
+							if (waitTime <= 0) {
+								return false;
+							}
+						} else {
+							inuse = true;
+							return true;
+						}
+					}
+				} catch (InterruptedException ex) {
+					notify();
+					throw ex;
+				}
+			}
+		}
 	}
 
 	/**
-	 * Acquires lock
-	 */
-	public void lock() {
-		sync.acquire(1);
-	}
-
-	/**
-	 * Releases lock
-	 */
-	public void unlock() {
-		sync.release(1);
-	}
-
-	/**
-	 * @return true if locked
-	 */
-	public boolean isLocked() {
-		return sync.isHeldExclusively();
-	}
-
-	/**
-	 * Synchronizer for {@link Mutex}
+	 * returns whether this mutex is in use or not<br>
+	 * <b>CAUTION:</b> this method is <b>not thread safe</b><br>
 	 * 
-	 * @author Sangmin Lee
-	 * @since 2014. 4. 24.
+	 * @return true: in use
 	 */
-	class Sync extends AbstractQueuedSynchronizer {
-		private static final long serialVersionUID = 3584438822993449109L;
-
-		@Override
-		protected boolean tryAcquire(int arg) {
-			boolean result = false;
-
-			if (compareAndSetState(0, arg)) {
-				setExclusiveOwnerThread(Thread.currentThread());
-				result = true;
-			}
-
-			return result;
-		}
-
-		@Override
-		protected boolean tryRelease(int arg) {
-			if (getState() == 0) {
-				throw new IllegalMonitorStateException();
-			}
-			setExclusiveOwnerThread(null);
-			setState(0);
-
-			return true;
-		}
-
-		@Override
-		protected boolean isHeldExclusively() {
-			return getState() == 1;
-		}
+	protected boolean isInuse() {
+		return inuse;
 	}
 }
