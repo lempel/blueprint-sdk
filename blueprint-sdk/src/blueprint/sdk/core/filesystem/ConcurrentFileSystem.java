@@ -51,6 +51,9 @@ public class ConcurrentFileSystem extends GenericFileSystem {
 	/** minimun evictor interval (5 seconds) */
 	protected static final long MIN_INTERVAL = 5 * 1000;
 
+	/**
+	 * Peroidic evictor thread for openFiles
+	 */
 	protected TerminatableThread evictor = new TerminatableThread() {
 		@Override
 		public void run() {
@@ -94,10 +97,6 @@ public class ConcurrentFileSystem extends GenericFileSystem {
 
 	public ConcurrentFileSystem() {
 		evictor.start();
-	}
-
-	public void dispose() {
-		evictor.terminate();
 	}
 
 	/**
