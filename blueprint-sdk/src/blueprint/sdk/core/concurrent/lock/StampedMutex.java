@@ -18,8 +18,10 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 /**
  * Mutex with timestamp.<br/>
  * <br/>
- * Timestamp will be updated by every invocation of {@link StampedMutex.Sync#tryAcquire(int)}
- * and {@link StampedMutex.Sync#tryRelease(int)} with {@link System#currentTimeMillis()}<br/>
+ * Timestamp will be updated by every invocation of
+ * {@link StampedMutex.Sync#tryAcquire(int)} and
+ * {@link StampedMutex.Sync#tryRelease(int)} with
+ * {@link System#currentTimeMillis()}<br/>
  * 
  * @author Sangmin Lee
  * @since 2014. 4. 25.
@@ -80,8 +82,12 @@ public class StampedMutex {
 				result = true;
 			}
 
-			timestamp = System.currentTimeMillis();
+			updateTimestamp();
 			return result;
+		}
+
+		void updateTimestamp() {
+			timestamp = System.currentTimeMillis();
 		}
 
 		@Override
@@ -93,7 +99,7 @@ public class StampedMutex {
 			setExclusiveOwnerThread(null);
 			setState(0);
 
-			timestamp = System.currentTimeMillis();
+			updateTimestamp();
 			return true;
 		}
 
@@ -105,7 +111,7 @@ public class StampedMutex {
 		/**
 		 * @return current timestamp
 		 */
-		long getTimestamp() {
+		long getStamp() {
 			return timestamp;
 		}
 	}
