@@ -19,18 +19,18 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
  * Mutex with timestamp.<br/>
  * <br/>
  * Timestamp will be updated by every invocation of
- * {@link StampedMutex.Sync#tryAcquire(int)} and
- * {@link StampedMutex.Sync#tryRelease(int)} with
+ * {@link TimestampedMutex.Sync#tryAcquire(int)} and
+ * {@link TimestampedMutex.Sync#tryRelease(int)} with
  * {@link System#currentTimeMillis()}<br/>
  * 
  * @author Sangmin Lee
  * @since 2014. 4. 25.
  */
-public class StampedMutex {
+public class TimestampedMutex {
 	/** synchronizer */
 	protected Sync sync;
 
-	public StampedMutex() {
+	public TimestampedMutex() {
 		sync = new Sync();
 	}
 
@@ -38,7 +38,17 @@ public class StampedMutex {
 	 * Acquires lock
 	 */
 	public void lock() {
-		sync.acquire(1);
+		sync.lock(null, 1);
+	}
+
+	/**
+	 * Acquires lock
+	 * 
+	 * @param requester
+	 *            requester object for re-enterance
+	 */
+	public void lock(Object requester) {
+		sync.lock(requester, 1);
 	}
 
 	/**
@@ -56,6 +66,13 @@ public class StampedMutex {
 	}
 
 	/**
+	 * @return current lock owner
+	 */
+	public Object getOwner() {
+		return sync.getOwner();
+	}
+
+	/**
 	 * @return current timestamp
 	 */
 	public long getTimestamp() {
@@ -63,7 +80,7 @@ public class StampedMutex {
 	}
 
 	/**
-	 * Synchronizer for {@link Mutex}
+	 * Synchronizer for {@link TimestampedMutex}
 	 * 
 	 * @author Sangmin Lee
 	 * @since 2014. 4. 24.
@@ -72,6 +89,27 @@ public class StampedMutex {
 		private static final long serialVersionUID = 3584438822993449109L;
 
 		long timestamp = System.currentTimeMillis();
+
+		/** Lock owner */
+		Object owner = null;
+
+		/**
+		 * Acquires lock
+		 * 
+		 * @param requester
+		 *            requester object for re-enterance
+		 * @param arg
+		 *            the acquire argument.<br/>
+		 *            See {@link AbstractQueuedSynchronizer#acquire(int)}<br/>
+		 */
+		public void lock(Object requester, int arg) {
+			if (!isReentrable(requester)) {
+				acquire(arg);
+				synchronized (this) {
+					owner = requester;
+				}
+			}
+		}
 
 		@Override
 		protected boolean tryAcquire(int arg) {
@@ -86,18 +124,17 @@ public class StampedMutex {
 			return result;
 		}
 
-		void updateTimestamp() {
-			timestamp = System.currentTimeMillis();
-		}
-
 		@Override
 		protected boolean tryRelease(int arg) {
 			if (getState() == 0) {
 				throw new IllegalMonitorStateException();
 			}
 
-			setExclusiveOwnerThread(null);
-			setState(0);
+			synchronized (this) {
+				owner = null;
+				setExclusiveOwnerThread(null);
+				setState(0);
+			}
 
 			updateTimestamp();
 			return true;
@@ -106,6 +143,43 @@ public class StampedMutex {
 		@Override
 		protected boolean isHeldExclusively() {
 			return getState() == 1;
+		}
+
+		/**
+		 * See if re-entrable or not.
+		 * 
+		 * @param requester
+		 *            requester object for re-enterance
+		 * @return true if can re-enter
+		 */
+		boolean isReentrable(Object requester) {
+			boolean result = false;
+
+			if (owner == null) {
+				if (requester == null) {
+					result = true;
+				}
+			} else {
+				if (owner.equals(requester)) {
+					result = true;
+				}
+			}
+
+			return result;
+		}
+
+		/**
+		 * @return current lock owner
+		 */
+		Object getOwner() {
+			return owner;
+		}
+
+		/**
+		 * update timestamp with System.currentTimeMillis()
+		 */
+		void updateTimestamp() {
+			timestamp = System.currentTimeMillis();
 		}
 
 		/**

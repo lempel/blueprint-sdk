@@ -19,13 +19,13 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-import blueprint.sdk.core.concurrent.lock.StampedMutex;
+import blueprint.sdk.core.concurrent.lock.TimestampedMutex;
 import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
 
 /**
  * Thread Safe File System.<br/>
  * <br/>
- * For each and every file, a {@link StampedMutex} is created for
+ * For each and every file, a {@link TimestampedMutex} is created for
  * synchonization.<br/>
  * Once a mutex is created for a file, it'll be stored to
  * {@link ConcurrentFileSystem#openFiles} and reused until eviction.<br/>
@@ -37,7 +37,9 @@ import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
  */
 public class ConcurrentFileSystem extends GenericFileSystem {
 	/** Monitor Objects of currently open files (key: path, value: monitor) */
-	protected Map<String, StampedMutex> openFiles = new ConcurrentHashMap<String, StampedMutex>();
+	protected Map<String, TimestampedMutex> openFiles = new ConcurrentHashMap<String, TimestampedMutex>();
+	/** lock for openFiles */
+	protected ReentrantLock openFilesLock = new ReentrantLock();
 
 	/**
 	 * TTL(Time-To-Live) for {@link ConcurrentFileSystem#openFiles} in
@@ -54,11 +56,15 @@ public class ConcurrentFileSystem extends GenericFileSystem {
 	/**
 	 * Peroidic evictor thread for openFiles
 	 */
+	// XXX Is there anyway to eliminate EvictorThread?
 	protected TerminatableThread evictor = new TerminatableThread() {
 		@Override
 		public void run() {
 			running = true;
 
+			setName("evictor-" + hashCode());
+
+			// set eviction interval
 			long interval = EVICTOR_TTL / 2;
 			if (interval >= MAX_INTERVAL) {
 				interval = MAX_INTERVAL;
@@ -77,7 +83,7 @@ public class ConcurrentFileSystem extends GenericFileSystem {
 				try {
 					Set<String> keySet = openFiles.keySet();
 					for (String key : keySet) {
-						StampedMutex wrapper = openFiles.get(key);
+						TimestampedMutex wrapper = openFiles.get(key);
 						// evict timed-out and unlocked mutex
 						if (wrapper.getTimestamp() <= limit && !wrapper.isLocked()) {
 							openFiles.remove(key);
@@ -92,9 +98,6 @@ public class ConcurrentFileSystem extends GenericFileSystem {
 		}
 	};
 
-	/** lock for openFiles */
-	protected ReentrantLock openFilesLock = new ReentrantLock();
-
 	public ConcurrentFileSystem() {
 		evictor.start();
 	}
@@ -106,18 +109,18 @@ public class ConcurrentFileSystem extends GenericFileSystem {
 	 *            file path
 	 * @return existing lock or new lock
 	 */
-	protected StampedMutex getLock(String path) {
+	protected TimestampedMutex getLock(String path) {
 		if (path == null) {
 			throw new NullPointerException("specified path is null");
 		}
 
-		StampedMutex result = null;
+		TimestampedMutex result = null;
 
 		openFilesLock.lock();
 		try {
 			result = openFiles.get(path);
 			if (result == null) {
-				result = new StampedMutex();
+				result = new TimestampedMutex();
 				openFiles.put(path, result);
 			}
 		} finally {
@@ -126,6 +129,8 @@ public class ConcurrentFileSystem extends GenericFileSystem {
 
 		return result;
 	}
+
+	// XXX maybe I have to override exists() to check locks too.
 
 	@Override
 	public boolean deleteFile(String path) {
@@ -136,7 +141,7 @@ public class ConcurrentFileSystem extends GenericFileSystem {
 		boolean result = false;
 
 		if (exists(path)) {
-			StampedMutex monitor = getLock(path);
+			TimestampedMutex monitor = getLock(path);
 			monitor.lock();
 			try {
 				result = super.deleteFile(path);
@@ -157,8 +162,8 @@ public class ConcurrentFileSystem extends GenericFileSystem {
 		boolean result = false;
 
 		if (!orgPath.equals(newPath)) {
-			StampedMutex orgMtx;
-			StampedMutex newMtx;
+			TimestampedMutex orgMtx;
+			TimestampedMutex newMtx;
 
 			openFilesLock.lock();
 			try {
@@ -190,7 +195,7 @@ public class ConcurrentFileSystem extends GenericFileSystem {
 
 		byte[] result = null;
 
-		StampedMutex monitor = getLock(path);
+		TimestampedMutex monitor = getLock(path);
 		monitor.lock();
 		try {
 			result = super.readFile(path);
@@ -207,7 +212,7 @@ public class ConcurrentFileSystem extends GenericFileSystem {
 			throw new NullPointerException("specified path is null");
 		}
 
-		StampedMutex monitor = getLock(path);
+		TimestampedMutex monitor = getLock(path);
 		monitor.lock();
 		try {
 			super.writeToFile(path, contents, append);
