@@ -43,18 +43,18 @@ public class ConcurrentFileSystem extends GenericFileSystem {
 
 	/**
 	 * TTL(Time-To-Live) for {@link ConcurrentFileSystem#openFiles} in
-	 * millisecounds.<br/>
+	 * milliseconds.<br/>
 	 * Default value is 10 minutes.
 	 */
 	protected static long EVICTOR_TTL = 10 * 60 * 1000;
 
 	/** maximum evictor interval (10 minutes) */
 	protected static final long MAX_INTERVAL = 10 * 60 * 1000;
-	/** minimun evictor interval (5 seconds) */
+	/** minimum evictor interval (5 seconds) */
 	protected static final long MIN_INTERVAL = 5 * 1000;
 
 	/**
-	 * Peroidic evictor thread for openFiles
+	 * Periodic evictor thread for openFiles
 	 */
 	// XXX Is there anyway to eliminate EvictorThread?
 	protected TerminatableThread evictor = new TerminatableThread() {
