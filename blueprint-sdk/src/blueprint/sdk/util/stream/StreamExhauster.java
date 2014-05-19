@@ -14,8 +14,10 @@
 package blueprint.sdk.util.stream;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Read everything from given InputStream.
@@ -27,25 +29,32 @@ public class StreamExhauster extends Thread {
 	/** stream to exhaust */
 	protected DataInputStream ins;
 	/** true: print, false: discard */
-	protected boolean print = false;
+	protected DataOutputStream dos;
 
 	/**
+	 * Silently exhanust input
+	 * 
 	 * @param ins
+	 *            InputStrema to exhaust
 	 */
-	public StreamExhauster(final InputStream ins) {
-		this(ins, false);
+	public StreamExhauster(final InputStream input) {
+		this(input, null);
 	}
 
 	/**
 	 * @param ins
-	 * @param print
-	 *            true: print, false: discard
+	 *            InputStrema to exhaust
+	 * @param out
+	 *            OutputStream to redirect
 	 */
-	public StreamExhauster(final InputStream ins, final boolean print) {
+	public StreamExhauster(final InputStream input, final OutputStream out) {
 		super();
 
 		setDaemon(true);
-		this.ins = new DataInputStream(ins);
+		ins = new DataInputStream(input);
+		if (out != null) {
+			dos = new DataOutputStream(out);
+		}
 	}
 
 	public void run() {
@@ -53,14 +62,14 @@ public class StreamExhauster extends Thread {
 			while (true) {
 				byte[] one = new byte[1];
 				ins.readFully(one);
-				if (print) {
-					System.out.println(new String(one)); // NOPMD
+				if (dos != null) {
+					dos.write(one);
 				}
 
 				byte[] bin = new byte[ins.available()];
 				ins.readFully(bin);
-				if (print) {
-					System.out.println(new String(bin)); // NOPMD
+				if (dos != null) {
+					dos.write(bin);
 				}
 			}
 		} catch (IOException ignored) { // NOPMD

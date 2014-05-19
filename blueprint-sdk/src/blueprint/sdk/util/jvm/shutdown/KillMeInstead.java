@@ -16,6 +16,7 @@ package blueprint.sdk.util.jvm.shutdown;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
@@ -79,8 +80,13 @@ public class KillMeInstead {
 		ProcessBuilder bld = new ProcessBuilder(cmds);
 		Process proc = bld.start();
 
-		final Thread ex1 = new StreamExhauster(proc.getErrorStream(), print);
-		final Thread ex2 = new StreamExhauster(proc.getInputStream(), print);
+		OutputStream out = null;
+		if (print) {
+			out = System.out;
+		}
+
+		final Thread ex1 = new StreamExhauster(proc.getErrorStream(), out);
+		final Thread ex2 = new StreamExhauster(proc.getInputStream(), out);
 		ex1.start();
 		ex2.start();
 
