@@ -49,6 +49,23 @@ public class H2Queue extends JdbcQueue {
 	 */
 	public H2Queue(DataSource datasrc) {
 		super(datasrc);
+
+		Thread sync = new Thread() {
+			@Override
+			public void run() {
+				while (true) {
+					try {
+						// 10 minutes
+						sleep(10 * 60 * 1000);
+					} catch (InterruptedException ignored) {
+					}
+
+					closeConnection();
+				}
+			}
+		};
+		sync.setDaemon(true);
+		sync.start();
 	}
 
 	/**
@@ -65,6 +82,31 @@ public class H2Queue extends JdbcQueue {
 						+ " (UUID, CONTENT) VALUES (?, ?)");
 				deleteStmt = con.prepareStatement("DELETE FROM " + schema + "." + table + " WHERE UUID = ?");
 			}
+		}
+	}
+
+	/**
+	 * Close all connections and related stuffs 
+	 */
+	protected void closeConnection() {
+		synchronized (this) {
+			if (insertStmt != null) {
+				synchronized (insertStmt) {
+					synchronized (insertStmt) {
+						CloseHelper.close(insertStmt);
+					}
+				}
+			}
+
+			if (deleteStmt != null) {
+				synchronized (deleteStmt) {
+					synchronized (deleteStmt) {
+						CloseHelper.close(deleteStmt);
+					}
+				}
+			}
+
+			CloseHelper.close(con);
 		}
 	}
 
