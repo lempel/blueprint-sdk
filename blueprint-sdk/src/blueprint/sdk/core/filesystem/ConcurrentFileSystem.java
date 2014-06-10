@@ -223,4 +223,11 @@ public class ConcurrentFileSystem extends GenericFileSystem {
 			monitor.unlock();
 		}
 	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		
+		evictor.terminate();
+	}
 }

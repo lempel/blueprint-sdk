@@ -19,7 +19,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.sql.DataSource;
+import org.h2.Driver;
+import org.h2.jdbcx.JdbcDataSource;
 
 import blueprint.sdk.util.jdbc.CloseHelper;
 
@@ -47,7 +48,7 @@ public class H2Queue extends JdbcQueue {
 	 * @param datasrc
 	 *            DataSource for persistence
 	 */
-	public H2Queue(DataSource datasrc) {
+	public H2Queue(JdbcDataSource datasrc) {
 		super(datasrc);
 
 		Thread sync = new Thread() {
@@ -66,6 +67,14 @@ public class H2Queue extends JdbcQueue {
 		};
 		sync.setDaemon(true);
 		sync.start();
+	}
+
+	@Override
+	public void clear() throws JdbcQueueException {
+		super.clear();
+		
+		// unload H2 Driver too
+		Driver.unload();
 	}
 
 	/**

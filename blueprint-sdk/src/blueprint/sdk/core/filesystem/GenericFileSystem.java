@@ -99,4 +99,9 @@ public class GenericFileSystem extends FileSystem {
 			}
 		}
 	}
+
+	@Override
+	public void dispose() {
+		// NO-Op
+	}
 }

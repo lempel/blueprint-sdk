@@ -84,4 +84,9 @@ public abstract class FileSystem {
 	 *             Can't access given path
 	 */
 	public abstract void writeToFile(String path, byte[] contents, boolean append) throws IOException;
+	
+	/**
+	 * Dispose all resources
+	 */
+	public abstract void dispose();
 }

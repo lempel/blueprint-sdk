@@ -104,4 +104,11 @@ public class CachedFileSystem extends ConcurrentFileSystem {
 			}
 		}
 	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		
+		cache.dispose();
+	}
 }

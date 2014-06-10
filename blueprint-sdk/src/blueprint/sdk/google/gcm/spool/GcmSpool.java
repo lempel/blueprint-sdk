@@ -15,9 +15,8 @@ package blueprint.sdk.google.gcm.spool;
 
 import java.sql.SQLException;
 
-import javax.sql.DataSource;
-
 import org.apache.log4j.Logger;
+import org.h2.jdbcx.JdbcDataSource;
 
 import blueprint.sdk.core.concurrent.Worker;
 import blueprint.sdk.core.concurrent.WorkerGroup;
@@ -54,7 +53,7 @@ public class GcmSpool implements Terminatable {
 	 * @throws SQLException
 	 *             Can't initialize {@link H2Queue} or {@link GcmSpoolWorker}
 	 */
-	public GcmSpool(DataSource datasrc, String apiKey, int retries, int workerCount) throws Exception {
+	public GcmSpool(JdbcDataSource datasrc, String apiKey, int retries, int workerCount) throws Exception {
 		this(datasrc, apiKey, retries, new GcmErrorHandler(), GcmSpoolWorker.class, workerCount);
 	}
 
@@ -74,7 +73,7 @@ public class GcmSpool implements Terminatable {
 	 * @throws Exception
 	 *             Can't initialize {@link H2Queue} or {@link GcmSpoolWorker}
 	 */
-	public GcmSpool(DataSource datasrc, String apiKey, int retries, GcmErrorHandler errHandler,
+	public GcmSpool(JdbcDataSource datasrc, String apiKey, int retries, GcmErrorHandler errHandler,
 			Class<? extends Worker<String>> workerClass, int workerCount) throws Exception {
 		L.info("Current destination = " + GcmSender.GCM_URL);
 
@@ -113,5 +112,7 @@ public class GcmSpool implements Terminatable {
 		if (workerGroup != null) {
 			workerGroup.terminate();
 		}
+		
+		queue.clear();
 	}
 }

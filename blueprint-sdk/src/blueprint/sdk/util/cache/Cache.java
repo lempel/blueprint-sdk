@@ -188,6 +188,15 @@ public class Cache<T> {
 	}
 
 	/**
+	 * Dispose all resources
+	 */
+	public void dispose() {
+		cache.clear();
+		
+		evictor.terminate();
+	}
+	
+	/**
 	 * Evictor thread for {@link Cache}
 	 * 
 	 * @author Sangmin Lee
