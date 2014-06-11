@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import org.h2.Driver;
+import org.h2.constant.ErrorCode;
 import org.h2.jdbcx.JdbcDataSource;
 
 import blueprint.sdk.util.jdbc.CloseHelper;
@@ -128,7 +129,7 @@ public class H2Queue extends JdbcQueue {
 			try {
 				stmt.executeUpdate("CREATE SCHEMA " + schema);
 			} catch (SQLException e) {
-				if (e.getErrorCode() != 90078) {
+				if (e.getErrorCode() != ErrorCode.SCHEMA_ALREADY_EXISTS_1) {
 					throw e;
 				}
 			}
@@ -140,7 +141,7 @@ public class H2Queue extends JdbcQueue {
 						+ "_IDX_01 UNIQUE (UUID)");
 				stmt.executeUpdate("CREATE SEQUENCE " + schema + "." + table + "_SEQ CACHE 1");
 			} catch (SQLException e) {
-				if (e.getErrorCode() != 42101) {
+				if (e.getErrorCode() != ErrorCode.TABLE_OR_VIEW_ALREADY_EXISTS_1) {
 					throw e;
 				}
 			}
