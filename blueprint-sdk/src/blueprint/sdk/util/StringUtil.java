@@ -292,4 +292,18 @@ public class StringUtil {
 		}
 		return result;
 	}
+
+	public static String capitalize(final String str) {
+		String result = null;
+
+		if (str != null) {
+			if (str.length() >= 2) {
+				result = str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
+			} else {
+				result = str.toUpperCase();
+			}
+		}
+
+		return result;
+	}
 }
