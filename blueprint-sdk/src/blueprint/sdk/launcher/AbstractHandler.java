@@ -14,7 +14,7 @@
  Background:
 
  blueprint-sdk is a java software development kit to protect other open source
- softwares' licenses. It's intended to provide light weight APIs for blueprints.
+ software licenses. It's intended to provide light weight APIs for blueprints.
  Well... at least trying to.
 
  There are so many great open source projects now. Back in year 2000, there
@@ -34,7 +34,7 @@
  license terms.
 
 
- To commiters:
+ To committers:
 
  License terms of the other software used by your source code should not be
  violated by using your source code. That's why blueprint-sdk is made for.
@@ -42,48 +42,46 @@
  */
 package blueprint.sdk.launcher;
 
-import javax.xml.xpath.XPathExpressionException;
-
 import blueprint.sdk.util.config.Config;
+
+import javax.xml.xpath.XPathExpressionException;
 
 /**
  * Prototype for handlers
- * 
+ *
  * @author Sangmin Lee
  * @since 2007. 12. 12
  */
 public abstract class AbstractHandler {
-	/** is this running on M$ Windows? */
-	protected static boolean isWindows = false;
+    static final String pathSeparator;
 
-	protected static String pathSeparator = ":";
+    static {
+        // check OS
+        boolean isWindows = System.getProperty("os.name").startsWith("Windows");
 
-	static {
-		// check OS
-		if (System.getProperty("os.name").startsWith("Windows")) {
-			isWindows = true;
-		}
+        if (isWindows) {
+            pathSeparator = ";";
+        } else {
+            pathSeparator = ":";
+        }
+    }
 
-		if (isWindows) {
-			pathSeparator = ";";
-		}
-	}
+    @SuppressWarnings("WeakerAccess")
+    protected final Config config;
 
-	protected Config config;
+    /**
+     * @param config configuration
+     */
+    @SuppressWarnings("WeakerAccess")
+    public AbstractHandler(final Config config) {
+        this.config = config;
+    }
 
-	/**
-	 * @param config
-	 */
-	public AbstractHandler(final Config config) {
-		this.config = config;
-	}
-
-	/**
-	 * Launches target program
-	 * 
-	 * @param args
-	 *            additional arguments for target program
-	 * @throws XPathExpressionException
-	 */
-	public abstract void launch(String[] args) throws XPathExpressionException;
+    /**
+     * Launches target program
+     *
+     * @param args additional arguments for target program
+     * @throws XPathExpressionException
+     */
+    public abstract void launch(String[] args) throws XPathExpressionException;
 }

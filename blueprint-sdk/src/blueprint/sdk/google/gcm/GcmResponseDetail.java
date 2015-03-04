@@ -15,16 +15,16 @@ package blueprint.sdk.google.gcm;
 
 /**
  * Element of 'results' from GCM's response message
- * 
+ *
  * @author Sangmin Lee
  * @since 2013. 12. 10.
  */
 public class GcmResponseDetail {
-	public boolean success = false;
+    public boolean success = false;
 
-	/**
-	 * if success is true, message id.<br>
-	 * if success is false, error message.<br>
-	 */
-	public String message = "";
+    /**
+     * if success is true, message id.<br>
+     * if success is false, error message.<br>
+     */
+    public String message = "";
 }

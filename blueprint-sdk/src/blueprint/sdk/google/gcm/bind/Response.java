@@ -18,14 +18,14 @@ import java.util.Map;
 
 /**
  * Response message from GCM
- * 
+ *
  * @author Sangmin Lee
  * @since 2013. 12. 10.
  */
 public class Response {
-	public String multicast_id;
-	public int success;
-	public int failure;
-	public int canonical_ids;
-	public List<Map<String, String>> results;
+    public String multicast_id;
+    public int success;
+    public int failure;
+    public int canonical_ids;
+    public List<Map<String, String>> results;
 }

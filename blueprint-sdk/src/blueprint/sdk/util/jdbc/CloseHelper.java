@@ -20,123 +20,125 @@ import java.sql.Statement;
 
 /**
  * Closes JDBC resources.
- * 
+ *
  * @author Sangmin Lee
  * @since 2013. 8. 27.
  */
 public class CloseHelper {
-	/**
-	 * Closes given JDBC Resource
-	 * 
-	 * @param con
-	 */
-	public static void close(Connection con) {
-		if (con != null) {
-			try {
-				con.close();
-			} catch (SQLException ignored) { // NOPMD by Sangmin Lee
-			}
-		}
-	}
+    /**
+     * Closes given JDBC Resource
+     *
+     * @param con target to close
+     */
+    public static void close(Connection con) {
+        if (con != null) {
+            try {
+                con.close();
+            } catch (SQLException ignored) {
+            }
+        }
+    }
 
-	/**
-	 * Closes given JDBC Resource
-	 * 
-	 * @param stmt
-	 */
-	public static void close(Statement stmt) {
-		if (stmt != null) {
-			try {
-				stmt.close();
-			} catch (SQLException ignored) { // NOPMD by Sangmin Lee
-			}
-		}
-	}
+    /**
+     * Closes given JDBC Resource
+     *
+     * @param stmt target to close
+     */
+    public static void close(Statement stmt) {
+        if (stmt != null) {
+            try {
+                stmt.close();
+            } catch (SQLException ignored) {
+            }
+        }
+    }
 
-	/**
-	 * Closes given JDBC Resource
-	 * 
-	 * @param rset
-	 */
-	public static void close(ResultSet rset) {
-		if (rset != null) {
-			try {
-				rset.close();
-			} catch (SQLException ignored) { // NOPMD by Sangmin Lee
-			}
-		}
-	}
+    /**
+     * Closes given JDBC Resource
+     *
+     * @param rset target to close
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static void close(ResultSet rset) {
+        if (rset != null) {
+            try {
+                rset.close();
+            } catch (SQLException ignored) {
+            }
+        }
+    }
 
-	/**
-	 * Closes given JDBC Resource
-	 * 
-	 * @param rset
-	 */
-	public static void close(ResultSetHelper rset) {
-		if (rset != null) {
-			try {
-				rset.close();
-			} catch (SQLException ignored) { // NOPMD by Sangmin Lee
-			}
-		}
-	}
+    /**
+     * Closes given JDBC Resource
+     *
+     * @param rset target to close
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static void close(ResultSetHelper rset) {
+        if (rset != null) {
+            try {
+                rset.close();
+            } catch (SQLException ignored) {
+            }
+        }
+    }
 
-	/**
-	 * Closes given JDBC Resources
-	 * 
-	 * @param con
-	 * @param stmt
-	 */
-	public static void close(Connection con, Statement stmt) {
-		close(stmt);
-		close(con);
-	}
+    /**
+     * Closes given JDBC Resources
+     *
+     * @param con target to close
+     * @param stmt target to close
+     */
+    public static void close(Connection con, Statement stmt) {
+        close(stmt);
+        close(con);
+    }
 
-	/**
-	 * Closes given JDBC Resources
-	 * 
-	 * @param stmt
-	 * @param rset
-	 */
-	public static void close(Statement stmt, ResultSet rset) {
-		close(rset);
-		close(stmt);
-	}
+    /**
+     * Closes given JDBC Resources
+     *
+     * @param stmt target to close
+     * @param rset target to close
+     */
+    public static void close(Statement stmt, ResultSet rset) {
+        close(rset);
+        close(stmt);
+    }
 
-	/**
-	 * Closes given JDBC Resources
-	 * 
-	 * @param stmt
-	 * @param rset
-	 */
-	public static void close(Statement stmt, ResultSetHelper rset) {
-		close(rset);
-		close(stmt);
-	}
+    /**
+     * Closes given JDBC Resources
+     *
+     * @param stmt target to close
+     * @param rset target to close
+     */
+    public static void close(Statement stmt, ResultSetHelper rset) {
+        close(rset);
+        close(stmt);
+    }
 
-	/**
-	 * Closes given JDBC Resources
-	 * 
-	 * @param con
-	 * @param stmt
-	 * @param rset
-	 */
-	public static void close(Connection con, Statement stmt, ResultSet rset) {
-		close(rset);
-		close(stmt);
-		close(con);
-	}
+    /**
+     * Closes given JDBC Resources
+     *
+     * @param con target to close
+     * @param stmt target to close
+     * @param rset target to close
+     */
+    public static void close(Connection con, Statement stmt, ResultSet rset) {
+        close(rset);
+        close(stmt);
+        close(con);
+    }
 
-	/**
-	 * Closes given JDBC Resources
-	 * 
-	 * @param con
-	 * @param stmt
-	 * @param rset
-	 */
-	public static void close(Connection con, Statement stmt, ResultSetHelper rset) {
-		close(rset);
-		close(stmt);
-		close(con);
-	}
+    /**
+     * Closes given JDBC Resources
+     *
+     * @param con target to close
+     * @param stmt target to close
+     * @param rset target to close
+     */
+    public static void close(Connection con, Statement stmt, ResultSetHelper rset) {
+        close(rset);
+        close(stmt);
+        close(con);
+    }
 }

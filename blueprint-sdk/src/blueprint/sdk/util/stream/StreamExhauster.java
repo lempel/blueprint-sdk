@@ -13,66 +13,64 @@
 
 package blueprint.sdk.util.stream;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 /**
  * Read everything from given InputStream.
- * 
+ *
  * @author Sangmin Lee
  * @since 2012. 11. 28.
  */
 public class StreamExhauster extends Thread {
-	/** stream to exhaust */
-	protected DataInputStream ins;
-	/** true: print, false: discard */
-	protected DataOutputStream dos;
+    /**
+     * stream to exhaust
+     */
+    private final DataInputStream ins;
+    /**
+     * true: print, false: discard
+     */
+    private DataOutputStream dos;
 
-	/**
-	 * Silently exhanust input
-	 * 
-	 * @param ins
-	 *            InputStrema to exhaust
-	 */
-	public StreamExhauster(final InputStream input) {
-		this(input, null);
-	}
+    /**
+     * Silently exhanust input
+     *
+     * @param input InputStream to exhaust
+     */
+    public StreamExhauster(final InputStream input) {
+        this(input, null);
+    }
 
-	/**
-	 * @param ins
-	 *            InputStrema to exhaust
-	 * @param out
-	 *            OutputStream to redirect
-	 */
-	public StreamExhauster(final InputStream input, final OutputStream out) {
-		super();
+    /**
+     * @param input  InputStream to exhaust
+     * @param output OutputStream to redirect
+     */
+    public StreamExhauster(final InputStream input, final OutputStream output) {
+        super();
 
-		setDaemon(true);
-		ins = new DataInputStream(input);
-		if (out != null) {
-			dos = new DataOutputStream(out);
-		}
-	}
+        setDaemon(true);
+        ins = new DataInputStream(input);
+        if (output != null) {
+            dos = new DataOutputStream(output);
+        }
+    }
 
-	public void run() {
-		try {
-			while (true) {
-				byte[] one = new byte[1];
-				ins.readFully(one);
-				if (dos != null) {
-					dos.write(one);
-				}
+    @SuppressWarnings("InfiniteLoopStatement")
+    public void run() {
+        try {
+            while (true) {
+                byte[] one = new byte[1];
+                ins.readFully(one);
+                if (dos != null) {
+                    dos.write(one);
+                }
 
-				byte[] bin = new byte[ins.available()];
-				ins.readFully(bin);
-				if (dos != null) {
-					dos.write(bin);
-				}
-			}
-		} catch (IOException ignored) { // NOPMD
-		}
-	}
+                byte[] bin = new byte[ins.available()];
+                ins.readFully(bin);
+                if (dos != null) {
+                    dos.write(bin);
+                }
+            }
+        } catch (IOException ignored) { // NOPMD
+        }
+    }
 }

@@ -14,7 +14,7 @@
  Background:
 
  blueprint-sdk is a java software development kit to protect other open source
- softwares' licenses. It's intended to provide light weight APIs for blueprints.
+ software licenses. It's intended to provide light weight APIs for blueprints.
  Well... at least trying to.
 
  There are so many great open source projects now. Back in year 2000, there
@@ -34,7 +34,7 @@
  license terms.
 
 
- To commiters:
+ To committers:
 
  License terms of the other software used by your source code should not be
  violated by using your source code. That's why blueprint-sdk is made for.
@@ -42,40 +42,41 @@
  */
 package blueprint.sdk.launcher;
 
-import javax.xml.xpath.XPathExpressionException;
-
 import blueprint.sdk.util.config.Config;
+
+import javax.xml.xpath.XPathExpressionException;
 
 /**
  * Handler Factory for JavaLauncher
- * 
+ *
  * @author Sangmin Lee
  * @since 2007. 12. 12
  */
+@SuppressWarnings("WeakerAccess")
 public final class HandlerFactory {
-	private HandlerFactory() {
-		super();
-	}
+    private HandlerFactory() {
+        super();
+    }
 
-	/**
-	 * returns an instance of handler for given configuration
-	 * 
-	 * @param config
-	 * @return instance of handler
-	 * @throws XPathExpressionException
-	 */
-	public static AbstractHandler getInstance(final Config config) throws XPathExpressionException {
-		AbstractHandler result = null;
+    /**
+     * returns an instance of handler for given configuration
+     *
+     * @param config configuration
+     * @return instance of handler
+     * @throws XPathExpressionException
+     */
+    public static AbstractHandler getInstance(final Config config) throws XPathExpressionException {
+        AbstractHandler result;
 
-		boolean fork = config.getBoolean("/javaLauncher/invoke/@fork");
+        boolean fork = config.getBoolean("/javaLauncher/invoke/@fork");
 
-		if (fork) {
-			result = new ForkHandler(config);
-		} else {
-			result = new LoadHandler(config);
-		}
+        if (fork) {
+            result = new ForkHandler(config);
+        } else {
+            result = new LoadHandler(config);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
 }

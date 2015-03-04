@@ -20,60 +20,53 @@ import java.lang.reflect.ReflectPermission;
 
 /**
  * Provides reflective access to every field/method.
- * 
+ *
  * @author Sangmin Lee
  * @since 2013. 9. 5.
  */
+@SuppressWarnings("WeakerAccess")
 public class Crowbar {
-	public static boolean checkSecurity() {
-		boolean result = true;
+    public static boolean checkSecurity() {
+        boolean result = true;
 
-		try {
-			System.getSecurityManager().checkPermission(new ReflectPermission("suppressAccessChecks"));
-		} catch (SecurityException e) {
-			result = false;
-		}
+        try {
+            System.getSecurityManager().checkPermission(new ReflectPermission("suppressAccessChecks"));
+        } catch (SecurityException e) {
+            result = false;
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	public static Field getField(Class<?> target, String name) throws SecurityException, NoSuchFieldException {
-		Field result = target.getDeclaredField(name);
-		result.setAccessible(true);
+    public static Field getField(Class<?> target, String name) throws SecurityException, NoSuchFieldException {
+        Field result = target.getDeclaredField(name);
+        result.setAccessible(true);
 
-		return result;
-	}
+        return result;
+    }
 
-	public static Method getMethod(Class<?> target, String name, Class<?>[] paramTypes) throws SecurityException,
-			NoSuchMethodException {
-		Method result = target.getDeclaredMethod(name, paramTypes);
-		result.setAccessible(true);
-		return result;
-	}
+    public static Method getMethod(Class<?> target, String name, Class<?>[] paramTypes) throws SecurityException,
+            NoSuchMethodException {
+        Method result = target.getDeclaredMethod(name, paramTypes);
+        result.setAccessible(true);
+        return result;
+    }
 
-	public static Object getValue(Object target, String name) throws SecurityException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException {
-		Object result = null;
+    public static Object getValue(Object target, String name) throws SecurityException, NoSuchFieldException,
+            IllegalArgumentException, IllegalAccessException {
+        Field field = getField(target.getClass(), name);
+        return field.get(target);
+    }
 
-		Field field = getField(target.getClass(), name);
-		result = field.get(target);
+    public static Object callMethod(Object target, String name, Object[] params) throws SecurityException,
+            IllegalArgumentException, IllegalAccessException, NoSuchMethodException,
+            InvocationTargetException {
+        Class<?>[] paramTypes = new Class<?>[params.length];
+        for (int i = 0; i < params.length; i++) {
+            paramTypes[i] = params[i].getClass();
+        }
 
-		return result;
-	}
-
-	public static Object callMethod(Object target, String name, Object[] params) throws SecurityException,
-			NoSuchFieldException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException,
-			InvocationTargetException {
-		Object result = null;
-
-		Class<?>[] paramTypes = new Class<?>[params.length];
-		for (int i = 0; i < params.length; i++) {
-			paramTypes[i] = params[i].getClass();
-		}
-
-		Method method = getMethod(target.getClass(), name, paramTypes);
-		result = method.invoke(target, params);
-
-		return result;
-	}
+        Method method = getMethod(target.getClass(), name, paramTypes);
+        return method.invoke(target, params);
+    }
 }

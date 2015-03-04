@@ -13,95 +13,92 @@
 
 package blueprint.sdk.core.filesystem;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Generic OS dependent File System
- * 
+ *
  * @author Sangmin Lee
  * @since 2014. 4. 21.
  */
 public class GenericFileSystem extends FileSystem {
-	@Override
-	public boolean exists(String path) {
-		return new File(path).exists();
-	}
+    @Override
+    public boolean exists(String path) {
+        return new File(path).exists();
+    }
 
-	@Override
-	public boolean deleteFile(String path) {
-		if (path == null) {
-			throw new NullPointerException("specified path is null");
-		}
+    @Override
+    public boolean deleteFile(String path) {
+        if (path == null) {
+            throw new NullPointerException("specified path is null");
+        }
 
-		boolean result = false;
-		File target = new File(path);
-		if (target.exists()) {
-			result = target.delete();
-		}
-		return result;
-	}
+        boolean result = false;
+        File target = new File(path);
+        if (target.exists()) {
+            result = target.delete();
+        }
+        return result;
+    }
 
-	@Override
-	public boolean renameFile(String orgPath, String newPath) {
-		if (orgPath == null || newPath == null) {
-			throw new NullPointerException("at least one of specified path is null");
-		}
+    @Override
+    public boolean renameFile(String orgPath, String newPath) {
+        if (orgPath == null || newPath == null) {
+            throw new NullPointerException("at least one of specified path is null");
+        }
 
-		boolean result = false;
+        boolean result = false;
 
-		if (!orgPath.equals(newPath)) {
-			File target = new File(orgPath);
-			result = target.renameTo(new File(newPath));
-		}
+        if (!orgPath.equals(newPath)) {
+            File target = new File(orgPath);
+            result = target.renameTo(new File(newPath));
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public byte[] readFile(String path) throws IOException {
-		if (path == null) {
-			throw new NullPointerException("specified path is null");
-		}
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    @Override
+    public byte[] readFile(String path) throws IOException {
+        if (path == null) {
+            throw new NullPointerException("specified path is null");
+        }
 
-		byte[] result = null;
+        byte[] result = null;
 
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(path);
-			result = new byte[fis.available()];
-			fis.read(result);
-		} finally {
-			if (fis != null) {
-				fis.close();
-			}
-		}
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(path);
+            result = new byte[fis.available()];
+            fis.read(result);
+        } finally {
+            if (fis != null) {
+                fis.close();
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public void writeToFile(String path, byte[] contents, boolean append) throws IOException {
-		if (path == null) {
-			throw new NullPointerException("specified path is null");
-		}
+    @Override
+    public void writeToFile(String path, byte[] contents, boolean append) throws IOException {
+        if (path == null) {
+            throw new NullPointerException("specified path is null");
+        }
 
-		BufferedOutputStream bos = null;
-		try {
-			bos = new BufferedOutputStream(new FileOutputStream(path, append));
-			bos.write(contents);
-		} finally {
-			if (bos != null) {
-				bos.close();
-			}
-		}
-	}
+        BufferedOutputStream bos = null;
+        try {
+            bos = new BufferedOutputStream(new FileOutputStream(path, append));
+            bos.write(contents);
+        } finally {
+            if (bos != null) {
+                bos.close();
+            }
+        }
+    }
 
-	@Override
-	public void dispose() {
-		// NO-Op
-	}
+    @Override
+    public void dispose() {
+        // NO-Op
+    }
 }

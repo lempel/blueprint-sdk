@@ -13,227 +13,232 @@
 
 package blueprint.sdk.util.cache;
 
+import blueprint.sdk.util.Validator;
+import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import blueprint.sdk.util.Validator;
-import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
-
 /**
  * Very simple Object cache with lazy eviction.
- * 
- * @param <T>
- *            element type
+ *
+ * @param <T> element type
  * @author Sangmin Lee
  * @since 2013. 6. 28.
  */
 public class Cache<T> {
-	/** actual cache */
-	protected Map<String, CacheItem<T>> cache;
+    /**
+     * actual cache
+     */
+    private final Map<String, CacheItem<T>> cache;
 
-	/** time to live (in milli-seconds, 0 = no eviction) */
-	protected long timeToLive;
+    /**
+     * time to live (in milli-seconds, 0 = no eviction)
+     */
+    private final long timeToLive;
 
-	/** active evictor */
-	protected CacheEvictor evictor;
+    /**
+     * active evictor
+     */
+    private CacheEvictor evictor;
 
-	/**
-	 * Create an instance of Cache with very lazy eviction policy.<br>
-	 * Expired items will be evicte by {@link Cache#get(String)}.<br>
-	 * 
-	 * @param timeToLive
-	 *            time to live (in seconds, 0 = no eviction)
-	 */
-	public Cache(long timeToLive) {
-		this(5, timeToLive);
-	}
+    /**
+     * Create an instance of Cache with very lazy eviction policy.<br>
+     * Expired items will be evicted by {@link Cache#get(String)}.<br>
+     *
+     * @param timeToLive time to live (in seconds, 0 = no eviction)
+     */
+    public Cache(long timeToLive) {
+        this(5, timeToLive);
+    }
 
-	/**
-	 * Create an instance of Cache with very lazy eviction policy.<br>
-	 * Expired items will be evicte by {@link Cache#get(String)}.<br>
-	 * 
-	 * @param initialSize
-	 *            initial size of cache
-	 * @param timeToLive
-	 *            time to live (in seconds, 0 = no eviction)
-	 */
-	public Cache(int initialSize, long timeToLive) {
-		super();
+    /**
+     * Create an instance of Cache with very lazy eviction policy.<br>
+     * Expired items will be evicted by {@link Cache#get(String)}.<br>
+     *
+     * @param initialSize initial size of cache
+     * @param timeToLive  time to live (in seconds, 0 = no eviction)
+     */
+    @SuppressWarnings("WeakerAccess")
+    public Cache(int initialSize, long timeToLive) {
+        super();
 
-		cache = new ConcurrentHashMap<String, CacheItem<T>>(initialSize);
+        cache = new ConcurrentHashMap<>(initialSize);
 
-		this.timeToLive = timeToLive * 1000;
-	}
+        this.timeToLive = timeToLive * 1000;
+    }
 
-	/**
-	 * Create an instance of Cache with very lazy eviction policy.<br>
-	 * Evictor thread would periodically evict expired items.<br>
-	 * 
-	 * @param initialSize
-	 *            initial size of cache
-	 * @param timeToLive
-	 *            time to live (in seconds, 0 = no eviction)
-	 * @param useActiveEvictor
-	 *            true: create an evictor thread
-	 */
-	public Cache(int initialSize, long timeToLive, boolean useActiveEvictor) {
-		this(initialSize, timeToLive);
+    /**
+     * Create an instance of Cache with very lazy eviction policy.<br>
+     * Evictor thread would periodically evict expired items.<br>
+     *
+     * @param initialSize      initial size of cache
+     * @param timeToLive       time to live (in seconds, 0 = no eviction)
+     * @param useActiveEvictor true: create an evictor thread
+     */
+    @SuppressWarnings("SameParameterValue")
+    public Cache(int initialSize, long timeToLive, boolean useActiveEvictor) {
+        this(initialSize, timeToLive);
 
-		evictor = new CacheEvictor(cache, timeToLive);
-		evictor.start();
-	}
+        if (useActiveEvictor) {
+            evictor = new CacheEvictor(cache, timeToLive);
+            evictor.start();
+        }
+    }
 
-	/**
-	 * get an element
-	 * 
-	 * @param key
-	 * @return cache element
-	 */
-	public T get(String key) {
-		T result = null;
+    @SuppressWarnings("WeakerAccess")
+    protected static boolean isAlive(CacheItem<?> item, long timeToLive) {
+        boolean result = false;
 
-		if (!Validator.isEmpty(key)) {
-			CacheItem<T> item = cache.get(key);
-			if (item != null) {
-				if (isAlive(item)) {
-					result = item.element;
-				} else {
-					cache.remove(key);
-				}
-			}
-		}
+        if (item != null && item.timestamp >= (System.currentTimeMillis() - timeToLive)) {
+            result = true;
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	/**
-	 * put an element
-	 * 
-	 * @param key
-	 * @param element
-	 * @return previous element
-	 */
-	public T put(String key, T element) {
-		T result = null;
+    /**
+     * get an element
+     *
+     * @param key key of element
+     * @return cache element
+     */
+    public T get(String key) {
+        T result = null;
 
-		if (!Validator.isEmpty(key)) {
-			CacheItem<T> item = null;
-			synchronized (cache) {
-				item = cache.get(key);
+        if (!Validator.isEmpty(key)) {
+            CacheItem<T> item = cache.get(key);
+            if (item != null) {
+                if (isAlive(item)) {
+                    result = item.element;
+                } else {
+                    cache.remove(key);
+                }
+            }
+        }
 
-				if (item == null) {
-					item = new CacheItem<T>();
-					item.element = element;
-					cache.put(key, item);
-				} else if (isAlive(item)) {
-					result = item.element;
-					item.element = element;
-				}
-			}
+        return result;
+    }
 
-			item.timestamp = System.currentTimeMillis();
-		}
+    /**
+     * put an element
+     *
+     * @param key key of element
+     * @param element element to put
+     * @return previous element
+     */
+    @SuppressWarnings("UnusedReturnValue")
+    public T put(String key, T element) {
+        T result = null;
 
-		return result;
-	}
+        if (!Validator.isEmpty(key)) {
+            CacheItem<T> item;
+            synchronized (cache) {
+                item = cache.get(key);
 
-	/**
-	 * remove an element
-	 * 
-	 * @param key
-	 * @return removed element
-	 */
-	public T remove(String key) {
-		T result = null;
+                if (item == null) {
+                    item = new CacheItem<>();
+                    item.element = element;
+                    cache.put(key, item);
+                } else if (isAlive(item)) {
+                    result = item.element;
+                    item.element = element;
+                }
+            }
 
-		if (!Validator.isEmpty(key)) {
-			CacheItem<T> item = null;
-			synchronized (cache) {
-				item = cache.remove(key);
-			}
+            item.timestamp = System.currentTimeMillis();
+        }
 
-			if (isAlive(item)) {
-				result = item.element;
-			}
-		}
+        return result;
+    }
 
-		return result;
-	}
+    /**
+     * remove an element
+     *
+     * @param key key of element
+     * @return removed element
+     */
+    public T remove(String key) {
+        T result = null;
 
-	/**
-	 * @param item
-	 *            item to check
-	 * @return false if item is expired or null
-	 */
-	protected boolean isAlive(CacheItem<T> item) {
-		return isAlive(item, timeToLive);
-	}
+        if (!Validator.isEmpty(key)) {
+            CacheItem<T> item;
+            synchronized (cache) {
+                item = cache.remove(key);
+            }
 
-	protected static boolean isAlive(CacheItem<?> item, long timeToLive) {
-		boolean result = false;
+            if (isAlive(item)) {
+                result = item.element;
+            }
+        }
 
-		if (item != null && item.timestamp >= (System.currentTimeMillis() - timeToLive)) {
-			result = true;
-		}
+        return result;
+    }
 
-		return result;
-	}
+    /**
+     * @param item item to check
+     * @return false if item is expired or null
+     */
+    @SuppressWarnings("WeakerAccess")
+    protected boolean isAlive(CacheItem<T> item) {
+        return isAlive(item, timeToLive);
+    }
 
-	/**
-	 * @return the timeToLive
-	 */
-	public int getTimeToLive() {
-		return (int) (timeToLive / 1000);
-	}
+    /**
+     * @return the timeToLive
+     */
+    public int getTimeToLive() {
+        return (int) (timeToLive / 1000);
+    }
 
-	/**
-	 * Dispose all resources
-	 */
-	public void dispose() {
-		cache.clear();
-		
-		evictor.terminate();
-	}
-	
-	/**
-	 * Evictor thread for {@link Cache}
-	 * 
-	 * @author Sangmin Lee
-	 * @since 2014. 3. 20.
-	 */
-	private class CacheEvictor extends TerminatableThread {
-		private Map<String, CacheItem<T>> cache;
-		private long timeToLive;
-		private long interval;
+    /**
+     * Dispose all resources
+     */
+    public void dispose() {
+        cache.clear();
 
-		/**
-		 * @param cache
-		 * @param timeToLive
-		 */
-		public CacheEvictor(Map<String, CacheItem<T>> cache, long timeToLive) {
-			this.cache = cache;
-			this.timeToLive = timeToLive;
-			interval = timeToLive / 3;
-		}
+        evictor.terminate();
+    }
 
-		@Override
-		public void run() {
-			while (running && !terminated) {
-				try {
-					sleep(interval);
+    /**
+     * Evictor thread for {@link Cache}
+     *
+     * @author Sangmin Lee
+     * @since 2014. 3. 20.
+     */
+    private class CacheEvictor extends TerminatableThread {
+        private final Map<String, CacheItem<T>> cache;
+        private final long timeToLive;
+        private final long interval;
 
-					Set<String> keys = cache.keySet();
-					for (String key : keys) {
-						CacheItem<T> item = cache.get(key);
+        /**
+         * @param cache cache to handle
+         * @param timeToLive life span in seconds
+         */
+        public CacheEvictor(Map<String, CacheItem<T>> cache, long timeToLive) {
+            this.cache = cache;
+            this.timeToLive = timeToLive;
+            interval = timeToLive / 3;
+        }
 
-						if (!Cache.isAlive(item, timeToLive)) {
-							cache.remove(key);
-						}
-					}
-				} catch (InterruptedException ignored) {
-				}
-			}
-		}
-	}
+        @Override
+        public void run() {
+            while (running && !terminated) {
+                try {
+                    sleep(interval);
+
+                    Set<String> keys = cache.keySet();
+                    for (String key : keys) {
+                        CacheItem<T> item = cache.get(key);
+
+                        if (!Cache.isAlive(item, timeToLive)) {
+                            cache.remove(key);
+                        }
+                    }
+                } catch (InterruptedException ignored) {
+                }
+            }
+        }
+    }
 }

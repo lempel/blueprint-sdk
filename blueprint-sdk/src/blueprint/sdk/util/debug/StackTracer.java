@@ -17,21 +17,22 @@ import org.apache.log4j.Logger;
 
 /**
  * Prints current thread's stack trace at anytime..
- * 
+ *
  * @author Sangmin Lee
  * @since 2013. 9. 5.
  */
+@SuppressWarnings("WeakerAccess")
 public class StackTracer {
-	private static final Logger L = Logger.getLogger(StackTracer.class);
+    private static final Logger L = Logger.getLogger(StackTracer.class);
 
-	/**
-	 * Prints current stack trace
-	 */
-	public static void printStackTrace() {
-		try {
-			throw new Exception("printStackTrace");
-		} catch (Exception e) {
-			L.info("printStackTrace", e);
-		}
-	}
+    /**
+     * Prints current stack trace
+     */
+    public static void printStackTrace() {
+        try {
+            throw new Exception("printStackTrace");
+        } catch (Exception e) {
+            L.info("printStackTrace", e);
+        }
+    }
 }

@@ -13,222 +13,223 @@
 
 package blueprint.sdk.util.queue;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
+import blueprint.sdk.util.jdbc.CloseHelper;
 import org.h2.Driver;
 import org.h2.constant.ErrorCode;
 import org.h2.jdbcx.JdbcDataSource;
 
-import blueprint.sdk.util.jdbc.CloseHelper;
+import java.sql.*;
 
 /**
  * H2 based AbstractJdbcQueue implementation (example).
- * 
+ *
  * @author Sangmin Lee
  * @since 2013. 8. 27.
  */
 public class H2Queue extends JdbcQueue {
-	/** H2 Connection */
-	protected Connection con = null;
+    /**
+     * H2 Connection
+     */
+    private Connection con = null;
 
-	/** schema for queue */
-	protected String schema = "BLUEPRINT";
-	/** table for queue */
-	protected String table = "QUEUE";
+    /**
+     * schema for queue
+     */
+    private String schema = "BLUEPRINT";
+    /**
+     * table for queue
+     */
+    private String table = "QUEUE";
 
-	protected PreparedStatement insertStmt;
-	protected PreparedStatement deleteStmt;
+    private PreparedStatement insertStmt;
+    private PreparedStatement deleteStmt;
 
-	/**
-	 * Constructor
-	 * 
-	 * @param datasrc
-	 *            DataSource for persistence
-	 */
-	public H2Queue(JdbcDataSource datasrc) {
-		super(datasrc);
+    /**
+     * Constructor
+     *
+     * @param datasrc DataSource for persistence
+     */
+    public H2Queue(JdbcDataSource datasrc) {
+        super(datasrc);
 
-		Thread sync = new Thread() {
-			@Override
-			public void run() {
-				while (true) {
-					try {
-						// 10 minutes
-						sleep(10 * 60 * 1000);
-					} catch (InterruptedException ignored) {
-					}
+        // TODO Bad idea. Must provide a way to stop this thread.
+        Thread sync = new Thread() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        // 10 minutes
+                        sleep(10 * 60 * 1000);
+                    } catch (InterruptedException ignored) {
+                    }
 
-					closeConnection();
-				}
-			}
-		};
-		sync.setDaemon(true);
-		sync.start();
-	}
+                    closeConnection();
+                }
+            }
+        };
+        sync.setDaemon(true);
+        sync.start();
+    }
 
-	@Override
-	public void clear() throws JdbcQueueException {
-		super.clear();
-		
-		// unload H2 Driver too
-		Driver.unload();
-	}
+    @Override
+    public void clear() throws JdbcQueueException {
+        super.clear();
 
-	/**
-	 * Check connection to H2
-	 * 
-	 * @throws SQLException
-	 */
-	protected void checkConnection() throws SQLException {
-		synchronized (this) {
-			if (con == null || con.isClosed()) {
-				con = datasrc.getConnection();
+        // unload H2 Driver too
+        Driver.unload();
+    }
 
-				insertStmt = con.prepareStatement("INSERT INTO " + schema + "." + table
-						+ " (UUID, CONTENT) VALUES (?, ?)");
-				deleteStmt = con.prepareStatement("DELETE FROM " + schema + "." + table + " WHERE UUID = ?");
-			}
-		}
-	}
+    /**
+     * Check connection to H2
+     *
+     * @throws SQLException
+     */
+    @SuppressWarnings("WeakerAccess")
+    protected void checkConnection() throws SQLException {
+        synchronized (this) {
+            if (con == null || con.isClosed()) {
+                con = datasrc.getConnection();
 
-	/**
-	 * Close all connections and related stuffs 
-	 */
-	protected void closeConnection() {
-		synchronized (this) {
-			if (insertStmt != null) {
-				synchronized (insertStmt) {
-					synchronized (insertStmt) {
-						CloseHelper.close(insertStmt);
-					}
-				}
-			}
+                insertStmt = con.prepareStatement("INSERT INTO " + schema + "." + table
+                        + " (UUID, CONTENT) VALUES (?, ?)");
+                deleteStmt = con.prepareStatement("DELETE FROM " + schema + "." + table + " WHERE UUID = ?");
+            }
+        }
+    }
 
-			if (deleteStmt != null) {
-				synchronized (deleteStmt) {
-					synchronized (deleteStmt) {
-						CloseHelper.close(deleteStmt);
-					}
-				}
-			}
+    /**
+     * Close all connections and related stuffs
+     */
+    @SuppressWarnings("WeakerAccess")
+    protected void closeConnection() {
+        synchronized (this) {
+            if (insertStmt != null) {
+                synchronized (insertStmt) {
+                    synchronized (insertStmt) {
+                        CloseHelper.close(insertStmt);
+                    }
+                }
+            }
 
-			CloseHelper.close(con);
-		}
-	}
+            if (deleteStmt != null) {
+                synchronized (deleteStmt) {
+                    synchronized (deleteStmt) {
+                        CloseHelper.close(deleteStmt);
+                    }
+                }
+            }
 
-	@Override
-	protected void createTable() throws SQLException {
-		Connection con = datasrc.getConnection();
+            CloseHelper.close(con);
+        }
+    }
 
-		Statement stmt = con.createStatement();
-		try {
-			try {
-				stmt.executeUpdate("CREATE SCHEMA " + schema);
-			} catch (SQLException e) {
-				if (e.getErrorCode() != ErrorCode.SCHEMA_ALREADY_EXISTS_1) {
-					throw e;
-				}
-			}
+    @Override
+    protected void createTable() throws SQLException {
+        Connection con = datasrc.getConnection();
 
-			try {
-				stmt.executeUpdate("CREATE TABLE " + schema + "." + table
-						+ " ( UUID CHAR(60) NOT NULL, CONTENT VARCHAR)");
-				stmt.executeUpdate("ALTER TABLE " + schema + "." + table + " ADD CONSTRAINT " + table
-						+ "_IDX_01 UNIQUE (UUID)");
-				stmt.executeUpdate("CREATE SEQUENCE " + schema + "." + table + "_SEQ CACHE 1");
-			} catch (SQLException e) {
-				if (e.getErrorCode() != ErrorCode.TABLE_OR_VIEW_ALREADY_EXISTS_1) {
-					throw e;
-				}
-			}
-		} finally {
-			CloseHelper.close(con, stmt);
-		}
-	}
+        Statement stmt = con.createStatement();
+        try {
+            try {
+                stmt.executeUpdate("CREATE SCHEMA " + schema);
+            } catch (SQLException e) {
+                if (e.getErrorCode() != ErrorCode.SCHEMA_ALREADY_EXISTS_1) {
+                    throw e;
+                }
+            }
 
-	@Override
-	protected void emptyTable() throws SQLException {
-		checkConnection();
+            try {
+                stmt.executeUpdate("CREATE TABLE " + schema + "." + table
+                        + " ( UUID CHAR(60) NOT NULL, CONTENT VARCHAR)");
+                stmt.executeUpdate("ALTER TABLE " + schema + "." + table + " ADD CONSTRAINT " + table
+                        + "_IDX_01 UNIQUE (UUID)");
+                stmt.executeUpdate("CREATE SEQUENCE " + schema + "." + table + "_SEQ CACHE 1");
+            } catch (SQLException e) {
+                if (e.getErrorCode() != ErrorCode.TABLE_OR_VIEW_ALREADY_EXISTS_1) {
+                    throw e;
+                }
+            }
+        } finally {
+            CloseHelper.close(con, stmt);
+        }
+    }
 
-		Statement stmt = con.createStatement();
-		try {
-			stmt.executeUpdate("DELETE FROM " + schema + "." + table + "");
-		} finally {
-			CloseHelper.close(stmt);
-		}
-	}
+    @Override
+    protected void emptyTable() throws SQLException {
+        checkConnection();
 
-	@Override
-	protected void load() throws SQLException {
-		checkConnection();
+        Statement stmt = con.createStatement();
+        try {
+            stmt.executeUpdate("DELETE FROM " + schema + "." + table + "");
+        } finally {
+            CloseHelper.close(stmt);
+        }
+    }
 
-		Statement stmt = con.createStatement();
-		ResultSet rset = null;
-		try {
-			rset = stmt.executeQuery("SELECT UUID, CONTENT FROM " + schema + "." + table + "");
-			while (rset.next()) {
-				JdbcElement item = new JdbcElement();
-				item.uuid = rset.getString(1);
-				item.content = rset.getString(2);
-				queue.push(item);
-			}
-		} finally {
-			CloseHelper.close(stmt, rset);
-		}
-	}
+    @Override
+    protected void load() throws SQLException {
+        checkConnection();
 
-	@Override
-	protected void insert(Element element) throws SQLException {
-		checkConnection();
+        Statement stmt = con.createStatement();
+        ResultSet rset = null;
+        try {
+            rset = stmt.executeQuery("SELECT UUID, CONTENT FROM " + schema + "." + table + "");
+            while (rset.next()) {
+                JdbcElement item = new JdbcElement();
+                item.uuid = rset.getString(1);
+                item.content = rset.getString(2);
+                queue.push(item);
+            }
+        } finally {
+            CloseHelper.close(stmt, rset);
+        }
+    }
 
-		synchronized (insertStmt) {
-			insertStmt.setString(1, element.uuid);
-			insertStmt.setString(2, element.content);
-			insertStmt.executeUpdate();
-		}
-	}
+    @Override
+    protected void insert(Element element) throws SQLException {
+        checkConnection();
 
-	@Override
-	protected void delete(Element element) throws SQLException {
-		checkConnection();
+        synchronized (insertStmt) {
+            insertStmt.setString(1, element.uuid);
+            insertStmt.setString(2, element.content);
+            insertStmt.executeUpdate();
+        }
+    }
 
-		synchronized (deleteStmt) {
-			deleteStmt.setString(1, element.uuid);
-			deleteStmt.executeUpdate();
-		}
-	}
+    @Override
+    protected void delete(Element element) throws SQLException {
+        checkConnection();
 
-	/**
-	 * @return the schema
-	 */
-	public String getSchema() {
-		return schema;
-	}
+        synchronized (deleteStmt) {
+            deleteStmt.setString(1, element.uuid);
+            deleteStmt.executeUpdate();
+        }
+    }
 
-	/**
-	 * @param schema
-	 *            the schema to set
-	 */
-	public void setSchema(String schema) {
-		this.schema = schema;
-	}
+    /**
+     * @return the schema
+     */
+    public String getSchema() {
+        return schema;
+    }
 
-	/**
-	 * @return the table
-	 */
-	public String getTable() {
-		return table;
-	}
+    /**
+     * @param schema the schema to set
+     */
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
 
-	/**
-	 * @param table
-	 *            the table to set
-	 */
-	public void setTable(String table) {
-		this.table = table;
-	}
+    /**
+     * @return the table
+     */
+    public String getTable() {
+        return table;
+    }
+
+    /**
+     * @param table the table to set
+     */
+    public void setTable(String table) {
+        this.table = table;
+    }
 }

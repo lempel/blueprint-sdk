@@ -13,55 +13,59 @@
 
 package blueprint.sdk.util.jvm.shutdown;
 
+import blueprint.sdk.util.Terminatable;
+
 import java.util.List;
 import java.util.Vector;
 
-import blueprint.sdk.util.Terminatable;
-
 /**
  * A Shutdown Hook terminates all registered Terminatables
- * 
+ *
  * @author Sangmin Lee
  * @since 2007. 07. 26
  */
 public class Terminator extends Thread {
-	/** Singleton */
-	private static final Terminator TER;
+    /**
+     * Singleton
+     */
+    private static final Terminator TER;
 
-	/** terminatable objects */
-	private transient List<Terminatable> terminatables = new Vector<Terminatable>(50, 5);
+    /**
+     * terminatable objects
+     */
+    private transient List<Terminatable> terminatables = new Vector<>(50, 5);
 
-	static {
-		TER = new Terminator();
-		Runtime.getRuntime().addShutdownHook(TER);
-	}
+    static {
+        TER = new Terminator();
+        Runtime.getRuntime().addShutdownHook(TER);
+    }
 
-	public static Terminator getInstance() {
-		return TER;
-	}
+    public static Terminator getInstance() {
+        return TER;
+    }
 
-	public void register(final Terminatable target) {
-		terminatables.add(target);
-	}
+    public void register(final Terminatable target) {
+        terminatables.add(target);
+    }
 
-	public void unregister(final Terminatable target) {
-		terminatables.remove(target);
-	}
+    public void unregister(final Terminatable target) {
+        terminatables.remove(target);
+    }
 
-	public void run() {
-		while (!terminatables.isEmpty()) {
-			Terminatable ter = (Terminatable) terminatables.remove(0);
-			if (ter != null) {
-				ter.terminate();
-			}
-		}
-	}
+    public void run() {
+        while (!terminatables.isEmpty()) {
+            Terminatable ter = terminatables.remove(0);
+            if (ter != null) {
+                ter.terminate();
+            }
+        }
+    }
 
-	@Override
-	protected void finalize() throws Throwable {
-		terminatables.clear();
-		terminatables = null;
+    @Override
+    protected void finalize() throws Throwable {
+        terminatables.clear();
+        terminatables = null;
 
-		super.finalize();
-	}
+        super.finalize();
+    }
 }

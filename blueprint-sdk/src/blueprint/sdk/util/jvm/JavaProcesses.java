@@ -25,108 +25,98 @@
 
 package blueprint.sdk.util.jvm;
 
-import java.net.URISyntaxException;
+import sun.jvmstat.monitor.*;
+import sun.tools.jps.Arguments;
+
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import sun.jvmstat.monitor.MonitorException;
-import sun.jvmstat.monitor.MonitoredHost;
-import sun.jvmstat.monitor.MonitoredVm;
-import sun.jvmstat.monitor.MonitoredVmUtil;
-import sun.jvmstat.monitor.VmIdentifier;
-import sun.tools.jps.Arguments;
-
 /**
- * Get informations of running JVMs.<br>
+ * Get information of running JVMs.<br>
  * <br>
  * Based on sun.tool.jsp.Jps.<br>
- * 
+ *
  * @author Sangmin Lee
  * @since 1.5
  */
 public class JavaProcesses {
-	protected Arguments arguments = new Arguments(new String[] { "-mlv" });
+    private Arguments arguments = new Arguments(new String[]{"-mlv"});
 
-	/**
-	 * @param arguments
-	 *            new arguments
-	 */
-	public void setArguments(Arguments arguments) {
-		this.arguments = arguments;
-	}
+    /**
+     * @param monitoredHost host
+     * @param info VM information
+     * @return target VM
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static MonitoredVm getMonitoredVm(MonitoredHost monitoredHost, VmInfo info) {
+        MonitoredVm result = null;
 
-	/**
-	 * @return Summary of running JVMs
-	 * @throws MonitorException
-	 *             jvmstat Exception
-	 */
-	public List<VmInfo> listJvms() throws MonitorException {
-		List<VmInfo> result = new ArrayList<VmInfo>();
+        String vmidString = toVmId(info.pid);
 
-		MonitoredHost monitoredHost = getMonitoredHost();
+        try {
+            VmIdentifier id = new VmIdentifier(vmidString);
+            result = monitoredHost.getMonitoredVm(id, 0);
+        } catch (Exception ignored) {
+        }
+        return result;
+    }
 
-		// get the set active JVMs on the specified host.
-		Set<Integer> jvms = monitoredHost.activeVms();
+    /**
+     * @param pid process id
+     * @return VM id
+     */
+    private static String toVmId(int pid) {
+        return "//" + pid + "?mode=r";
+    }
 
-		for (Iterator<Integer> j = jvms.iterator(); j.hasNext(); /* empty */) {
-			VmInfo info = new VmInfo();
+    /**
+     * @param arguments new arguments
+     */
+    public void setArguments(Arguments arguments) {
+        this.arguments = arguments;
+    }
 
-			info.pid = ((Integer) j.next()).intValue();
+    /**
+     * @return Summary of running JVMs
+     * @throws MonitorException jvmstat Exception
+     */
+    public List<VmInfo> listJvms() throws MonitorException {
+        List<VmInfo> result = new ArrayList<>();
 
-			MonitoredVm vm = getMonitoredVm(monitoredHost, info);
-			if (vm == null) {
-				continue;
-			}
+        MonitoredHost monitoredHost = getMonitoredHost();
 
-			info.mainClass = MonitoredVmUtil.mainClass(vm, arguments.showLongPaths());
-			info.mainArgs = MonitoredVmUtil.mainArgs(vm);
-			info.vmArgs = MonitoredVmUtil.jvmArgs(vm);
-			info.vmFlags = MonitoredVmUtil.jvmFlags(vm);
+        // get the set active JVMs on the specified host.
+        Set<Integer> jvms = monitoredHost.activeVms();
 
-			monitoredHost.detach(vm);
+        for (Integer jvm : jvms) {
+            VmInfo info = new VmInfo();
 
-			result.add(info);
-		}
+            info.pid = jvm;
 
-		return result;
-	}
+            MonitoredVm vm = getMonitoredVm(monitoredHost, info);
+            if (vm == null) {
+                continue;
+            }
 
-	/**
-	 * @return host of JVMs
-	 * @throws MonitorException
-	 */
-	public MonitoredHost getMonitoredHost() throws MonitorException {
-		return MonitoredHost.getMonitoredHost(arguments.hostId());
-	}
+            info.mainClass = MonitoredVmUtil.mainClass(vm, arguments.showLongPaths());
+            info.mainArgs = MonitoredVmUtil.mainArgs(vm);
+            info.vmArgs = MonitoredVmUtil.jvmArgs(vm);
+            info.vmFlags = MonitoredVmUtil.jvmFlags(vm);
 
-	/**
-	 * @param monitoredHost
-	 *            host
-	 * @param info
-	 * @return target VM
-	 */
-	public static MonitoredVm getMonitoredVm(MonitoredHost monitoredHost, VmInfo info) {
-		MonitoredVm result = null;
+            monitoredHost.detach(vm);
 
-		String vmidString = toVmId(info.pid);
+            result.add(info);
+        }
 
-		try {
-			VmIdentifier id = new VmIdentifier(vmidString);
-			result = monitoredHost.getMonitoredVm(id, 0);
-		} catch (URISyntaxException ignored) {
-		} catch (Exception ignored) {
-		}
-		return result;
-	}
+        return result;
+    }
 
-	/**
-	 * @param pid
-	 *            process id
-	 * @return VM id
-	 */
-	public static String toVmId(int pid) {
-		return "//" + pid + "?mode=r";
-	}
+    /**
+     * @return host of JVMs
+     * @throws MonitorException
+     */
+    public MonitoredHost getMonitoredHost() throws MonitorException {
+        return MonitoredHost.getMonitoredHost(arguments.hostId());
+    }
 }

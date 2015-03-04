@@ -13,51 +13,55 @@
 
 package blueprint.sdk.util.debug;
 
+import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
+import org.apache.log4j.Logger;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 
-import org.apache.log4j.Logger;
-
 /**
  * Periodically checks MXBean for deadlock.
- * 
+ *
  * @author Sangmin Lee
  * @since 2013. 11. 6.
  */
-public class DeadlockDetector extends Thread {
-	private static final Logger L = Logger.getLogger(DeadlockDetector.class);
+@SuppressWarnings("WeakerAccess")
+public class DeadlockDetector extends TerminatableThread {
+    private static final Logger L = Logger.getLogger(DeadlockDetector.class);
 
-	public DeadlockDetector() {
-		super();
+    public DeadlockDetector() {
+        super();
 
-		setDaemon(true);
-	}
+        setDaemon(true);
+    }
 
-	@Override
-	public void run() {
-		ThreadMXBean bean = ManagementFactory.getThreadMXBean();
+    @Override
+    public void run() {
+        ThreadMXBean bean = ManagementFactory.getThreadMXBean();
 
-		while (true) {
-			// Returns null if no threads are deadlocked.
-			long[] threadIds = bean.findDeadlockedThreads();
+        while (running) {
+            // Returns null if no threads are deadlocked.
+            long[] threadIds = bean.findDeadlockedThreads();
 
-			if (threadIds != null) {
-				ThreadInfo[] infos = bean.getThreadInfo(threadIds);
+            if (threadIds != null) {
+                ThreadInfo[] infos = bean.getThreadInfo(threadIds);
 
-				for (ThreadInfo info : infos) {
-					StackTraceElement[] stack = info.getStackTrace();
+                for (ThreadInfo info : infos) {
+                    StackTraceElement[] stack = info.getStackTrace();
 
-					for (StackTraceElement stackTraceElement : stack) {
-						L.warn(stackTraceElement.toString());
-					}
-				}
-			}
+                    for (StackTraceElement stackTraceElement : stack) {
+                        L.warn(stackTraceElement.toString());
+                    }
+                }
+            }
 
-			try {
-				Thread.sleep(30000);
-			} catch (InterruptedException ignore) {
-			}
-		}
-	}
+            try {
+                Thread.sleep(30000);
+            } catch (InterruptedException ignore) {
+            }
+        }
+
+        terminated = true;
+    }
 }

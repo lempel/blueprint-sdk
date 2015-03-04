@@ -14,15 +14,15 @@
 package blueprint.sdk.util.jvm;
 
 /**
- * Summay of sun.jvmstat.monitor.MonitoredVm
- * 
+ * Summary of sun.jvmstat.monitor.MonitoredVm
+ *
  * @author Sangmin Lee
  * @since 2013. 6. 23.
  */
 public class VmInfo {
-	public int pid;
-	public String mainClass;
-	public String mainArgs;
-	public String vmArgs;
-	public String vmFlags;
+    public int pid;
+    public String mainClass;
+    public String mainArgs;
+    public String vmArgs;
+    public String vmFlags;
 }

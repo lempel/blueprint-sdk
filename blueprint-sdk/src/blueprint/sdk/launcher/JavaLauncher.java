@@ -14,7 +14,7 @@
  Background:
 
  blueprint-sdk is a java software development kit to protect other open source
- softwares' licenses. It's intended to provide light weight APIs for blueprints.
+ software licenses. It's intended to provide light weight APIs for blueprints.
  Well... at least trying to.
 
  There are so many great open source projects now. Back in year 2000, there
@@ -34,7 +34,7 @@
  license terms.
 
 
- To commiters:
+ To committers:
 
  License terms of the other software used by your source code should not be
  violated by using your source code. That's why blueprint-sdk is made for.
@@ -42,11 +42,10 @@
  */
 package blueprint.sdk.launcher;
 
-import javax.xml.xpath.XPathExpressionException;
-
+import blueprint.sdk.util.config.Config;
 import org.apache.log4j.Logger;
 
-import blueprint.sdk.util.config.Config;
+import javax.xml.xpath.XPathExpressionException;
 
 /**
  * A Java application launcher for jar hell.<br>
@@ -64,52 +63,53 @@ import blueprint.sdk.util.config.Config;
  * To turn on trace function, you need a trace.jar (<a
  * href="http://x-15.org/tracing.htm">http://x-15.org/tracing.htm</a>) file and<br>
  * create a 'trace.properties' file on working directory<br>
- * 
+ *
  * @author Sangmin Lee
  * @since 2007. 12. 12
  */
 public class JavaLauncher {
-	/** logger */
-	private static final Logger LOGGER = Logger.getLogger(JavaLauncher.class);
+    /**
+     * logger
+     */
+    private static final Logger LOGGER = Logger.getLogger(JavaLauncher.class);
 
-	/**
-	 * Entry Point
-	 * 
-	 * @param args
-	 */
-	public static void main(final String[] args) {
-		if (args.length < 1) {
-			LOGGER.error("Usage: java " + JavaLauncher.class.getName()
-					+ " <config file name> [additional arguments for target program]");
-		} else {
-			try {
-				JavaLauncher jln = new JavaLauncher();
+    /**
+     * Entry Point
+     *
+     * @param args arguments
+     */
+    public static void main(final String[] args) {
+        if (args.length < 1) {
+            LOGGER.error("Usage: java " + JavaLauncher.class.getName()
+                    + " <config file name> [additional arguments for target program]");
+        } else {
+            try {
+                JavaLauncher jln = new JavaLauncher();
 
-				Config config = new Config();
-				config.load(args[0]);
+                Config config = new Config();
+                config.load(args[0]);
 
-				String[] args2 = new String[args.length - 1];
-				System.arraycopy(args, 1, args2, 0, args2.length);
+                String[] args2 = new String[args.length - 1];
+                System.arraycopy(args, 1, args2, 0, args2.length);
 
-				jln.launch(config, args2);
-			} catch (Exception e) {
-				LOGGER.error(e.toString());
-			}
-		}
-	}
+                jln.launch(config, args2);
+            } catch (Exception e) {
+                LOGGER.error(e.toString());
+            }
+        }
+    }
 
-	/**
-	 * launches target program accorind to given configuration
-	 * 
-	 * @param config
-	 *            configuration
-	 * @param args
-	 *            extra arguments
-	 * @throws XPathExpressionException
-	 */
-	public void launch(final Config config, final String[] args) throws XPathExpressionException {
-		AbstractHandler handler = HandlerFactory.getInstance(config);
+    /**
+     * launches target program according to given configuration
+     *
+     * @param config configuration
+     * @param args   extra arguments
+     * @throws XPathExpressionException
+     */
+    @SuppressWarnings("WeakerAccess")
+    public void launch(final Config config, final String[] args) throws XPathExpressionException {
+        AbstractHandler handler = HandlerFactory.getInstance(config);
 
-		handler.launch(args);
-	}
+        handler.launch(args);
+    }
 }

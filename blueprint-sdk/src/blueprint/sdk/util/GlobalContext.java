@@ -19,26 +19,28 @@ import java.util.Map;
 /**
  * Bad, bad, bad...<br>
  * But it helps sometimes.<br>
- * 
+ *
  * @author Sangmin Lee
  * @since 2007. 07. 31
  */
 public class GlobalContext extends HashMap<String, Object> {
-	private static final long serialVersionUID = 3099255535794184917L;
+    private static final long serialVersionUID = 3099255535794184917L;
 
-	/** Singleton */
-	private static GlobalContext context = new GlobalContext();
+    /**
+     * Singleton
+     */
+    private static final GlobalContext context = new GlobalContext();
 
-	public static GlobalContext getInstance() {
-		return context;
-	}
+    public static GlobalContext getInstance() {
+        return context;
+    }
 
-	@SuppressWarnings("unchecked")
-	public GlobalContext clone() {
-		GlobalContext result = new GlobalContext();
+    @SuppressWarnings("unchecked")
+    public GlobalContext clone() {
+        GlobalContext result = new GlobalContext();
 
-		result.putAll((Map<? extends String, ? extends Object>) super.clone());
+        result.putAll((Map<? extends String, ?>) super.clone());
 
-		return result;
-	}
+        return result;
+    }
 }

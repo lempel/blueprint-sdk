@@ -15,34 +15,33 @@ package blueprint.sdk.util.queue;
 
 /**
  * General Interface for Queue
- * 
+ *
  * @author Sangmin Lee
  * @since 2013. 12. 11.
  */
 public interface Queue<T> {
-	/**
-	 * Retrieves an element from queue. (blocks if queue is empty)
-	 * 
-	 * @return queue element or null(interrupted)
-	 */
-	T take();
+    /**
+     * Retrieves an element from queue. (blocks if queue is empty)
+     *
+     * @return queue element or null(interrupted)
+     */
+    T take();
 
-	/**
-	 * Push an element to queue
-	 * 
-	 * @param element
-	 * @throws NullPointerException
-	 *             null element
-	 */
-	void push(T element);
+    /**
+     * Push an element to queue
+     *
+     * @param element element to push
+     * @throws NullPointerException null element
+     */
+    void push(T element);
 
-	/**
-	 * Clears queue
-	 */
-	void clear();
+    /**
+     * Clears queue
+     */
+    void clear();
 
-	/**
-	 * @return number of elements
-	 */
-	int size();
+    /**
+     * @return number of elements
+     */
+    int size();
 }

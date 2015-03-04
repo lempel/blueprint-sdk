@@ -20,53 +20,52 @@ import java.util.List;
  * Recycle byte arrays as many as possible to reduce memory allocations.<br>
  * <b>BEWARE: </b>This pool reduces memory allocations & heap usage variations
  * but total performance could be decreased (due to inevitable locks).<br>
- * 
+ *
  * @author Sangmin Lee
  * @since 2009. 1. 20.
  */
 public class ByteArrayPool {
-	private final int arraySize;
-	private final int maxArrays;
-	private final List<byte[]> pool;
+    private final int arraySize;
+    private final int maxArrays;
+    private final List<byte[]> pool;
 
-	/**
-	 * Constructor
-	 * 
-	 * @param arraySize
-	 *            each array's size
-	 * @param maxArrays
-	 *            maximum number of arrays to preserve
-	 */
-	protected ByteArrayPool(final int arraySize, final int maxArrays) {
-		this.arraySize = arraySize;
-		this.maxArrays = maxArrays;
-		pool = new ArrayList<byte[]>(maxArrays);
-	}
+    /**
+     * Constructor
+     *
+     * @param arraySize each array's size
+     * @param maxArrays maximum number of arrays to preserve
+     */
+    @SuppressWarnings("WeakerAccess")
+    protected ByteArrayPool(final int arraySize, final int maxArrays) {
+        this.arraySize = arraySize;
+        this.maxArrays = maxArrays;
+        pool = new ArrayList<>(maxArrays);
+    }
 
-	public byte[] newArray() {
-		byte[] result;
+    public byte[] newArray() {
+        byte[] result;
 
-		synchronized (pool) {
-			if (pool.isEmpty()) {
-				result = new byte[arraySize];
-			} else {
-				result = pool.remove(0);
-			}
-		}
+        synchronized (pool) {
+            if (pool.isEmpty()) {
+                result = new byte[arraySize];
+            } else {
+                result = pool.remove(0);
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	/**
-	 * Release un-necessary array to pool.
-	 * 
-	 * @param arr
-	 */
-	public void release(final byte[] arr) {
-		synchronized (pool) {
-			if (pool.size() < maxArrays) {
-				pool.add(arr);
-			}
-		}
-	}
+    /**
+     * Release un-necessary array to pool.
+     *
+     * @param target array to release
+     */
+    public void release(final byte[] target) {
+        synchronized (pool) {
+            if (pool.size() < maxArrays) {
+                pool.add(target);
+            }
+        }
+    }
 }

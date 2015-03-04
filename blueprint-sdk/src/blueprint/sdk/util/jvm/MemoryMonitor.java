@@ -14,144 +14,152 @@
 
 package blueprint.sdk.util.jvm;
 
+import blueprint.sdk.util.Terminatable;
+import org.apache.log4j.Logger;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
-import blueprint.sdk.util.Terminatable;
-
 /**
  * Monitors memory usage<br>
  * For better result, please set -Xmx argument.<br>
- * 
+ *
  * @author Sangmin Lee
  * @since 2009. 3. 2.
  */
 public class MemoryMonitor implements Terminatable, Runnable {
-	private static final Logger L = Logger.getLogger(MemoryMonitor.class);
+    private static final Logger L = Logger.getLogger(MemoryMonitor.class);
 
-	/** check interval - 10sec */
-	private static final int INTERVAL = 10000;
-	/** memory usage limit to warn - 80% */
-	private static final int WARNING_USAGE = 80;
-	/** maximum tolerable warnings - 6times */
-	private static final int MAX_WARNINGS = 6;
+    /**
+     * check interval - 10sec
+     */
+    private static final int INTERVAL = 10000;
+    /**
+     * memory usage limit to warn - 80%
+     */
+    private static final int WARNING_USAGE = 80;
+    /**
+     * maximum tolerable warnings - 6times
+     */
+    private static final int MAX_WARNINGS = 6;
 
-	private boolean running = false;
-	private transient boolean terminated = false;
-	private boolean trace = false;
+    private boolean running = false;
+    private transient boolean terminated = false;
+    private boolean trace = false;
 
-	public MemoryMonitor() {
-		super();
-	}
+    @SuppressWarnings("WeakerAccess")
+    public MemoryMonitor() {
+        super();
+    }
 
-	public MemoryMonitor(boolean trace) {
-		super();
+    @SuppressWarnings("WeakerAccess")
+    public MemoryMonitor(boolean trace) {
+        super();
 
-		this.trace = trace;
-	}
+        this.trace = trace;
+    }
 
-	public boolean isValid() {
-		return running;
-	}
+    /**
+     * @return current heap usage in percent
+     */
+    public static int getMemoryUsage() {
+        Runtime rtime = Runtime.getRuntime();
+        long total = rtime.maxMemory();
+        long used = rtime.totalMemory() - rtime.freeMemory();
+        double ratio = (double) used / (double) total;
+        return (int) (ratio * 100d);
+    }
 
-	public boolean isTerminated() {
-		return terminated;
-	}
+    /**
+     * @return true if -Xmx is set
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static boolean isXmxSet() {
+        boolean result = false;
 
-	public void terminate() {
-		running = false;
-	}
+        RuntimeMXBean RuntimemxBean = ManagementFactory.getRuntimeMXBean();
+        List<String> arguments = RuntimemxBean.getInputArguments();
+        for (String arg : arguments) {
+            if (arg.toLowerCase().startsWith("-xmx")) {
+                result = true;
+                break;
+            }
+        }
 
-	/**
-	 * @return current heap usage in percent
-	 */
-	public static int getMemoryUsage() {
-		Runtime rtime = Runtime.getRuntime();
-		long total = rtime.maxMemory();
-		long used = rtime.totalMemory() - rtime.freeMemory();
-		double ratio = (double) used / (double) total;
-		return (int) (ratio * 100d);
-	}
+        return result;
+    }
 
-	/**
-	 * @return true if -Xmx is set
-	 */
-	public static boolean isXmxSet() {
-		boolean result = false;
+    public boolean isValid() {
+        return running;
+    }
 
-		RuntimeMXBean RuntimemxBean = ManagementFactory.getRuntimeMXBean();
-		List<String> arguments = RuntimemxBean.getInputArguments();
-		for (String arg : arguments) {
-			if (arg.toLowerCase().startsWith("-xmx")) {
-				result = true;
-				break;
-			}
-		}
+    public boolean isTerminated() {
+        return terminated;
+    }
 
-		return result;
-	}
+    public void terminate() {
+        running = false;
+    }
 
-	public void start() {
-		Thread thr = new Thread(this);
-		thr.setName(this.getClass().getName());
-		thr.setDaemon(true);
-		thr.start();
-	}
+    public void start() {
+        Thread thr = new Thread(this);
+        thr.setName(this.getClass().getName());
+        thr.setDaemon(true);
+        thr.start();
+    }
 
-	public void run() {
-		running = true;
+    public void run() {
+        running = true;
 
-		boolean interrupted = false;
-		int warnCount = 0;
-		boolean xmx = isXmxSet();
+        boolean interrupted = false;
+        int warnCount = 0;
+        boolean xmx = isXmxSet();
 
-		while (running) {
-			try {
-				if (!interrupted) {
-					Runtime rtime = Runtime.getRuntime();
-					long total = rtime.maxMemory();
-					long used = rtime.totalMemory() - rtime.freeMemory();
-					double ratio = (double) used / (double) total;
-					int percent = (int) (ratio * 100d);
+        while (running) {
+            try {
+                if (!interrupted) {
+                    Runtime rtime = Runtime.getRuntime();
+                    long total = rtime.maxMemory();
+                    long used = rtime.totalMemory() - rtime.freeMemory();
+                    double ratio = (double) used / (double) total;
+                    int percent = (int) (ratio * 100d);
 
-					if (percent >= WARNING_USAGE) {
-						warnCount++;
-						if (warnCount >= MAX_WARNINGS) {
-							L.error("LOW MEMORY!! Memory usage is Critical. " + percent + "%");
-							if (xmx) {
-								L.error("RECOMMEND: 1. Increase -Xmx value");
-							} else {
-								L.error("RECOMMEND: 1. Set -Xmx value");
-							}
-							L.error("RECOMMEND: 2. Check for memory leak");
-							L.error("RECOMMEND: 3. Install more RAM");
-							warnCount = 0;
-						} else {
-							L.warn("Memory usage: " + percent + "% - " + (used / 1024 / 1024) + "M");
-						}
-					} else {
-						warnCount = 0;
-					}
+                    if (percent >= WARNING_USAGE) {
+                        warnCount++;
+                        if (warnCount >= MAX_WARNINGS) {
+                            L.error("LOW MEMORY!! Memory usage is Critical. " + percent + "%");
+                            if (xmx) {
+                                L.error("RECOMMEND: 1. Increase -Xmx value");
+                            } else {
+                                L.error("RECOMMEND: 1. Set -Xmx value");
+                            }
+                            L.error("RECOMMEND: 2. Check for memory leak");
+                            L.error("RECOMMEND: 3. Install more RAM");
+                            warnCount = 0;
+                        } else {
+                            L.warn("Memory usage: " + percent + "% - " + (used / 1024 / 1024) + "M");
+                        }
+                    } else {
+                        warnCount = 0;
+                    }
 
-					if (trace) {
-						L.info("Memory usage: " + percent + "% - " + (used / 1024 / 1024) + "M");
-					}
-				}
-			} catch (OutOfMemoryError oom) {
-				L.error("OutOfMemoryError", oom);
-			}
+                    if (trace) {
+                        L.info("Memory usage: " + percent + "% - " + (used / 1024 / 1024) + "M");
+                    }
+                }
+            } catch (OutOfMemoryError oom) {
+                L.error("OutOfMemoryError", oom);
+            }
 
-			try {
-				Thread.sleep(INTERVAL);
-				interrupted = false;
-			} catch (InterruptedException e) {
-				interrupted = true;
-			}
-		}
+            try {
+                Thread.sleep(INTERVAL);
+                interrupted = false;
+            } catch (InterruptedException e) {
+                interrupted = true;
+            }
+        }
 
-		terminated = true;
-	}
+        terminated = true;
+    }
 }

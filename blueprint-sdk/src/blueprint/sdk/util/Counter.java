@@ -15,34 +15,34 @@ package blueprint.sdk.util;
 
 /**
  * Thread-Safe Counter
- * 
+ *
  * @author Sangmin Lee
  * @since 2009. 2. 26.
  */
 public class Counter {
-	private long total = 0;
+    private long total = 0;
 
-	public void increase() {
-		synchronized (this) {
-			total++;
-		}
-	}
+    public void increase() {
+        synchronized (this) {
+            total++;
+        }
+    }
 
-	public void decrease() {
-		synchronized (this) {
-			total--;
-		}
-	}
+    public void decrease() {
+        synchronized (this) {
+            total--;
+        }
+    }
 
-	public void reset() {
-		synchronized (this) {
-			total = 0;
-		}
-	}
+    public void reset() {
+        synchronized (this) {
+            total = 0;
+        }
+    }
 
-	public long count() {
-		synchronized (this) {
-			return total;
-		}
-	}
+    public long count() {
+        synchronized (this) {
+            return total;
+        }
+    }
 }

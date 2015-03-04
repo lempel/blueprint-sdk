@@ -18,30 +18,29 @@ import java.util.Map;
 
 /**
  * Factory for ByteArrayPool
- * 
+ *
  * @author Sangmin Lee
  * @since 2009. 1. 20.
  */
+@SuppressWarnings("WeakerAccess")
 public class ByteArrayFactory {
-	private static Map<Integer, ByteArrayPool> poolMap = new HashMap<Integer, ByteArrayPool>();
+    private static final Map<Integer, ByteArrayPool> poolMap = new HashMap<>();
 
-	/**
-	 * @param arraySize
-	 *            each array's size
-	 * @param maxArrays
-	 *            maximum number of arrays to preserve
-	 * @return instance of a pool
-	 */
-	public static synchronized ByteArrayPool getInstance(final int arraySize, final int maxArrays) {
-		ByteArrayPool result;
+    /**
+     * @param arraySize each array's size
+     * @param maxArrays maximum number of arrays to preserve
+     * @return instance of a pool
+     */
+    public static synchronized ByteArrayPool getInstance(final int arraySize, final int maxArrays) {
+        ByteArrayPool result;
 
-		if (poolMap.containsKey(arraySize)) {
-			result = poolMap.get(arraySize);
-		} else {
-			result = new ByteArrayPool(arraySize, maxArrays);
-			poolMap.put(arraySize, result);
-		}
+        if (poolMap.containsKey(arraySize)) {
+            result = poolMap.get(arraySize);
+        } else {
+            result = new ByteArrayPool(arraySize, maxArrays);
+            poolMap.put(arraySize, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 }

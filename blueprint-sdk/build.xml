@@ -1,72 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="blueprint-sdk" default="default" basedir=".">
-	<target name="default" depends="clean, setup, compile_java7, javadoc, jar" />
-	<target name="java6" depends="clean, setup, compile_java6, javadoc, jar" />
+    <target name="default" depends="clean, setup, compile, javadoc, jar"/>
 
-	<!-- variables -->
-	<property name="jdk6" value="1.6" />
-	<property name="jdk7" value="1.7" />
-	<property name="encoding" value="UTF-8" />
-	<property name="build" value="bin" />
-	<property name="classes" value="${build}" />
-	<property name="src" value="src" />
-	<property name="apidoc" value="apidoc" />
-	<property name="dist" location="." />
+    <!-- variables -->
+    <property name="jdk" value="1.7"/>
+    <property name="encoding" value="UTF-8"/>
+    <property name="build" value="bin"/>
+    <property name="classes" value="${build}"/>
+    <property name="src" value="src"/>
+    <property name="apidoc" value="apidoc"/>
+    <property name="dist" location="."/>
 
-	<!-- classpath -->
-	<path id="build.classpath">
-		<path>
-			<fileset id="lib" dir=".">
-				<patternset id="lib.jars">
-					<include name="lib/**" />
-				</patternset>
-			</fileset>
-		</path>
-	</path>
-	<!-- clean up -->
-	<target name="clean">
-		<delete dir="${build}" />
-	</target>
+    <!-- classpath -->
+    <path id="build.classpath">
+        <path>
+            <fileset id="lib" dir=".">
+                <patternset id="lib.jars">
+                    <include name="lib/**"/>
+                </patternset>
+            </fileset>
+        </path>
+    </path>
+    <!-- clean up -->
+    <target name="clean">
+        <delete dir="${build}"/>
+    </target>
 
-	<!-- create directories -->
-	<target name="setup">
-		<mkdir dir="${build}" />
-	</target>
+    <!-- create directories -->
+    <target name="setup">
+        <mkdir dir="${build}"/>
+    </target>
 
-	<!-- compile -->
-	<target name="compile_java6">
-		<javac classpathref="build.classpath" source="${jdk6}" target="${jdk6}" encoding="${encoding}" srcdir="${src}" destdir="${classes}" deprecation="on" debug="on" includeantruntime="false" />
-	</target>
+    <!-- compile -->
+    <target name="compile">
+        <javac classpathref="build.classpath" source="${jdk}" target="${jdk}" encoding="${encoding}" srcdir="${src}"
+               destdir="${classes}" deprecation="on" debug="on" includeantruntime="false"/>
+    </target>
 
-	<!-- compile -->
-	<target name="compile_java7">
-		<javac classpathref="build.classpath" source="${jdk7}" target="${jdk7}" encoding="${encoding}" srcdir="${src}" destdir="${classes}" deprecation="on" debug="on" includeantruntime="false" />
-	</target>
+    <!-- javadoc -->
+    <target name="javadoc">
+        <javadoc destdir="${apidoc}" author="true" version="true" use="true" encoding="${encoding}">
+            <packageset dir="${src}" defaultexcludes="yes">
+                <include name="blueprint/**"/>
+            </packageset>
+        </javadoc>
+    </target>
 
-	<!-- javadoc -->
-	<target name="javadoc">
-		<javadoc destdir="${apidoc}" author="true" version="true" use="true" encoding="${encoding}">
-			<packageset dir="${src}" defaultexcludes="yes">
-				<include name="blueprint/**" />
-			</packageset>
-		</javadoc>
-	</target>
+    <!-- jar -->
+    <target name="jar" unless="-jar">
+        <manifest file="MANIFEST.MF">
+            <attribute name="Built-By" value="Sangmin Lee"/>
+        </manifest>
 
-	<!-- jar -->
-	<target name="jar" unless="-jar">
-		<manifest file="MANIFEST.MF">
-			<attribute name="Built-By" value="Sangmin Lee" />
-		</manifest>
+        <jar jarfile="${dist}/blueprint-sdk.jar" filesonly="true" manifest="MANIFEST.MF">
+            <fileset dir="${classes}"/>
+        </jar>
 
-		<jar jarfile="${dist}/blueprint-sdk.jar" filesonly="true" manifest="MANIFEST.MF">
-			<fileset dir="${classes}" />
-		</jar>
+        <jar jarfile="${dist}/blueprint-sdk-javadoc.jar" filesonly="true" manifest="MANIFEST.MF">
+            <fileset dir="${apidoc}"/>
+        </jar>
 
-		<jar jarfile="${dist}/blueprint-sdk-javadoc.jar" filesonly="true" manifest="MANIFEST.MF">
-			<fileset dir="${apidoc}" />
-		</jar>
-
-		<delete file="MANIFEST.MF" />
-		<delete dir="apidoc" />
-	</target>
+        <delete file="MANIFEST.MF"/>
+        <delete dir="apidoc"/>
+    </target>
 </project>

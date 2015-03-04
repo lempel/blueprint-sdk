@@ -13,143 +13,136 @@
 
 package blueprint.sdk.core.concurrent;
 
-import org.apache.log4j.Logger;
-
 import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
+import org.apache.log4j.Logger;
 
 /**
  * A Group of Workers<br>
  * Maintains JobQueue and Workers<br>
  * <br>
  * Provides automatic thread spanning feature, call start() method.<br>
- * 
+ *
  * @author Sangmin Lee
  * @since 2008. 11. 25.
  */
 public class SpanningWorkerGroup<J, Q extends JobQueue<J>> extends WorkerGroup<J, JobQueue<J>> {
-	private static final Logger L = Logger.getLogger(SpanningWorkerGroup.class);
+    /**
+     * check interval (msec)
+     */
+    private static final int INTERVAL = 1000;
+    private static final Logger L = Logger.getLogger(SpanningWorkerGroup.class);
+    private long maxThroughput = 0;
 
-	/** check interval (msec) */
-	protected static final int INTERVAL = 1000;
+    /**
+     * Constructor<br>
+     * Creates Workers and JobQueue<br>
+     *
+     * @param jobQueue job queue
+     * @param workerClass Worker class
+     * @param workerCount Initial number of workers
+     */
+    @SuppressWarnings("WeakerAccess")
+    public SpanningWorkerGroup(final Q jobQueue, final Class<? extends Worker<J>> workerClass, final int workerCount) {
+        super(jobQueue, workerClass, workerCount);
 
-	private long maxThroughput = 0;
+        Refiller refiller = new Refiller();
+        refiller.start();
+    }
 
-	protected Refiller refiller;
+    public void run() {
+        try {
+            // instantiate & start workers
+            for (int i = 0; i < initialWorkers; i++) {
+                newWorker();
+            }
 
-	/**
-	 * Constructor<br>
-	 * Creates Workers and JobQueue<br>
-	 * 
-	 * @param jobQueue
-	 * @param workerClass
-	 * @param workerCount
-	 *            Initial number of workers
-	 * @throws Exception
-	 *             Can't create workers
-	 */
-	public SpanningWorkerGroup(final Q jobQueue, final Class<? extends Worker<J>> workerClass, final int workerCount)
-			throws Exception {
-		super(jobQueue, workerClass, workerCount);
+            running = true;
 
-		refiller = new Refiller();
-		refiller.start();
-	}
+            // if initial number of workers are too small, increase it first
+            if (workers.size() * THREAD_INC_RATIO < 1) {
+                int newThreads = (int) (1.0f / THREAD_INC_RATIO) - workers.size();
+                addWorkers(newThreads);
+            }
+        } catch (Exception e) {
+            L.error("Can't create workers. Terminating " + getClass().getSimpleName(), e);
+        }
 
-	public void run() {
-		try {
-			// instantiate & start workers
-			for (int i = 0; i < initialWorkers; i++) {
-				newWorker();
-			}
+        long start = 0L;
+        jobQueue.setCount(true);
 
-			running = true;
+        boolean interrupted;
+        while (running) {
+            try {
+                // reset interrupted flag & keep start time
+                interrupted = false;
+                // new period, update start time
+                start = System.currentTimeMillis();
 
-			// if initial number of workers are too small, increase it first
-			if (workers.size() * THREAD_INC_RATIO < 1) {
-				int newThreads = (int) (1.0f / THREAD_INC_RATIO) - workers.size();
-				addWorkers(newThreads);
-			}
-		} catch (Exception e) {
-			L.error("Can't create workers. Terminating " + getClass().getSimpleName(), e);
-		}
+                Thread.sleep(INTERVAL);
+            } catch (InterruptedException ignored) {
+                interrupted = true;
+            }
 
-		boolean interrupted = false;
-		long start = 0L;
-		jobQueue.setCount(true);
+            if (!interrupted) {
+                // calculate elapsed time
+                long elapsed = System.currentTimeMillis() - start;
 
-		while (running) {
-			try {
-				// reset interrupted flag & keep start time
-				interrupted = false;
-				// new period, update start time
-				start = System.currentTimeMillis();
+                spanWorkers(elapsed);
+            }
+        }
 
-				Thread.sleep(INTERVAL);
-			} catch (InterruptedException ignored) {
-				interrupted = true;
-			}
+        terminated = true;
+    }
 
-			if (!interrupted) {
-				// calculate elapsed time
-				long elapsed = System.currentTimeMillis() - start;
+    /**
+     * @param elapsed elapsed time in msec
+     */
+    private void spanWorkers(long elapsed) {
+        // convert msec to sec with rounding
+        elapsed = (elapsed + 500) / 1000;
 
-				spanWorkers(elapsed);
-			}
-		}
+        // calculate throughput & reset counter
+        long throughtput = jobQueue.getProcessedJobs() / elapsed;
+        jobQueue.resetProcessedJobs();
 
-		terminated = true;
-	}
+        // is all busy situation occurred?
+        if (jobQueue.isAllBusyTrapped()) {
+            jobQueue.resetAllBusyTrap();
 
-	/**
-	 * @param elapsed
-	 *            elapsed time in msec
-	 */
-	private void spanWorkers(long elapsed) {
-		// convert msec to sec with rounding
-		elapsed = (elapsed + 500) / 1000;
+            int newThreads = (int) (THREAD_INC_RATIO * workers.size());
+            if (throughtput >= maxThroughput) {
+                maxThroughput = throughtput;
 
-		// calculate throughput & reset counter
-		long throughtput = jobQueue.getProcessedJobs() / elapsed;
-		jobQueue.resetProcessedJobs();
+                // increase the number of threads
+                addWorkers(newThreads);
+            } else {
+                // decrease the number of threads
+                removeWorkers(newThreads);
+            }
+        }
+    }
 
-		// is all busy situation occured?
-		if (jobQueue.isAllBusyTrapped()) {
-			jobQueue.resetAllBusyTrap();
+    /**
+     * Refills dead workers
+     *
+     * @author Sangmin Lee
+     * @since 2013. 12. 11.
+     */
+    private class Refiller extends TerminatableThread {
+        @Override
+        public void run() {
+            running = true;
+            while (running) {
+                synchronized (deathMonitor) {
+                    try {
+                        deathMonitor.wait();
+                    } catch (InterruptedException ignored) {
+                    }
 
-			int newThreads = (int) (THREAD_INC_RATIO * workers.size());
-			if (throughtput >= maxThroughput) {
-				maxThroughput = throughtput;
-
-				// increase the number of threads
-				addWorkers(newThreads);
-			} else {
-				// decrease the number of threads
-				removeWorkers(newThreads);
-			}
-		}
-	}
-
-	/**
-	 * Refills dead workers
-	 * 
-	 * @author Sangmin Lee
-	 * @since 2013. 12. 11.
-	 */
-	class Refiller extends TerminatableThread {
-		@Override
-		public void run() {
-			running = true;
-			while (running) {
-				synchronized (deathMonitor) {
-					try {
-						deathMonitor.wait();
-					} catch (InterruptedException ignored) {
-					}
-
-					maintainWorkers();
-				}
-			}
-			terminated = true;
-		}
-	}
+                    maintainWorkers();
+                }
+            }
+            terminated = true;
+        }
+    }
 }

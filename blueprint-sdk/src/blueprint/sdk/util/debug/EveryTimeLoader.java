@@ -13,83 +13,79 @@
 
 package blueprint.sdk.util.debug;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import org.apache.log4j.Logger;
+
+import java.io.FileInputStream;
+import java.io.IOException;
 
 /**
  * loads class every time (always hot!)
- * 
+ *
  * @author Sangmin Lee
  * @since 2009. 3. 26.
  */
 public class EveryTimeLoader extends ClassLoader {
-	private static final Logger L = Logger.getLogger(EveryTimeLoader.class);
+    private static final Logger L = Logger.getLogger(EveryTimeLoader.class);
 
-	@SuppressWarnings("unused")
-	private ClassLoader parent;
-	private String classDir;
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
+    private ClassLoader parent;
+    private final String classDir;
 
-	private EveryTimeLoader(ClassLoader parent, String classDir) {
-		super();
+    private EveryTimeLoader(ClassLoader parent, String classDir) {
+        super();
 
-		this.parent = parent;
-		this.classDir = classDir;
-	}
+        this.parent = parent;
+        this.classDir = classDir;
+    }
 
-	public Class<?> loadClass(String name) throws ClassNotFoundException {
-		return loadClass(name, false);
-	}
+    public static synchronized EveryTimeLoader newInstance(String classDir) {
+        Thread currentThread = Thread.currentThread();
+        ClassLoader ctxClassLoader = currentThread.getContextClassLoader();
 
-	public static synchronized EveryTimeLoader newInstance(String classDir) {
-		Thread currentThread = Thread.currentThread();
-		ClassLoader ctxClassLoader = currentThread.getContextClassLoader();
+        EveryTimeLoader newClassLoader;
+        if (!(ctxClassLoader instanceof EveryTimeLoader)) {
+            newClassLoader = new EveryTimeLoader(ctxClassLoader, classDir);
+            currentThread.setContextClassLoader(newClassLoader);
+        } else {
+            newClassLoader = (EveryTimeLoader) ctxClassLoader;
+        }
 
-		EveryTimeLoader newClassLoader;
-		if (!(ctxClassLoader instanceof EveryTimeLoader)) {
-			newClassLoader = new EveryTimeLoader(ctxClassLoader, classDir);
-			currentThread.setContextClassLoader(newClassLoader);
-		} else {
-			newClassLoader = (EveryTimeLoader) ctxClassLoader;
-		}
+        return newClassLoader;
+    }
 
-		return newClassLoader;
-	}
+    private static String replace(String str) {
+        char[] temp = str.toCharArray();
+        for (int i = 0; i < temp.length; i++) {
+            if (temp[i] == '.') {
+                temp[i] = '/';
+            }
+        }
+        return new String(temp);
+    }
 
-	protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-		Class<?> result = null;
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        return loadClass(name, false);
+    }
 
-		try {
-			FileInputStream fis = new FileInputStream(classDir + EveryTimeLoader.reaplace(name, '.', '/') + ".class");
-			byte[] buffer = new byte[fis.available()];
-			fis.read(buffer);
-			fis.close();
+    protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
+        Class<?> result = null;
 
-			result = defineClass(name, buffer, 0, buffer.length);
+        try {
+            FileInputStream fis = new FileInputStream(classDir + EveryTimeLoader.replace(name) + ".class");
+            byte[] buffer = new byte[fis.available()];
+            int nRead = fis.read(buffer);
+            fis.close();
 
-			L.debug("class loaded  - " + classDir + EveryTimeLoader.reaplace(name, '.', '/') + ".class");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			throw new ClassNotFoundException();
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new ClassNotFoundException();
-		} catch (Throwable t) {
-			t.printStackTrace();
-		}
+            result = defineClass(name, buffer, 0, nRead);
 
-		return result;
-	}
+            L.debug("class loaded  - " + classDir + EveryTimeLoader.replace(name) + ".class");
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new ClassNotFoundException();
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
 
-	private static String reaplace(String str, char srcChar, char targetChar) {
-		char[] temp = str.toCharArray();
-		for (int i = 0; i < temp.length; i++) {
-			if (temp[i] == srcChar) {
-				temp[i] = targetChar;
-			}
-		}
-		return new String(temp);
-	}
+        return result;
+    }
 }

@@ -15,22 +15,22 @@ package blueprint.sdk.util.queue;
 
 /**
  * Exception for JdbcQueue
- * 
+ *
  * @author Sangmin Lee
  * @since 2013. 9. 4.
  */
 public class JdbcQueueException extends RuntimeException {
-	private static final long serialVersionUID = 3168291844624116465L;
+    private static final long serialVersionUID = 3168291844624116465L;
 
-	public JdbcQueueException(String message) {
-		super(message);
-	}
+    public JdbcQueueException(String message) {
+        super(message);
+    }
 
-	public JdbcQueueException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public JdbcQueueException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public JdbcQueueException(Throwable cause) {
-		super(cause);
-	}
+    public JdbcQueueException(Throwable cause) {
+        super(cause);
+    }
 }

@@ -17,17 +17,20 @@ import java.io.Serializable;
 
 /**
  * Item for Cache
- * 
- * @param <T>
- *            element type
+ *
+ * @param <T> element type
  * @author Sangmin Lee
  * @since 2013. 6. 28.
  */
 public class CacheItem<T> implements Serializable {
-	private static final long serialVersionUID = 5248015221521450410L;
+    private static final long serialVersionUID = 5248015221521450410L;
 
-	/** actual cache element */
-	public T element;
-	/** last timestamp */
-	public long timestamp;
+    /**
+     * actual cache element
+     */
+    public T element;
+    /**
+     * last timestamp
+     */
+    public long timestamp;
 }

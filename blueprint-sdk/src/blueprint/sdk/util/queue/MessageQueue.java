@@ -19,146 +19,151 @@ import java.util.UUID;
 
 /**
  * Simple Message Queue.
- * 
+ *
  * @author Sangmin Lee
  * @since 2013. 9. 4.
  */
 public class MessageQueue implements Queue<String> {
-	/** actual queue */
-	protected LinkedList<Element> queue = new LinkedList<Element>();
+    /**
+     * actual queue
+     */
+    private final LinkedList<Element> queue = new LinkedList<>();
 
-	/** waiting consumers */
-	protected LinkedList<Thread> waiters = new LinkedList<Thread>();
+    /**
+     * waiting consumers
+     */
+    private final LinkedList<Thread> waiters = new LinkedList<>();
 
-	public MessageQueue() {
-		super();
-	}
+    @Override
+    public void clear() {
+        synchronized (queue) {
+            queue.clear();
+        }
+    }
 
-	@Override
-	public void clear() {
-		synchronized (queue) {
-			queue.clear();
-		}
-	}
+    @Override
+    public void push(String element) {
+        if (element == null) {
+            throw new NullPointerException("Can't push null");
+        }
 
-	@Override
-	public void push(String element) {
-		if (element == null) {
-			throw new NullPointerException("Can't push null");
-		}
+        Element item = new Element();
+        item.uuid = UUID.randomUUID().toString();
+        item.content = element;
 
-		Element item = new Element();
-		item.uuid = UUID.randomUUID().toString();
-		item.content = element;
+        synchronized (queue) {
+            queue.push(item);
+        }
+        notifyWaiter();
+    }
 
-		synchronized (queue) {
-			queue.push(item);
-		}
-		notifyWaiter();
-	}
+    /**
+     * Retrieves an element from queue.
+     *
+     * @return queue element or null(queue is empty)
+     */
+    @SuppressWarnings("WeakerAccess")
+    public String pop() {
+        String result = null;
 
-	/**
-	 * Retrieves an element from queue.
-	 * 
-	 * @return queue element or null(queue is empty)
-	 */
-	public String pop() {
-		String result = null;
+        try {
+            Element element;
+            synchronized (queue) {
+                element = queue.pop();
+            }
 
-		try {
-			Element element;
-			synchronized (queue) {
-				element = queue.pop();
-			}
+            if (element != null) {
+                result = element.content;
+            }
+        } catch (NoSuchElementException ignored) {
+            // just return null
+        }
 
-			if (element != null) {
-				result = element.content;
-			}
-		} catch (NoSuchElementException ignored) {
-			// just return null
-		}
+        return result;
+    }
 
-		return result;
-	}
+    @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
+    @Override
+    public String take() {
 
-	@Override
-	public String take() {
-		String result = null;
-		Thread current = null;
+        String result = pop();
+        if (result == null) {
+            Thread current = Thread.currentThread();
+            synchronized (waiters) {
+                waiters.add(current);
+            }
 
-		result = pop();
+            synchronized (current) {
+                try {
+                    current.wait();
+                } catch (InterruptedException ignored) {
+                }
 
-		if (result == null) {
-			current = Thread.currentThread();
-			synchronized (waiters) {
-				waiters.add(current);
-			}
+                result = pop();
+            }
+        }
 
-			synchronized (current) {
-				try {
-					current.wait();
-				} catch (InterruptedException ignored) {
-				}
+        return result;
+    }
 
-				result = pop();
-			}
-		}
+    /**
+     * Wake up a blocked thread
+     */
+    @SuppressWarnings({"SynchronizationOnLocalVariableOrMethodParameter", "WeakerAccess"})
+    protected void notifyWaiter() {
+        try {
+            Thread consumer;
+            synchronized (waiters) {
+                consumer = waiters.pop();
+            }
 
-		return result;
-	}
+            if (consumer != null) {
+                synchronized (consumer) {
+                    consumer.notifyAll();
+                }
+            }
+        } catch (NoSuchElementException ignored) {
+        }
+    }
 
-	/**
-	 * Wake up a blocked thread
-	 */
-	protected void notifyWaiter() {
-		try {
-			Thread consumer = null;
-			synchronized (waiters) {
-				consumer = waiters.pop();
-			}
+    /**
+     * release all threads which is block by {@link MessageQueue#take()}
+     */
+    @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
+    public void release() {
+        synchronized (waiters) {
+            while (!waiters.isEmpty()) {
+                Thread waiter = waiters.pop();
+                if (waiter != null) {
+                    synchronized (waiter) {
+                        waiter.notifyAll();
+                    }
+                }
+            }
+        }
+    }
 
-			if (consumer != null) {
-				synchronized (consumer) {
-					consumer.notifyAll();
-				}
-			}
-		} catch (NoSuchElementException ignored) {
-		}
-	}
-
-	/**
-	 * release all threads which is block by {@link MessageQueue#take()}
-	 */
-	public void release() {
-		synchronized (waiters) {
-			while (!waiters.isEmpty()) {
-				Thread waiter = waiters.pop();
-				if (waiter != null) {
-					synchronized (waiter) {
-						waiter.notifyAll();
-					}
-				}
-			}
-		}
-	}
-
-	@Override
-	public int size() {
-		synchronized (queue) {
-			return queue.size();
-		}
-	}
+    @Override
+    public int size() {
+        synchronized (queue) {
+            return queue.size();
+        }
+    }
 }
 
 /**
  * Internal element of MessageQueue
- * 
+ *
  * @author Sangmin Lee
  * @since 2013. 8. 27.
  */
 class Element {
-	/** UUID of content */
-	public String uuid;
-	/** actual queue content */
-	public String content;
+    /**
+     * UUID of content
+     */
+    public String uuid;
+    /**
+     * actual queue content
+     */
+    public String content;
 }

@@ -32,44 +32,37 @@ import java.net.URLClassLoader;
  * catch (IOException e) {<br>
  * e.printStackTrace();<br>
  * }<br>
- * 
+ *
  * @author Sangmin Lee
  * @since 2009. 2. 4.
  */
 public class ClasspathModifier {
-	private static final Class<?>[] PARAMS = new Class[] { URL.class };
+    private static final Class<?>[] PARAMS = new Class[]{URL.class};
 
-	public static void addPath(String path) throws IOException {
-		File f = new File(path);
-		addPath(f);
-	}
+    public static void addPath(String path) throws IOException {
+        File f = new File(path);
+        addPath(f);
+    }
 
-	public static void addPath(File file) throws IOException {
-		addURL(file.toURI().toURL());
-	}
+    @SuppressWarnings("WeakerAccess")
+    public static void addPath(File file) throws IOException {
+        addURL(file.toURI().toURL());
+    }
 
-	public static void addURL(URL u) throws IOException {
-		URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-		Class<URLClassLoader> sysclass = URLClassLoader.class;
+    @SuppressWarnings("WeakerAccess")
+    public static void addURL(URL u) throws IOException {
+        URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        Class<URLClassLoader> sysclass = URLClassLoader.class;
 
-		try {
-			Method method = sysclass.getDeclaredMethod("addURL", PARAMS);
-			method.setAccessible(true);
-			method.invoke(sysloader, new Object[] { u });
-		} catch (SecurityException e) {
-			throw new IOException("", e);
-		} catch (IllegalArgumentException e) {
-			// Should not happen
-			throw new IOException("Can't call URLClassLoader.addURL(URL)", e);
-		} catch (NoSuchMethodException e) {
-			// Should not happen
-			throw new IOException("Can't call URLClassLoader.addURL(URL)", e);
-		} catch (IllegalAccessException e) {
-			// Should not happen
-			throw new IOException("Can't call URLClassLoader.addURL(URL)", e);
-		} catch (InvocationTargetException e) {
-			// Should not happen
-			throw new IOException("Can't call URLClassLoader.addURL(URL)", e);
-		}
-	}
+        try {
+            Method method = sysclass.getDeclaredMethod("addURL", PARAMS);
+            method.setAccessible(true);
+            method.invoke(sysloader, u);
+        } catch (SecurityException e) {
+            throw new IOException("", e);
+        } catch (IllegalArgumentException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            // Should not happen
+            throw new IOException("Can't call URLClassLoader.addURL(URL)", e);
+        }
+    }
 }

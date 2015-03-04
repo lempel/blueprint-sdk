@@ -17,57 +17,63 @@ import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * Base class for TimestampedLock and TimestampedReadWriteLock
- * 
+ *
+ * @param <T> Actual Lock
  * @author Sangmin Lee
  * @since 2014. 5. 9.
  */
 public class TimestampedLockBase<T> {
-	/** Timestamp of System.currentTimeMillis() */
-	protected long timestamp = System.currentTimeMillis();
+    /**
+     * Timestamp of System.currentTimeMillis()
+     */
+    private long timestamp = System.currentTimeMillis();
 
-	/** Actual lock */
-	private T lock;
+    /**
+     * Actual lock
+     */
+    private final T lock;
 
-	/**
-	 * @param lock
-	 *            Actual {@link Lock} or {@link ReadWriteLock}
-	 */
-	public TimestampedLockBase(T lock) {
-		this.lock = lock;
+    /**
+     * @param lock Actual {@link T} or {@link ReadWriteLock}
+     */
+    @SuppressWarnings("WeakerAccess")
+    public TimestampedLockBase(T lock) {
+        this.lock = lock;
 
-		if (lock == null) {
-			throw new NullPointerException("Provided lock can't be null");
-		}
-	}
+        if (lock == null) {
+            throw new NullPointerException("Provided lock can't be null");
+        }
+    }
 
-	/**
-	 * @return Actual lock
-	 */
-	protected final T getLock() {
-		return lock;
-	}
+    /**
+     * @return Actual lock
+     */
+    @SuppressWarnings("WeakerAccess")
+    protected final T getLock() {
+        return lock;
+    }
 
-	/**
-	 * @return Timestamp of System.currentTimeMillis()
-	 */
-	public long getTimestamp() {
-		return timestamp;
-	}
+    /**
+     * @return Timestamp of System.currentTimeMillis()
+     */
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-	/**
-	 * Update timestamp with current time using System.currentTimeMillis()
-	 */
-	public void updateTimestamp() {
-		timestamp = System.currentTimeMillis();
-	}
+    /**
+     * Update timestamp with current time using System.currentTimeMillis()
+     */
+    @SuppressWarnings("WeakerAccess")
+    public void updateTimestamp() {
+        timestamp = System.currentTimeMillis();
+    }
 
-	/**
-	 * @param delta
-	 *            time in millisecond
-	 * @return true if timestamp is older than '
-	 *         {@link System#currentTimeMillis()} - delta'
-	 */
-	public boolean isTimedOut(long delta) {
-		return (getTimestamp() < System.currentTimeMillis() - delta);
-	}
+    /**
+     * @param delta time in millisecond
+     * @return true if timestamp is older than '
+     * {@link System#currentTimeMillis()} - delta'
+     */
+    public boolean isTimedOut(long delta) {
+        return (getTimestamp() < System.currentTimeMillis() - delta);
+    }
 }

@@ -13,6 +13,8 @@
 
 package blueprint.sdk.core.concurrent.lock.timestamped;
 
+import com.sun.istack.internal.NotNull;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -20,81 +22,75 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Wrapper of {@link ReentrantLock} with timestamp.
- * 
- * @param <T>
- *            Actual {@link Lock} to wrap
+ *
  * @author Sangmin Lee
  * @since 2014. 5. 9.
  */
 public class TimestampedLock extends TimestampedLockBase<ReentrantLock> implements Lock {
-	/**
-	 * @param fair
-	 *            fairness for {@link ReentrantLock}
-	 */
-	public TimestampedLock(boolean fair) {
-		super(new ReentrantLock(fair));
-	}
+    /**
+     * @param fair fairness for {@link ReentrantLock}
+     */
+    public TimestampedLock(boolean fair) {
+        super(new ReentrantLock(fair));
+    }
 
-	@Override
-	public void lock() {
-		getLock().lock();
+    @Override
+    public void lock() {
+        getLock().lock();
 
-		updateTimestamp();
-	}
+        updateTimestamp();
+    }
 
-	@Override
-	public void lockInterruptibly() throws InterruptedException {
-		try {
-			getLock().lockInterruptibly();
+    @Override
+    public void lockInterruptibly() throws InterruptedException {
+        getLock().lockInterruptibly();
 
-			updateTimestamp();
-		} catch (InterruptedException e) {
-			throw e;
-		}
-	}
+        updateTimestamp();
+    }
 
-	@Override
-	public boolean tryLock() {
-		boolean result = getLock().tryLock();
+    @Override
+    public boolean tryLock() {
+        boolean result = getLock().tryLock();
 
-		if (result) {
-			updateTimestamp();
-		}
+        if (result) {
+            updateTimestamp();
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
-		boolean result = getLock().tryLock(time, unit);
+    @Override
+    public boolean tryLock(@NotNull long time, @NotNull TimeUnit unit) throws InterruptedException {
+        boolean result = getLock().tryLock(time, unit);
 
-		if (result) {
-			updateTimestamp();
-		}
+        if (result) {
+            updateTimestamp();
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public void unlock() {
-		getLock().unlock();
+    @Override
+    public void unlock() {
+        getLock().unlock();
 
-		updateTimestamp();
-	}
+        updateTimestamp();
+    }
 
-	@Override
-	public Condition newCondition() {
-		Condition result = getLock().newCondition();
+    @Override
+    public Condition newCondition() {
+        Condition result = getLock().newCondition();
 
-		updateTimestamp();
+        updateTimestamp();
 
-		return result;
-	}
+        return result;
+    }
 
-	/**
-	 * @return {@link ReentrantLock#isLocked()}
-	 */
-	public boolean isLocked() {
-		return getLock().isLocked();
-	}
+    /**
+     * @return {@link ReentrantLock#isLocked()}
+     */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    public boolean isLocked() {
+        return getLock().isLocked();
+    }
 }

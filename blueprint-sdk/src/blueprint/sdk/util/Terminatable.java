@@ -15,14 +15,14 @@ package blueprint.sdk.util;
 
 /**
  * Provides common method for graceful shutdown
- * 
+ *
  * @author Sangmin Lee
  * @since 2007. 07. 18
  */
 public interface Terminatable {
-	boolean isValid();
+    boolean isValid();
 
-	boolean isTerminated();
+    boolean isTerminated();
 
-	void terminate();
+    void terminate();
 }

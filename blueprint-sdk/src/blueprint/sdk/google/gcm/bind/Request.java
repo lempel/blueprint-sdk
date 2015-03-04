@@ -17,11 +17,11 @@ import java.util.Map;
 
 /**
  * Request message for GCM
- * 
+ *
  * @author Sangmin Lee
  * @since 2013. 12. 10.
  */
 public class Request {
-	public String[] registration_ids = null;
-	public Map<String, String> data = null;
+    public String[] registration_ids = null;
+    public Map<String, String> data = null;
 }

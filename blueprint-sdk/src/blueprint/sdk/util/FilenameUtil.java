@@ -17,52 +17,53 @@ import java.util.UUID;
 
 /**
  * Handles filenames.
- * 
+ *
  * @author Sangmin Lee
  * @since 2002. 07. 30
  */
+@SuppressWarnings("WeakerAccess")
 public class FilenameUtil {
-	protected static String fileSeparator = System.getProperty("file.separator");
+    private static final String fileSeparator = System.getProperty("file.separator");
 
-	public static String getClassName(final Object obj) {
-		return obj.getClass().getName();
-	}
+    public static String getClassName(final Object obj) {
+        return obj.getClass().getName();
+    }
 
-	/**
-	 * generate a random but not existing file name for given path
-	 * 
-	 * @param filepath
-	 * @param ext
-	 * @return full path
-	 */
-	public static String generateRandomFileName(final String filepath, final String ext) {
-		String path = filepath;
-		if (!path.endsWith(fileSeparator)) {
-			path = path + fileSeparator;
-		}
+    /**
+     * generate a random but not existing file name for given path
+     *
+     * @param path target path
+     * @param ext file extension
+     * @return full path
+     */
+    public static String generateRandomFileName(final String path, final String ext) {
+        String actualPath = path;
+        if (!actualPath.endsWith(fileSeparator)) {
+            actualPath = actualPath + fileSeparator;
+        }
 
-		String newExt = ext;
-		if (newExt.charAt(0) != '.') {
-			newExt = "." + newExt;
-		}
+        String newExt = ext;
+        if (newExt.charAt(0) != '.') {
+            newExt = "." + newExt;
+        }
 
-		String uuid = UUID.randomUUID().toString().replaceAll("\\-", "");
+        String uuid = UUID.randomUUID().toString().replaceAll("\\-", "");
 
-		return path + uuid + newExt;
-	}
+        return actualPath + uuid + newExt;
+    }
 
-	public static String extractFileName(final String filePath) {
-		String result;
-		int pos = filePath.lastIndexOf(fileSeparator);
-		if (pos < 0) {
-			result = filePath;
-		} else {
-			result = filePath.substring(pos + 1, filePath.length());
-		}
-		return result;
-	}
+    public static String extractFileName(final String filePath) {
+        String result;
+        int pos = filePath.lastIndexOf(fileSeparator);
+        if (pos < 0) {
+            result = filePath;
+        } else {
+            result = filePath.substring(pos + 1, filePath.length());
+        }
+        return result;
+    }
 
-	public static String getFileSeparator() {
-		return fileSeparator;
-	}
+    public static String getFileSeparator() {
+        return fileSeparator;
+    }
 }
