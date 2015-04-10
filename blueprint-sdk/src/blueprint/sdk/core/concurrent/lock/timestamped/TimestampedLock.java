@@ -13,8 +13,6 @@
 
 package blueprint.sdk.core.concurrent.lock.timestamped;
 
-import com.sun.istack.internal.NotNull;
-
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -60,7 +58,7 @@ public class TimestampedLock extends TimestampedLockBase<ReentrantLock> implemen
     }
 
     @Override
-    public boolean tryLock(@NotNull long time, @NotNull TimeUnit unit) throws InterruptedException {
+    public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
         boolean result = getLock().tryLock(time, unit);
 
         if (result) {
