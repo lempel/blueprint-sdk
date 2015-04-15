@@ -14,6 +14,7 @@
 package blueprint.sdk.util.queue;
 
 import blueprint.sdk.util.jdbc.CloseHelper;
+import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
 import org.h2.Driver;
 import org.h2.constant.ErrorCode;
 import org.h2.jdbcx.JdbcDataSource;
@@ -45,38 +46,32 @@ public class H2Queue extends JdbcQueue {
     private PreparedStatement deleteStmt;
 
     /**
+     * Synchronizes changes to file (by closing connection)
+     */
+    private TerminatableThread synchronizer;
+
+    /**
      * Constructor
      *
      * @param datasrc DataSource for persistence
      */
     public H2Queue(JdbcDataSource datasrc) {
         super(datasrc);
-
-        // TODO Bad idea. Must provide a way to stop this thread.
-        Thread sync = new Thread() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        // 10 minutes
-                        sleep(10 * 60 * 1000);
-                    } catch (InterruptedException ignored) {
-                    }
-
-                    closeConnection();
-                }
-            }
-        };
-        sync.setDaemon(true);
-        sync.start();
     }
 
     @Override
     public void clear() throws JdbcQueueException {
-        super.clear();
+        synchronized (this) {
+            super.clear();
 
-        // unload H2 Driver too
-        Driver.unload();
+            // unload H2 Driver too
+            Driver.unload();
+
+            // terminate synchronizer
+            if (synchronizer != null && !synchronizer.isTerminated()) {
+                synchronizer.terminate();
+            }
+        }
     }
 
     /**
@@ -93,6 +88,28 @@ public class H2Queue extends JdbcQueue {
                 insertStmt = con.prepareStatement("INSERT INTO " + schema + "." + table
                         + " (UUID, CONTENT) VALUES (?, ?)");
                 deleteStmt = con.prepareStatement("DELETE FROM " + schema + "." + table + " WHERE UUID = ?");
+            }
+
+            if (synchronizer == null || synchronizer.isTerminated()) {
+                synchronizer = new TerminatableThread() {
+                    @Override
+                    public void run() {
+                        running = true;
+
+                        while (running) {
+                            try {
+                                // 10 minutes
+                                sleep(10 * 60 * 1000);
+                            } catch (InterruptedException ignored) {
+                            }
+
+                            closeConnection();
+                        }
+
+                        terminated = true;
+                    }
+                };
+                synchronizer.start();
             }
         }
     }
