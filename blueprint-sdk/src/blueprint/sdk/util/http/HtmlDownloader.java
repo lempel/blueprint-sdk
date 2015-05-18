@@ -57,28 +57,60 @@ import java.util.StringTokenizer;
  * @since 2015. 03. 12
  */
 public class HtmlDownloader {
-    // private static final Logger L = LoggerFactory.getLogger(HtmlDownloader.class);
+    // private static final Logger L =
+    // LoggerFactory.getLogger(HtmlDownloader.class);
 
     /** Value for 'User-Agent' of HTTP header */
     public static String USER_AGENT = "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36";
 
     /**
-     * Download designated uri as a String
-     *
-     * @param uri
-     *            target uri
-     * @return contents of target
+     * Connect to given url
+     * 
+     * @param target target url
+     * @return connection
      * @throws IOException
-     *             URI connection error
      */
-    public String download(String uri) throws IOException {
-	String result;
-
-	URL url = new URL(uri);
-	HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    private HttpURLConnection connect(URL target) throws IOException {
+	HttpURLConnection connection = (HttpURLConnection) target.openConnection();
 	connection.setRequestProperty("User-Agent", USER_AGENT);
 	connection.setRequestProperty("Connection", "Keep-Alive");
 	connection.connect();
+	
+	return connection;
+    }
+
+    /**
+     * Visit designated url and return response code.
+     * 
+     * @param target
+     *            target url
+     * @return http response code
+     * @see {@link HttpURLConnection}
+     * @throws IOException
+     *             URI connection error
+     */
+    public int getResponseCode(String target) throws IOException {
+	URL url = new URL(target);
+
+	HttpURLConnection connection = connect(url);
+
+	return connection.getResponseCode();
+    }
+
+    /**
+     * Download designated url as a String
+     *
+     * @param target
+     *            target url
+     * @return contents of target
+     * @throws IOException
+     *             URL connection error
+     */
+    public String download(String target) throws IOException {
+	String result;
+
+	URL url = new URL(target);
+	HttpURLConnection connection = connect(url);
 
 	if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 	    BufferedInputStream contentStream = new BufferedInputStream(
