@@ -13,12 +13,6 @@
 
 package blueprint.sdk.google.gcm;
 
-import blueprint.sdk.google.gcm.bind.Request;
-import blueprint.sdk.google.gcm.bind.Response;
-import blueprint.sdk.util.Validator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.log4j.Logger;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,6 +21,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import blueprint.sdk.google.gcm.bind.Request;
+import blueprint.sdk.google.gcm.bind.Response;
+import blueprint.sdk.util.Validator;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * Sends push message to GCM.
  *
@@ -34,7 +37,7 @@ import java.util.Map;
  * @since 2013. 12. 3.
  */
 public class GcmSender {
-    private static final Logger L = Logger.getLogger(GcmSender.class);
+    private static final Logger L = LoggerFactory.getLogger(GcmSender.class);
 
     @SuppressWarnings("CanBeFinal")
     public static String GCM_URL = "https://android.googleapis.com/gcm/send";

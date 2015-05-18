@@ -13,7 +13,8 @@
 
 package blueprint.sdk.util.debug;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Prints current thread's stack trace at anytime..
@@ -23,7 +24,7 @@ import org.apache.log4j.Logger;
  */
 @SuppressWarnings("WeakerAccess")
 public class StackTracer {
-    private static final Logger L = Logger.getLogger(StackTracer.class);
+    private static final Logger L = LoggerFactory.getLogger(StackTracer.class);
 
     /**
      * Prints current stack trace

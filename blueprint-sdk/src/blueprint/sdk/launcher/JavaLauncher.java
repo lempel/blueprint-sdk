@@ -42,10 +42,12 @@
  */
 package blueprint.sdk.launcher;
 
-import blueprint.sdk.util.config.Config;
-import org.apache.log4j.Logger;
-
 import javax.xml.xpath.XPathExpressionException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import blueprint.sdk.util.config.Config;
 
 /**
  * A Java application launcher for jar hell.<br>
@@ -71,7 +73,7 @@ public class JavaLauncher {
     /**
      * logger
      */
-    private static final Logger LOGGER = Logger.getLogger(JavaLauncher.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JavaLauncher.class);
 
     /**
      * Entry Point

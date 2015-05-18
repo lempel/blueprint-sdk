@@ -13,15 +13,17 @@
 
 package blueprint.sdk.google.gcm.spool;
 
-import blueprint.sdk.google.gcm.GcmResponseDetail;
-import blueprint.sdk.util.Validator;
-import org.apache.log4j.Logger;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import blueprint.sdk.google.gcm.GcmResponseDetail;
+import blueprint.sdk.util.Validator;
 
 /**
  * Rolls error log into separate files hourly.
@@ -31,7 +33,7 @@ import java.util.Date;
  */
 @SuppressWarnings("WeakerAccess")
 public class RollingFileHandler extends GcmErrorHandler {
-    private static final Logger L = Logger.getLogger(RollingFileHandler.class);
+    private static final Logger L = LoggerFactory.getLogger(RollingFileHandler.class);
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-HH");
     private static final long HOUR = 60 * 60 * 1000;

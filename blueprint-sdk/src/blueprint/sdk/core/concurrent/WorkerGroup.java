@@ -13,16 +13,18 @@
 
 package blueprint.sdk.core.concurrent;
 
-import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
-import blueprint.sdk.util.jvm.shutdown.Terminator;
-import blueprint.sdk.util.queue.Queue;
-import org.apache.log4j.Logger;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
+import blueprint.sdk.util.jvm.shutdown.Terminator;
+import blueprint.sdk.util.queue.Queue;
 
 /**
  * A Group of Workers<br>
@@ -44,7 +46,7 @@ public class WorkerGroup<J, Q extends Queue<J>> extends TerminatableThread {
      * worker thread increase ratio
      */
     static final float THREAD_INC_RATIO = 0.2f;
-    private static final Logger L = Logger.getLogger(WorkerGroup.class);
+    private static final Logger L = LoggerFactory.getLogger(WorkerGroup.class);
     protected final Class<? extends Worker<J>> workerClass;
     final int initialWorkers;
     protected final Q jobQueue;

@@ -13,9 +13,11 @@
 
 package blueprint.sdk.core.concurrent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
 import blueprint.sdk.util.queue.Queue;
-import org.apache.log4j.Logger;
 
 /**
  * Worker Thread
@@ -25,7 +27,7 @@ import org.apache.log4j.Logger;
  * @since 2007. 07. 25
  */
 public abstract class Worker<J> extends TerminatableThread {
-    private static final Logger L = Logger.getLogger(WorkerGroup.class);
+    private static final Logger L = LoggerFactory.getLogger(WorkerGroup.class);
 
     private Queue<J> jobQueue = null;
 

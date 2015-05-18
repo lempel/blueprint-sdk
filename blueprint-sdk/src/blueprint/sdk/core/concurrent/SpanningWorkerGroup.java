@@ -13,8 +13,10 @@
 
 package blueprint.sdk.core.concurrent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
-import org.apache.log4j.Logger;
 
 /**
  * A Group of Workers<br>
@@ -30,7 +32,7 @@ public class SpanningWorkerGroup<J, Q extends JobQueue<J>> extends WorkerGroup<J
      * check interval (msec)
      */
     private static final int INTERVAL = 1000;
-    private static final Logger L = Logger.getLogger(SpanningWorkerGroup.class);
+    private static final Logger L = LoggerFactory.getLogger(SpanningWorkerGroup.class);
     private long maxThroughput = 0;
 
     /**

@@ -14,12 +14,14 @@
 
 package blueprint.sdk.util.jvm;
 
-import blueprint.sdk.util.Terminatable;
-import org.apache.log4j.Logger;
-
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import blueprint.sdk.util.Terminatable;
 
 /**
  * Monitors memory usage<br>
@@ -29,7 +31,7 @@ import java.util.List;
  * @since 2009. 3. 2.
  */
 public class MemoryMonitor implements Terminatable, Runnable {
-    private static final Logger L = Logger.getLogger(MemoryMonitor.class);
+    private static final Logger L = LoggerFactory.getLogger(MemoryMonitor.class);
 
     /**
      * check interval - 10sec

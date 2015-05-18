@@ -42,16 +42,19 @@
  */
 package blueprint.sdk.launcher;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.xml.xpath.XPathExpressionException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import blueprint.sdk.util.CharsetUtil;
 import blueprint.sdk.util.StringUtil;
 import blueprint.sdk.util.Validator;
 import blueprint.sdk.util.config.Config;
-import org.apache.log4j.Logger;
-
-import javax.xml.xpath.XPathExpressionException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Forks target program as a child process.
@@ -60,7 +63,7 @@ import java.io.InputStream;
  * @since 2007. 12. 12
  */
 public class ForkHandler extends AbstractHandler {
-    private static final Logger LOGGER = Logger.getLogger(ForkHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ForkHandler.class);
 
     private static final String traceJarName = "trace.jar";
     private static String traceJarLocation = null;

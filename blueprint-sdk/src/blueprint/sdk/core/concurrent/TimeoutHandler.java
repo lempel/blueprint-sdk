@@ -13,11 +13,13 @@
 
 package blueprint.sdk.core.concurrent;
 
-import blueprint.sdk.util.Terminatable;
-import org.apache.log4j.Logger;
-
 import java.util.Enumeration;
 import java.util.Hashtable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import blueprint.sdk.util.Terminatable;
 
 /**
  * Checks registered Terminatables and terminates timed-out or invalid ones
@@ -26,7 +28,7 @@ import java.util.Hashtable;
  * @since 2007. 07. 20
  */
 public final class TimeoutHandler implements Terminatable, Runnable {
-    private static final Logger L = Logger.getLogger(WorkerGroup.class);
+    private static final Logger L = LoggerFactory.getLogger(WorkerGroup.class);
     /**
      * timeout (msec)
      */

@@ -13,16 +13,18 @@
 
 package blueprint.sdk.google.gcm.spool;
 
+import java.sql.SQLException;
+
+import org.h2.jdbcx.JdbcDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import blueprint.sdk.core.concurrent.Worker;
 import blueprint.sdk.core.concurrent.WorkerGroup;
 import blueprint.sdk.google.gcm.GcmSender;
 import blueprint.sdk.util.Terminatable;
 import blueprint.sdk.util.queue.H2Queue;
 import blueprint.sdk.util.queue.Queue;
-import org.apache.log4j.Logger;
-import org.h2.jdbcx.JdbcDataSource;
-
-import java.sql.SQLException;
 
 /**
  * Spooler for GCM.<br>
@@ -31,7 +33,7 @@ import java.sql.SQLException;
  * @since 2013. 12. 10.
  */
 public class GcmSpool implements Terminatable {
-    private static final Logger L = Logger.getLogger(GcmSpool.class);
+    private static final Logger L = LoggerFactory.getLogger(GcmSpool.class);
 
     private final H2Queue queue;
 

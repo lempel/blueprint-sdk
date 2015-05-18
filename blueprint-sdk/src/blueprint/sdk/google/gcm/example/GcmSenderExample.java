@@ -13,13 +13,15 @@
 
 package blueprint.sdk.google.gcm.example;
 
+import java.io.IOException;
+import java.util.HashMap;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import blueprint.sdk.google.gcm.GcmResponse;
 import blueprint.sdk.google.gcm.GcmResponseDetail;
 import blueprint.sdk.google.gcm.GcmSender;
-import org.apache.log4j.Logger;
-
-import java.io.IOException;
-import java.util.HashMap;
 
 /**
  * Example of GcmSender
@@ -28,7 +30,7 @@ import java.util.HashMap;
  * @since 2013. 12. 3.
  */
 public class GcmSenderExample {
-    private static final Logger L = Logger.getLogger(GcmSenderExample.class);
+    private static final Logger L = LoggerFactory.getLogger(GcmSenderExample.class);
 
     public static void main(String[] args) throws IOException {
         // set your apiKey

@@ -13,21 +13,24 @@
 
 package blueprint.sdk.util.config;
 
-import blueprint.sdk.util.JXPathHelper;
-import blueprint.sdk.util.Validator;
-import org.apache.commons.jxpath.JXPathContext;
-import org.apache.commons.jxpath.Pointer;
-import org.apache.log4j.Logger;
-import org.w3c.dom.Node;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.Pointer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+
+import blueprint.sdk.util.JXPathHelper;
+import blueprint.sdk.util.Validator;
 
 /**
  * Configuration Handler
@@ -39,7 +42,7 @@ public class Config {
     /**
      * logger
      */
-    private static final Logger L = Logger.getLogger(Config.class);
+    private static final Logger L = LoggerFactory.getLogger(Config.class);
 
     /**
      * uri of configuration

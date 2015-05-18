@@ -9,6 +9,8 @@
     <libelement value="jar://$MODULE_DIR$/lib/jackson-databind-2.3.3.jar!/" />
     <libelement value="jar://$MODULE_DIR$/lib/log4j-1.2.17.jar!/" />
     <libelement value="jar://$MODULE_DIR$/lib/openjdk-1.6.0-b27-tools.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/slf4j-api-1.7.12.jar!/" />
+    <libelement value="jar://$MODULE_DIR$/lib/slf4j-log4j12-1.7.12.jar!/" />
     <libelement value="jar://$MODULE_DIR$/blueprint-sdk-javadoc.jar!/" />
     <libelement value="jar://$MODULE_DIR$/blueprint-sdk.jar!/" />
     <libelement value="jar://$MODULE_DIR$/lib/commons-codec-1.9-javadoc.jar!/" />
@@ -139,6 +141,24 @@
       <library name="openjdk-1.6.0-b27-tools.jar">
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/openjdk-1.6.0-b27-tools.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="slf4j-api-1.7.12.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/slf4j-api-1.7.12.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="slf4j-log4j12-1.7.12.jar">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/slf4j-log4j12-1.7.12.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

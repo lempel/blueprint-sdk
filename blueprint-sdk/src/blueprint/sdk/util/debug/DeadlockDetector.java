@@ -13,12 +13,14 @@
 
 package blueprint.sdk.util.debug;
 
-import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
-import org.apache.log4j.Logger;
-
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
 
 /**
  * Periodically checks MXBean for deadlock.
@@ -28,7 +30,7 @@ import java.lang.management.ThreadMXBean;
  */
 @SuppressWarnings("WeakerAccess")
 public class DeadlockDetector extends TerminatableThread {
-    private static final Logger L = Logger.getLogger(DeadlockDetector.class);
+    private static final Logger L = LoggerFactory.getLogger(DeadlockDetector.class);
 
     public DeadlockDetector() {
         super();

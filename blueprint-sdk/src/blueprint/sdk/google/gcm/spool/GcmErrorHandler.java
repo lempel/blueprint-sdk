@@ -13,14 +13,17 @@
 
 package blueprint.sdk.google.gcm.spool;
 
+import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import blueprint.sdk.google.gcm.GcmResponse;
 import blueprint.sdk.google.gcm.GcmResponseDetail;
 import blueprint.sdk.google.gcm.GcmSender;
 import blueprint.sdk.google.gcm.bind.Request;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.log4j.Logger;
 
-import java.io.IOException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Handles GCM error
@@ -30,7 +33,7 @@ import java.io.IOException;
  */
 @SuppressWarnings("WeakerAccess")
 public class GcmErrorHandler {
-    private static final Logger L = Logger.getLogger(GcmErrorHandler.class);
+    private static final Logger L = LoggerFactory.getLogger(GcmErrorHandler.class);
 
     /**
      * Jackson ObjectMapper

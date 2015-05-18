@@ -13,10 +13,11 @@
 
 package blueprint.sdk.util.debug;
 
-import org.apache.log4j.Logger;
-
 import java.io.FileInputStream;
 import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * loads class every time (always hot!)
@@ -25,7 +26,7 @@ import java.io.IOException;
  * @since 2009. 3. 26.
  */
 public class EveryTimeLoader extends ClassLoader {
-    private static final Logger L = Logger.getLogger(EveryTimeLoader.class);
+    private static final Logger L = LoggerFactory.getLogger(EveryTimeLoader.class);
 
     @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private ClassLoader parent;

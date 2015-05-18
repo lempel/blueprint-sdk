@@ -21,7 +21,7 @@ import java.util.Date;
  * Convert Date/Time betweed {@link Date} and RFC3339 (GMT)
  * 
  * @author Sangmin Lee
- * @since 2015-04-17
+ * @since 2015. 04. 17
  */
 public class Rfc3339 {
     // 2014-07-21T16:35:27.000Z
