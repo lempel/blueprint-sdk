@@ -25,7 +25,8 @@ import java.util.Vector;
  * A Worker Group shares a JobQueue.<br>
  * <b>Thread Safe</b><br>
  *
- * @param <T> job class
+ * @param <T>
+ *            job class
  * @author Sangmin Lee
  * @since 2008. 11. 25.
  */
@@ -62,29 +63,30 @@ public class JobQueue<T> implements Queue<T> {
     /**
      * push a job Object to queue<br>
      *
-     * @param aJob job to push
+     * @param aJob
+     *            job to push
      */
     public void push(final T aJob) {
-        mtx.lock();
-        try {
-            queue.add(aJob);
+	mtx.lock();
+	try {
+	    queue.add(aJob);
 
-            // if lock is not in use (i.e. all threads are busy)
-            if (!lock.isLocked()) {
-                synchronized (allBusyTrapLock) {
-                    allBusyTrap = true;
-                }
-            }
+	    // if lock is not in use (i.e. all threads are busy)
+	    if (!lock.isLocked()) {
+		synchronized (allBusyTrapLock) {
+		    allBusyTrap = true;
+		}
+	    }
 
-            try {
-                // release lock mutex
-                lock.unlock();
-            } catch (IllegalMonitorStateException ignored) {
-                // can happen if there's no waiting worker
-            }
-        } finally {
-            mtx.unlock();
-        }
+	    try {
+		// release lock mutex
+		lock.unlock();
+	    } catch (IllegalMonitorStateException ignored) {
+		// can happen if there's no waiting worker
+	    }
+	} finally {
+	    mtx.unlock();
+	}
     }
 
     /**
@@ -93,34 +95,34 @@ public class JobQueue<T> implements Queue<T> {
      * @return a job Object
      */
     public T take() {
-        T aJob = null;
+	T aJob = null;
 
-        mtx.lock();
-        try {
-            while (queue.size() <= 0) {
-                // release exclusion mutex
-                mtx.unlock();
+	mtx.lock();
+	try {
+	    while (queue.size() <= 0) {
+		// release exclusion mutex
+		mtx.unlock();
 
-                // acquire lock mutex
-                lock.lock();
+		// acquire lock mutex
+		lock.lock();
 
-                // re-acquire exclusion mutex to pop
-                mtx.lock();
-            }
+		// re-acquire exclusion mutex to pop
+		mtx.lock();
+	    }
 
-            aJob = queue.remove(0);
-        } finally {
-            mtx.unlock();
-        }
+	    aJob = queue.remove(0);
+	} finally {
+	    mtx.unlock();
+	}
 
-        return aJob;
+	return aJob;
     }
 
     /**
      * @return size of queue
      */
     public int size() {
-        return queue.size();
+	return queue.size();
     }
 
     /**
@@ -129,29 +131,30 @@ public class JobQueue<T> implements Queue<T> {
      * @return true: yes
      */
     public boolean isAllBusyTrapped() {
-        synchronized (allBusyTrapLock) {
-            return allBusyTrap;
-        }
+	synchronized (allBusyTrapLock) {
+	    return allBusyTrap;
+	}
     }
 
     /**
      * reset allBusyTrap flag
      */
     void resetAllBusyTrap() {
-        synchronized (allBusyTrapLock) {
-            allBusyTrap = false;
-        }
+	synchronized (allBusyTrapLock) {
+	    allBusyTrap = false;
+	}
     }
 
     /**
      * start/stop count.<br>
      * this method is called by WorkerGroup<br>
      *
-     * @param flag set to start counting processed jobs
+     * @param flag
+     *            set to start counting processed jobs
      */
     @SuppressWarnings("SameParameterValue")
     void setCount(boolean flag) {
-        this.count = flag;
+	this.count = flag;
     }
 
     /**
@@ -159,37 +162,54 @@ public class JobQueue<T> implements Queue<T> {
      * this method is called by Worker<br>
      */
     void increaseProcessedJobCounter() {
-        if (count) {
-            processedJobs.increase();
-        }
+	if (count) {
+	    processedJobs.increase();
+	}
     }
 
     /**
      * @return processed jobs count
      */
     long getProcessedJobs() {
-        return processedJobs.count();
+	return processedJobs.count();
     }
 
     /**
      * reset processed jobs count
      */
     void resetProcessedJobs() {
-        processedJobs.reset();
+	processedJobs.reset();
+    }
+
+    /**
+     * Release all blocked Threads on {@link JobQueue#take()} 
+     */
+    public void release() {
+	mtx.lock();
+	try {
+	    try {
+		// release lock mutex
+		lock.unlock();
+	    } catch (IllegalMonitorStateException ignored) {
+		// can happen if there's no waiting worker
+	    }
+	} finally {
+	    mtx.unlock();
+	}
     }
 
     /**
      * clears queue
      */
     public void clear() {
-        mtx.lock();
-        try {
-            queue.clear();
-            resetProcessedJobs();
-            allBusyTrap = false;
-        } finally {
-            mtx.unlock();
-        }
+	mtx.lock();
+	try {
+	    queue.clear();
+	    resetProcessedJobs();
+	    allBusyTrap = false;
+	} finally {
+	    mtx.unlock();
+	}
     }
 
     /*
@@ -199,8 +219,8 @@ public class JobQueue<T> implements Queue<T> {
      */
     @Override
     protected void finalize() throws Throwable {
-        queue.clear();
+	queue.clear();
 
-        super.finalize();
+	super.finalize();
     }
 }
