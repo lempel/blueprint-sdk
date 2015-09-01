@@ -59,6 +59,10 @@ public class JobQueue<T> implements Queue<T> {
      * start/stop count
      */
     private boolean count = false;
+    /**
+     * flag for disposed queue
+     */
+    private boolean disposed = false;
 
     /**
      * push a job Object to queue<br>
@@ -69,20 +73,24 @@ public class JobQueue<T> implements Queue<T> {
     public void push(final T aJob) {
 	mtx.lock();
 	try {
-	    queue.add(aJob);
+	    if (disposed) {
+		throw new IllegalStateException("Can't push into disposed queue");
+	    } else{
+		queue.add(aJob);
 
-	    // if lock is not in use (i.e. all threads are busy)
-	    if (!lock.isLocked()) {
-		synchronized (allBusyTrapLock) {
-		    allBusyTrap = true;
+		// if lock is not in use (i.e. all threads are busy)
+		if (!lock.isLocked()) {
+		    synchronized (allBusyTrapLock) {
+			allBusyTrap = true;
+		    }
 		}
-	    }
 
-	    try {
-		// release lock mutex
-		lock.unlock();
-	    } catch (IllegalMonitorStateException ignored) {
-		// can happen if there's no waiting worker
+		try {
+		    // release lock mutex
+		    lock.unlock();
+		} catch (IllegalMonitorStateException ignored) {
+		    // can happen if there's no waiting worker
+		}
 	    }
 	} finally {
 	    mtx.unlock();
@@ -99,7 +107,7 @@ public class JobQueue<T> implements Queue<T> {
 
 	mtx.lock();
 	try {
-	    while (queue.size() <= 0) {
+	    while (queue.size() <= 0 && !disposed) {
 		// release exclusion mutex
 		mtx.unlock();
 
@@ -182,11 +190,13 @@ public class JobQueue<T> implements Queue<T> {
     }
 
     /**
-     * Release all blocked Threads on {@link JobQueue#take()} 
+     * Release all blocked Threads on {@link JobQueue#take()} and dispose queue.
      */
-    public void release() {
+    public void dispose() {
 	mtx.lock();
 	try {
+	    disposed = true;
+	    
 	    try {
 		// release lock mutex
 		lock.unlock();
