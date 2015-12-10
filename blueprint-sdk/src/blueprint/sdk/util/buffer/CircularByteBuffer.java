@@ -74,32 +74,18 @@ public class CircularByteBuffer {
 
             if (buffer.remaining() >= length) {
                 buffer.put(data, startIndex, length);
+            } else if (buffer.remaining() >= length) {
+                buffer.position(length);
+                buffer.compact();
+                buffer.put(data, startIndex, length);
+            } else if (incremental) {
+                resize(buffer.capacity() + (length - buffer.remaining()));
+                buffer.put(data, Math.abs(length - buffer.remaining()), buffer.remaining());
+            } else if (overflowCheck) {
+                throw new blueprint.sdk.util.buffer.OverflowException(length - buffer.remaining());
             } else if (buffer.capacity() < length) {
-                if (incremental) {
-                    // incremental mode
-                    resize(buffer.capacity() + (length - buffer.remaining()));
-                } else if (overflowCheck) {
-                    // non-incremental mode + overflow check
-                    throw new blueprint.sdk.util.buffer.OverflowException(length - buffer.remaining());
-                } else {
-                    // non-incremental mode + w/o overflow check
-                    buffer.clear();
-                }
+                buffer.clear();
                 buffer.put(data, Math.abs(length - buffer.capacity()), buffer.capacity());
-            } else if (buffer.remaining() < length) {
-                if (incremental) {
-                    // incremental mode
-                    resize(buffer.capacity() + (length - buffer.remaining()));
-                    buffer.put(data, Math.abs(length - buffer.remaining()), buffer.remaining());
-                } else if (overflowCheck) {
-                    // non-incremental mode + overflow check
-                    throw new blueprint.sdk.util.buffer.OverflowException(length - buffer.remaining());
-                } else {
-                    // non-incremental mode + w/o overflow check
-                    buffer.position(length);
-                    buffer.compact();
-                    buffer.put(data, startIndex, length);
-                }
             } else {
                 buffer.position(length);
                 buffer.compact();
