@@ -14,6 +14,7 @@
 package blueprint.sdk.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +30,8 @@ import java.nio.file.StandardOpenOption;
  * @since 2015. 11. 04.
  */
 public class SimpleJsonStore<T> {
+    private ObjectMapper mapper = new ObjectMapper();
+
     /**
      * '*.json' file's path
      */
@@ -51,11 +54,12 @@ public class SimpleJsonStore<T> {
 
         if (file.exists()) {
             byte[] data = Files.readAllBytes(this.path);
-            ObjectMapper mapper = new ObjectMapper();
             json = mapper.readValue(data, clazz);
         } else {
             json = clazz.newInstance();
         }
+
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
     }
 
     /**
@@ -71,7 +75,6 @@ public class SimpleJsonStore<T> {
      * @throws IOException save failed
      */
     public void save() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
         byte[] data = mapper.writeValueAsBytes(json);
         Files.write(path, data, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
     }
