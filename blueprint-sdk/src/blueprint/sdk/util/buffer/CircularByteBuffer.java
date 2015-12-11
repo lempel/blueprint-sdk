@@ -10,6 +10,7 @@
  Repository - https://github.com/lempel/blueprint-sdk.git
  Blog - http://lempel.egloos.com
  */
+
 package blueprint.sdk.util.buffer;
 
 import java.nio.ByteBuffer;
