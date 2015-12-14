@@ -76,6 +76,6 @@ public class SimpleJsonStore<T> {
      */
     public void save() throws IOException {
         byte[] data = mapper.writeValueAsBytes(json);
-        Files.write(path, data, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+        Files.write(path, data, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 }
