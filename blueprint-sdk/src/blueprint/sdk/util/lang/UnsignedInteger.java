@@ -1,0 +1,173 @@
+/*
+ License:
+
+ blueprint-sdk is licensed under the terms of Eclipse Public License(EPL) v1.0
+ (http://www.eclipse.org/legal/epl-v10.html)
+
+
+ Distribution:
+
+ Repository - https://github.com/lempel/blueprint-sdk.git
+ Blog - http://lempel.egloos.com
+ */
+
+package blueprint.sdk.util.lang;
+
+import java.io.IOException;
+
+/**
+ * Unsigned Integer for interoperability with external systems.
+ *
+ * @author Sangmi Lee
+ * @since 2015-12-16
+ */
+public class UnsignedInteger {
+    public static final long INT_MSB = 0x80000000L;
+    public static final long SINT_MAX = 0x7FFFFFFFL;
+    public static final long UINT_MAX = 0x0FFFFFFFL;
+
+    /**
+     * Carry flag.<br/>
+     * If it's set, value can't be expressed as signed int.<br/>
+     */
+    protected boolean carry = false;
+    /**
+     * actual value w/o carry
+     */
+    protected int signedInt = 0;
+
+    /**
+     * Internal use only
+     *
+     * @param carry     carry flag
+     * @param signedInt signed int value
+     */
+    protected UnsignedInteger(boolean carry, int signedInt) {
+        this.carry = carry;
+        this.signedInt = signedInt;
+    }
+
+    /**
+     * @param value unsigned int
+     */
+    public UnsignedInteger(long value) {
+        this((value & INT_MSB) != 0, (int) (value & SINT_MAX));
+    }
+
+    /**
+     * @param value String representation of unsigned int
+     */
+    public UnsignedInteger(String value) {
+        this(Long.parseLong(value));
+    }
+
+    /**
+     * @param value          byte[] representation of unsigned int
+     * @param isLittleEndian true for little endian, false for big endian
+     */
+    public UnsignedInteger(byte[] value, boolean isLittleEndian) {
+        if (value == null) {
+            throw new NullPointerException("Given value is null");
+        }
+
+        int start = 0;
+        int end = value.length;
+        int inc = 1;
+        if (!isLittleEndian) {
+            start = end - 1;
+            end = -1;
+            inc = -1;
+        }
+
+        long result = 0L;
+        int shift = 0;
+        for (int i = start; i != end; i += inc, shift += 8) {
+            result += ((long) (value[i]) & 0xff) << shift;
+            //System.out.println("result += " + i + " : " + ((long) (value[i]) & 0xff) + " << " + shift + "  == " + Long.toHexString(result));
+        }
+
+        carry = (result & INT_MSB) != 0;
+        signedInt = (int) (result & SINT_MAX);
+    }
+
+    /**
+     * Get signed int value
+     *
+     * @param value String representation of unsigned int
+     * @return signed int
+     * @throws NumberFormatException Value can't be expressed as signed int
+     */
+    public static int intValue(String value) throws NumberFormatException {
+        return new UnsignedInteger(value).intValue();
+    }
+
+    /**
+     * Get signed int value
+     *
+     * @param value          byte[] representation of unsigned int
+     * @param isLittleEndian true for little endian, false for big endian
+     * @return signed int
+     * @throws NumberFormatException Value can't be expressed as signed int
+     */
+    public static int intValue(byte[] value, boolean isLittleEndian) throws NumberFormatException {
+        return new UnsignedInteger(value, isLittleEndian).intValue();
+    }
+
+    public static long longValue(String value) throws IOException {
+        return new UnsignedInteger(value).longValue();
+    }
+
+    /**
+     * Get signed int value
+     *
+     * @param value          byte[] representation of unsigned int
+     * @param isLittleEndian true for little endian, false for big endian.
+     * @return signed int
+     */
+    public static long longValue(byte[] value, boolean isLittleEndian) {
+        return new UnsignedInteger(value, isLittleEndian).longValue();
+    }
+
+    /**
+     * @return an Exception for invalid scale
+     */
+    protected static NumberFormatException newNumberFormatException() {
+        return new NumberFormatException("Can't be expressed as signed int");
+    }
+
+    /**
+     * See if wrapped value has carry or not
+     *
+     * @return true: has carry. can't be expressed as signed int.
+     */
+    public boolean hasCarry() {
+        return carry;
+    }
+
+    /**
+     * Get wrapped signed int value
+     *
+     * @return signed int
+     */
+    public int getSignedInt() {
+        return signedInt;
+    }
+
+    /**
+     * Get value as signed int
+     *
+     * @return signed int
+     * @throws NumberFormatException Value can't be expressed as signed int
+     */
+    public int intValue() throws NumberFormatException {
+        if (carry) {
+            throw newNumberFormatException();
+        } else {
+            return signedInt;
+        }
+    }
+
+    public long longValue() {
+        return ((long) signedInt & SINT_MAX) | (hasCarry() ? INT_MSB : 0L);
+    }
+}
