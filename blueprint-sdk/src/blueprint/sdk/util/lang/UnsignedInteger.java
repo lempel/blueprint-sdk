@@ -13,8 +13,6 @@
 
 package blueprint.sdk.util.lang;
 
-import java.io.IOException;
-
 /**
  * Unsigned Integer for interoperability with external systems.
  *
@@ -91,6 +89,13 @@ public class UnsignedInteger {
     }
 
     /**
+     * @return an Exception for invalid scale
+     */
+    protected static NumberFormatException newNumberFormatException() {
+        return new NumberFormatException("Can't be expressed as signed int");
+    }
+
+    /**
      * Get signed int value
      *
      * @param value String representation of unsigned int
@@ -113,26 +118,25 @@ public class UnsignedInteger {
         return new UnsignedInteger(value, isLittleEndian).intValue();
     }
 
-    public static long longValue(String value) throws IOException {
+    /**
+     * Get unsigned int value as long type
+     *
+     * @param value String representation of unsigned int
+     * @return unsigned int
+     */
+    public static long longValue(String value) {
         return new UnsignedInteger(value).longValue();
     }
 
     /**
-     * Get signed int value
+     * Get unsigned int value as long type
      *
      * @param value          byte[] representation of unsigned int
      * @param isLittleEndian true for little endian, false for big endian.
-     * @return signed int
+     * @return unsigned int
      */
     public static long longValue(byte[] value, boolean isLittleEndian) {
         return new UnsignedInteger(value, isLittleEndian).longValue();
-    }
-
-    /**
-     * @return an Exception for invalid scale
-     */
-    protected static NumberFormatException newNumberFormatException() {
-        return new NumberFormatException("Can't be expressed as signed int");
     }
 
     /**
@@ -167,7 +171,58 @@ public class UnsignedInteger {
         }
     }
 
+    /**
+     * Get unsinged int value as long type
+     *
+     * @return unsinged int value as long type
+     */
     public long longValue() {
         return ((long) signedInt & SINT_MAX) | (hasCarry() ? INT_MSB : 0L);
+    }
+
+    /**
+     * Get String representation of value
+     *
+     * @return String representation of value
+     */
+    public String toString() {
+        return Long.toString(longValue());
+    }
+
+    /**
+     * Get Hexadecimal String representation of value
+     *
+     * @return Hexadecimal String representation of value
+     */
+    public String toHexString() {
+        return Long.toHexString(longValue());
+    }
+
+    /**
+     * Get byte[] representation of value
+     *
+     * @param isLittleEndian true for little endian, false for big endian
+     * @return byte[] representation of value
+     */
+    public byte[] toByteArray(boolean isLittleEndian) {
+        byte[] result = new byte[4];
+
+        int start = 0;
+        int end = result.length;
+        int inc = 1;
+        if (!isLittleEndian) {
+            start = end - 1;
+            end = -1;
+            inc = -1;
+        }
+
+        long longValue = longValue();
+        int shift = 0;
+        for (int i = start; i != end; i += inc, shift += 8) {
+            result[i] = (byte) ((longValue >> shift) & 0xFF);
+            //System.out.println("result[" + i + "] = " + Byte.toUnsignedInt(result[i]));
+        }
+
+        return result;
     }
 }
