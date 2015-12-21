@@ -37,6 +37,10 @@ public class SimpleJsonStore<T> {
      */
     private Path path;
     /**
+     * JSON Object's class
+     */
+    private Class<T> clazz;
+    /**
      * JSON Object
      */
     private T json;
@@ -51,6 +55,7 @@ public class SimpleJsonStore<T> {
     public SimpleJsonStore(String path, Class<T> clazz) throws IOException, IllegalAccessException, InstantiationException {
         File file = new File(path);
         this.path = file.toPath();
+        this.clazz = clazz;
 
         if (file.exists()) {
             byte[] data = Files.readAllBytes(this.path);
@@ -77,5 +82,18 @@ public class SimpleJsonStore<T> {
     public void save() throws IOException {
         byte[] data = mapper.writeValueAsBytes(json);
         Files.write(path, data, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+    }
+
+    /**
+     * Update with given JSON String and save to file
+     *
+     * @param jsonString JSON String
+     * @throws IOException parse or save failed
+     */
+    public void save(String jsonString) throws IOException {
+        T newJson = mapper.readValue(jsonString, clazz);
+
+        json = newJson;
+        save();
     }
 }
