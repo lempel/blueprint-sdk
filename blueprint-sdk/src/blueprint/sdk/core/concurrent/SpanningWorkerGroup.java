@@ -13,10 +13,9 @@
 
 package blueprint.sdk.core.concurrent;
 
+import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
 
 /**
  * A Group of Workers<br>
@@ -39,7 +38,7 @@ public class SpanningWorkerGroup<J, Q extends JobQueue<J>> extends WorkerGroup<J
      * Constructor<br>
      * Creates Workers and JobQueue<br>
      *
-     * @param jobQueue job queue
+     * @param jobQueue    job queue
      * @param workerClass Worker class
      * @param workerCount Initial number of workers
      */
@@ -107,11 +106,11 @@ public class SpanningWorkerGroup<J, Q extends JobQueue<J>> extends WorkerGroup<J
         long throughtput = jobQueue.getProcessedJobs() / elapsed;
         jobQueue.resetProcessedJobs();
 
-        // is all busy situation occurred?
-        if (jobQueue.isAllBusyTrapped()) {
-            jobQueue.resetAllBusyTrap();
-
-            int newThreads = (int) (THREAD_INC_RATIO * workers.size());
+        int newThreads = (int) (THREAD_INC_RATIO * workers.size());
+        if (jobQueue.isIdle()) {
+            // decrease the number of threads
+            removeWorkers(newThreads);
+        } else {
             if (throughtput >= maxThroughput) {
                 maxThroughput = throughtput;
 
