@@ -13,10 +13,11 @@
 
 package blueprint.sdk.core.concurrent;
 
-import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
-import blueprint.sdk.util.queue.Queue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
+import blueprint.sdk.util.queue.Queue;
 
 /**
  * Worker Thread
@@ -27,17 +28,20 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class Worker<J> extends TerminatableThread {
     private static final Logger L = LoggerFactory.getLogger(WorkerGroup.class);
+
+    private Queue<J> jobQueue = null;
+
     /**
      * notify this when terminated
      */
     private final Object deathMonitor;
-    private Queue<J> jobQueue = null;
+
     private boolean active = false;
 
     /**
      * Constructor
      *
-     * @param jobQueue     job queue
+     * @param jobQueue job queue
      * @param deathMonitor notify this monitor after termination
      */
     public Worker(final Queue<J> jobQueue, final Object deathMonitor) {
@@ -97,16 +101,6 @@ public abstract class Worker<J> extends TerminatableThread {
      */
     public boolean isActive() {
         return active;
-    }
-
-    /**
-     * Add given job to queue
-     *
-     * @param job a job to process
-     */
-    @SuppressWarnings("unused")
-    protected void addJob(J job) {
-        jobQueue.push(job);
     }
 
     @Override
