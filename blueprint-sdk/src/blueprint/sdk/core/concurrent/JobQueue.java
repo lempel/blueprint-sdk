@@ -83,13 +83,13 @@ public class JobQueue<T> implements Queue<T> {
         lock.lock();
         try {
             while (queue.size() == 0 || (aJob = queue.pop()) == null) {
+                idle = true;
                 lock.unlock();
 
-                idle = true;
                 mutex.lock();
-                idle = false;
 
                 lock.lock();
+                idle = false;
             }
         } finally {
             lock.unlock();
@@ -106,7 +106,12 @@ public class JobQueue<T> implements Queue<T> {
     }
 
     public boolean isIdle() {
-        return idle;
+        lock.lock();
+        try {
+            return idle;
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**

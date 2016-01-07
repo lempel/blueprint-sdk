@@ -30,7 +30,7 @@ public class SpanningWorkerGroup<J, Q extends JobQueue<J>> extends WorkerGroup<J
     /**
      * check interval (msec)
      */
-    private static final int INTERVAL = 1000;
+    private static final int INTERVAL = 5000;
     private static final Logger L = LoggerFactory.getLogger(SpanningWorkerGroup.class);
     private long maxThroughput = 0;
 

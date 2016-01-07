@@ -13,18 +13,17 @@
 
 package blueprint.sdk.core.concurrent;
 
+import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
+import blueprint.sdk.util.jvm.shutdown.Terminator;
+import blueprint.sdk.util.queue.Queue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
-import blueprint.sdk.util.jvm.shutdown.Terminator;
-import blueprint.sdk.util.queue.Queue;
 
 /**
  * A Group of Workers<br>
@@ -48,18 +47,18 @@ public class WorkerGroup<J, Q extends Queue<J>> extends TerminatableThread {
     static final float THREAD_INC_RATIO = 0.2f;
     private static final Logger L = LoggerFactory.getLogger(WorkerGroup.class);
     protected final Class<? extends Worker<J>> workerClass;
-    final int initialWorkers;
     protected final Q jobQueue;
     protected final List<Worker<J>> workers;
     /**
      * monitor for dead workers
      */
     protected final Object deathMonitor = new Object();
+    final int initialWorkers;
 
     /**
      * Constructor
      *
-     * @param jobQueue job queue
+     * @param jobQueue    job queue
      * @param workerClass Worker class
      * @param workerCount Initial number of workers
      */
@@ -114,7 +113,10 @@ public class WorkerGroup<J, Q extends Queue<J>> extends TerminatableThread {
             }
         }
 
-        L.info("worker added - class: " + workerClass + ", count: " + (count - failure));
+        int diff = (count - failure);
+        if (diff > 0) {
+            L.info("worker added - class: {}, count: {} (+{})", workerClass, workers.size(), diff);
+        }
     }
 
     /**
@@ -136,7 +138,9 @@ public class WorkerGroup<J, Q extends Queue<J>> extends TerminatableThread {
             }
         }
 
-        L.info("worker removed - class: " + workerClass + ", count: " + removed);
+        if (removed > 0) {
+            L.info("worker removed - class: {}, count: {} (-{})", workerClass, workers.size(), removed);
+        }
     }
 
     @Override
