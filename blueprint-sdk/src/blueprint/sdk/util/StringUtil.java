@@ -248,7 +248,7 @@ public class StringUtil {
 	return result;
     }
 
-    public static String lpadSapce(final String src, final int length) {
+	public static String lpadSpace(final String src, final int length) {
 	byte[] sourceArray = nvl(src).getBytes();
 	byte[] targetArray = new byte[length];
 	int count;
