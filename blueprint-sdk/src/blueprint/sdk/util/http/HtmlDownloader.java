@@ -73,8 +73,14 @@ public class HtmlDownloader {
      */
     private HttpURLConnection connect(URL target) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) target.openConnection();
-        connection.setRequestProperty("User-Agent", USER_AGENT);
         connection.setRequestProperty("Connection", "Keep-Alive");
+        connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+        connection.setRequestProperty("Upgrade-Insecure-Requests", "1");
+        connection.setRequestProperty("User-Agent", USER_AGENT);
+        connection.setRequestProperty("DNT", "1");
+        connection.setRequestProperty("Accept-Encoding", "gzip, deflate, sdch");
+        connection.setRequestProperty("Accept-Language", "ko,en-US;q=0.8,en;q=0.6");
+
         connection.connect();
 
         return connection;

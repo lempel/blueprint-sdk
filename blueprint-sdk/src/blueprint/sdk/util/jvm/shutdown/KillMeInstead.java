@@ -139,7 +139,7 @@ public class KillMeInstead {
                 PrintWriter pwr = new PrintWriter("killme.err");
                 pwr.println("Can't get PID from RuntimeMXBean. Please contact committers.");
                 pwr.println("OS = " + osm.getName());
-                pwr.println("Versin = " + osm.getVersion());
+                pwr.println("Version = " + osm.getVersion());
                 pwr.println("ManagementFactory.getRuntimeMXBean().getName() = "
                         + ManagementFactory.getRuntimeMXBean().getName());
                 pwr.close();
