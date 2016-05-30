@@ -16,7 +16,7 @@ package blueprint.sdk.util.queue;
 import blueprint.sdk.util.jdbc.CloseHelper;
 import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
 import org.h2.Driver;
-import org.h2.constant.ErrorCode;
+import org.h2.api.ErrorCode;
 import org.h2.jdbcx.JdbcDataSource;
 
 import java.sql.*;
