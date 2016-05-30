@@ -1,6 +1,7 @@
 package blueprint.sdk.ioc;
 
 import blueprint.sdk.util.Validator;
+import blueprint.sdk.util.debug.ClazzLoader;
 import blueprint.sdk.util.debug.EveryTimeLoader;
 import blueprint.sdk.util.jvm.JavaProcesses;
 import blueprint.sdk.util.jvm.shutdown.KillMeInstead;
@@ -49,6 +50,7 @@ public class IoC {
     public void init() {
         L.info("Initializing IoC Container");
 
+        boolean isExecuableJar = false;
         String mainClass = null;
         String rootPackage = null;
         try {
@@ -59,6 +61,7 @@ public class IoC {
             String lowerCases = mainClass.toLowerCase();
             if (lowerCases.endsWith(".jar") || lowerCases.endsWith(".zip")) {
                 rootPackage = "";
+                isExecuableJar = true;
             } else {
                 int idx = mainClass.lastIndexOf(".");
 
@@ -89,11 +92,11 @@ public class IoC {
             System.gc();
 
             // TODO remove debug code
-            EveryTimeLoader loader = new EveryTimeLoader("D:\\git\\blueprint-sdk\\build\\classes\\main");
+            EveryTimeLoader testLoader = new EveryTimeLoader("D:\\git\\blueprint-sdk\\build\\classes\\main");
             try {
-                loader.loadClass("blueprint.sdk.google.gcm.GcmResponse");
-                loader.loadClass("blueprint.sdk.google.gcm.GcmResponse");
-                loader.loadClass("blueprint.sdk.google.gcm.GcmResponse");
+                testLoader.loadClass("blueprint.sdk.google.gcm.GcmResponse");
+                testLoader.loadClass("blueprint.sdk.google.gcm.GcmResponse");
+                testLoader.loadClass("blueprint.sdk.google.gcm.GcmResponse");
             } catch (Throwable e) {
                 e.printStackTrace();
                 System.exit(1);
@@ -106,10 +109,11 @@ public class IoC {
                 // ---- look up class dirs if mainClass is class
                 // ---- look up jar files if mainClass is jar
 
-                // TODO remove debug code
-                if (!target.isDirectory()) {
+                if (isExecuableJar && token.endsWith(mainClass)) {
                     try {
                         ZipFile jar = new ZipFile(target);
+                        // TODO implement tailor made class loader
+                        EveryTimeLoader loader = new EveryTimeLoader(token);
 
                         Enumeration<? extends ZipEntry> entries = jar.entries();
                         while (entries.hasMoreElements()) {
@@ -125,8 +129,8 @@ public class IoC {
                                     ins.readFully(buffer);
                                     ins.close();
                                     Class clazz = loader.findClass(className, buffer);
-                                    clazz = loader.findClass(className, buffer);
-                                    clazz = loader.findClass(className, buffer);
+
+                                    // TODO inspect clazz and instantiate and put to some map
 
                                     L.debug("{} loaded", className);
                                 } catch (ClassFormatError e) {
@@ -146,6 +150,15 @@ public class IoC {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                } else if (!isExecuableJar && target.isDirectory()) {
+                    // TODO implement tailor made class loader
+                    ClazzLoader loader = new ClazzLoader();
+
+                    // TODO traverse class directory
+
+                    // TODO find class file
+
+                    // TODO inspect clazz and instantiate and put to some map
                 }
             }
         }
