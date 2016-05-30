@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../temp-blueprint-sdk/blueprint/blueprint.iml" filepath="$PROJECT_DIR$/../temp-blueprint-sdk/blueprint/blueprint.iml" />
-      <module fileurl="file://$PROJECT_DIR$/blueprint-sdk/blueprint-sdk.iml" filepath="$PROJECT_DIR$/blueprint-sdk/blueprint-sdk.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../blueprint-sdk-experimental/blueprint-sdk-experimental/blueprint-sdk-experimental.iml" filepath="$PROJECT_DIR$/../blueprint-sdk-experimental/blueprint-sdk-experimental/blueprint-sdk-experimental.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../blueprint-sdk-logger/blueprint-sdk-logger/blueprint-sdk-logger.iml" filepath="$PROJECT_DIR$/../blueprint-sdk-logger/blueprint-sdk-logger/blueprint-sdk-logger.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../tests-to-do/tests-to-do/tests-to-do.iml" filepath="$PROJECT_DIR$/../tests-to-do/tests-to-do/tests-to-do.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/blueprint-sdk.iml" filepath="$PROJECT_DIR$/.idea/modules/blueprint-sdk.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/blueprint-sdk_main.iml" filepath="$PROJECT_DIR$/.idea/modules/blueprint-sdk_main.iml" group="blueprint-sdk" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/blueprint-sdk_test.iml" filepath="$PROJECT_DIR$/.idea/modules/blueprint-sdk_test.iml" group="blueprint-sdk" />
     </modules>
   </component>
 </project>

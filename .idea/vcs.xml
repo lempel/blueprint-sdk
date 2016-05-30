@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="VcsDirectoryMappings">
-    <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../blueprint-sdk-experimental" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../blueprint-sdk-logger" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../temp-blueprint-sdk" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/../tests-to-do" vcs="Git" />
+    <mapping directory="" vcs="Git" />
   </component>
 </project>
