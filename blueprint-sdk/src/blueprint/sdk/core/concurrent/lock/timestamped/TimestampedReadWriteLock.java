@@ -22,7 +22,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * Wrapped {@link ReentrantReadWriteLock} with timestamp support.
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2014. 5. 9.
  */
 public class TimestampedReadWriteLock extends TimestampedLockBase<ReentrantReadWriteLock> implements ReadWriteLock {
@@ -63,7 +63,7 @@ public class TimestampedReadWriteLock extends TimestampedLockBase<ReentrantReadW
      * Wrapper for {@link ReentrantReadWriteLock.ReadLock} with timestamp
      * support.
      *
-     * @author Sangmin Lee
+     * @author lempel@gmail.com
      * @since 2014. 5. 9.
      */
     // FIXME must extract a super class
@@ -137,7 +137,7 @@ public class TimestampedReadWriteLock extends TimestampedLockBase<ReentrantReadW
      * Wrapper for {@link ReentrantReadWriteLock.WriteLock} with timestamp
      * support.
      *
-     * @author Sangmin Lee
+     * @author lempel@gmail.com
      * @since 2014. 5. 9.
      */
     // FIXME must extract a super class

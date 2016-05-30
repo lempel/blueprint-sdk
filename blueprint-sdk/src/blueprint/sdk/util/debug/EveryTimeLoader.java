@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 /**
  * loads class every time (always hot!)
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2009. 3. 26.
  */
 public class EveryTimeLoader extends ClassLoader {

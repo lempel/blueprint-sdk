@@ -59,7 +59,7 @@ import blueprint.sdk.util.config.Config;
 /**
  * Forks target program as a child process.
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2007. 12. 12
  */
 public class ForkHandler extends AbstractHandler {
@@ -247,7 +247,7 @@ public class ForkHandler extends AbstractHandler {
 /**
  * Shutdown Hook to destroy child process
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2007. 12. 12
  */
 class ShutdownHook extends Thread {

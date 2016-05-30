@@ -17,7 +17,7 @@ package blueprint.sdk.util;
  * Statistics Utility<br>
  * Simple yet...<br>
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2009. 2. 25.
  */
 @SuppressWarnings("WeakerAccess")

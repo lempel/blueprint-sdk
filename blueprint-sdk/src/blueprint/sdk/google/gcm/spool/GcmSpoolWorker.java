@@ -23,7 +23,7 @@ import java.io.IOException;
 /**
  * Worker for GcmSpool.
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 12. 11.
  */
 public class GcmSpoolWorker extends Worker<String> {

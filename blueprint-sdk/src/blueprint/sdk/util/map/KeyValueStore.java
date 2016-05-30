@@ -29,7 +29,7 @@ import java.util.Map;
  * Simple Key/Value Store with JSON file synchronization
  *
  * @param <T> Must be a simple bean class with zero argument constructors.
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2014. 4. 15.
  */
 public class KeyValueStore<T> {

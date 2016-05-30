@@ -20,7 +20,7 @@ import java.util.Date;
 /**
  * Convert Date/Time betweed {@link Date} and RFC3339 (GMT)
  * 
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2015. 04. 17
  */
 public class Rfc3339 {

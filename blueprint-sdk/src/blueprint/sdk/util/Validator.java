@@ -20,7 +20,7 @@ import java.util.Collection;
 /**
  * Provides Object validation methods
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2009. 8. 22.
  */
 public final class Validator {

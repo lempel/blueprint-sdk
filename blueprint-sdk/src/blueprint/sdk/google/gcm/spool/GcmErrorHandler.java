@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Handles GCM error
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 12. 11.
  */
 @SuppressWarnings("WeakerAccess")

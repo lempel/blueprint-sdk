@@ -28,7 +28,7 @@ import blueprint.sdk.util.Validator;
 /**
  * Rolls error log into separate files hourly.
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 12. 11.
  */
 @SuppressWarnings("WeakerAccess")

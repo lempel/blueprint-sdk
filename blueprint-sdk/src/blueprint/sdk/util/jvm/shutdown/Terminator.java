@@ -21,7 +21,7 @@ import java.util.Vector;
 /**
  * A Shutdown Hook terminates all registered Terminatables
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2007. 07. 26
  */
 public class Terminator extends Thread {

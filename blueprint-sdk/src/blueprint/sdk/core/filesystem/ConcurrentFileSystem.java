@@ -32,7 +32,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Mutex eviction is done by TTL(Time-To-Live) because of actual file sync could
  * be delayed by OS's write-back cache & flushing policy.<br/>
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2014. 4. 23.
  */
 public class ConcurrentFileSystem extends GenericFileSystem {

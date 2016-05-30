@@ -18,7 +18,7 @@ import java.io.IOException;
 /**
  * Abstract File System
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2014. 4. 21.
  */
 public abstract class FileSystem {

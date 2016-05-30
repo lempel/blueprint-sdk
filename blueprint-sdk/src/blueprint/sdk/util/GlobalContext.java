@@ -20,7 +20,7 @@ import java.util.Map;
  * Bad, bad, bad...<br>
  * But it helps sometimes.<br>
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2007. 07. 31
  */
 public class GlobalContext extends HashMap<String, Object> {

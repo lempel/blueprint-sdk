@@ -49,7 +49,7 @@ import javax.xml.xpath.XPathExpressionException;
 /**
  * Handler Factory for JavaLauncher
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2007. 12. 12
  */
 @SuppressWarnings("WeakerAccess")

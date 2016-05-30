@@ -33,7 +33,7 @@ import java.util.List;
  *
  * @param <J> Job Type
  * @param <Q> Queue Type
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2008. 11. 25.
  */
 public class WorkerGroup<J, Q extends Queue<J>> extends TerminatableThread {

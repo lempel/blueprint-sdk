@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
  * Worker Thread
  *
  * @param <J> job class
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2007. 07. 25
  */
 public abstract class Worker<J> extends TerminatableThread {

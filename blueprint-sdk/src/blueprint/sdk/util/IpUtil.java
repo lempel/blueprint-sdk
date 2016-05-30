@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * IP address related utility
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 8. 5.
  */
 @SuppressWarnings("WeakerAccess")

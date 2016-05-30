@@ -26,7 +26,7 @@ import blueprint.sdk.google.gcm.GcmSender;
 /**
  * Example of GcmSender
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 12. 3.
  */
 public class GcmSenderExample {

@@ -49,7 +49,7 @@ import javax.xml.xpath.XPathExpressionException;
 /**
  * Prototype for handlers
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2007. 12. 12
  */
 public abstract class AbstractHandler {

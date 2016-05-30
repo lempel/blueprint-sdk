@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Prints current thread's stack trace at anytime..
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 9. 5.
  */
 @SuppressWarnings("WeakerAccess")

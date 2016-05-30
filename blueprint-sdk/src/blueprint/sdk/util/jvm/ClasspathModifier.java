@@ -33,7 +33,7 @@ import java.net.URLClassLoader;
  * e.printStackTrace();<br>
  * }<br>
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2009. 2. 4.
  */
 public class ClasspathModifier {

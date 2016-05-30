@@ -19,7 +19,7 @@ import java.util.concurrent.locks.ReadWriteLock;
  * Base class for TimestampedLock and TimestampedReadWriteLock
  *
  * @param <T> Actual Lock
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2014. 5. 9.
  */
 public class TimestampedLockBase<T> {

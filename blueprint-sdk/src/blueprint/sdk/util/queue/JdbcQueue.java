@@ -25,7 +25,7 @@ import java.util.UUID;
  * <br>
  * Must call {@link JdbcQueue#init()} before use.<br>
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 8. 26.
  */
 public abstract class JdbcQueue extends MessageQueue {
@@ -185,7 +185,7 @@ public abstract class JdbcQueue extends MessageQueue {
 /**
  * Internal element of JdbcQueue
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 10. 25.
  */
 class JdbcElement extends Element {

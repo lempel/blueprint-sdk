@@ -16,7 +16,7 @@ package blueprint.sdk.util.queue;
 /**
  * General Interface for Queue
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 12. 11.
  */
 public interface Queue<T> {

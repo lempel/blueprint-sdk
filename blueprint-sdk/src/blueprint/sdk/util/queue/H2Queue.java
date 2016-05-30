@@ -24,7 +24,7 @@ import java.sql.*;
 /**
  * H2 based AbstractJdbcQueue implementation (example).
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 8. 27.
  */
 public class H2Queue extends JdbcQueue {

@@ -19,7 +19,7 @@ import java.io.Serializable;
  * Item for Cache
  *
  * @param <T> element type
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 6. 28.
  */
 public class CacheItem<T> implements Serializable {

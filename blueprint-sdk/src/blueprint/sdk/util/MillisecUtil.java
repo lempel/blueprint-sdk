@@ -16,7 +16,7 @@ package blueprint.sdk.util;
 /**
  * Provides common methods for millisecond handling
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2009. 8. 22.
  */
 @SuppressWarnings("WeakerAccess")

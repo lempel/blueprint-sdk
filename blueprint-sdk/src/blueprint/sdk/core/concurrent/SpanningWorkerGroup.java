@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * <br>
  * Provides automatic thread spanning feature, call start() method.<br>
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2008. 11. 25.
  */
 public class SpanningWorkerGroup<J, Q extends JobQueue<J>> extends WorkerGroup<J, JobQueue<J>> {
@@ -126,7 +126,7 @@ public class SpanningWorkerGroup<J, Q extends JobQueue<J>> extends WorkerGroup<J
     /**
      * Refills dead workers
      *
-     * @author Sangmin Lee
+     * @author lempel@gmail.com
      * @since 2013. 12. 11.
      */
     private class Refiller extends TerminatableThread {

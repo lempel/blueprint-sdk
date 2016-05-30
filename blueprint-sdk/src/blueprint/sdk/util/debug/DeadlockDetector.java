@@ -25,7 +25,7 @@ import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
 /**
  * Periodically checks MXBean for deadlock.
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 11. 6.
  */
 @SuppressWarnings("WeakerAccess")

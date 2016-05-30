@@ -20,7 +20,7 @@ import java.util.UUID;
 /**
  * Simple Message Queue.
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 9. 4.
  */
 public class MessageQueue implements Queue<String> {
@@ -154,7 +154,7 @@ public class MessageQueue implements Queue<String> {
 /**
  * Internal element of MessageQueue
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 8. 27.
  */
 class Element {

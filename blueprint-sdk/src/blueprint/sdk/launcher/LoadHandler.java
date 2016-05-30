@@ -63,7 +63,7 @@ import blueprint.sdk.util.jvm.ClasspathModifier;
  * Add all dir/jar/zip files to current classpath and load target program within
  * same process
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2007. 12. 12
  */
 public class LoadHandler extends AbstractHandler {

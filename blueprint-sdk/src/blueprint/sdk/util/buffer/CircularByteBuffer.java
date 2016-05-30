@@ -23,7 +23,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * <br>
  * <b>This class is thread safe.</b><br>
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2008. 11. 24.
  */
 public class CircularByteBuffer {

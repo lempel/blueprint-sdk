@@ -26,7 +26,7 @@ import java.nio.file.StandardOpenOption;
  * Simple JSON Store
  *
  * @param <T> JSON Object
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2015. 11. 04.
  */
 public class SimpleJsonStore<T> {

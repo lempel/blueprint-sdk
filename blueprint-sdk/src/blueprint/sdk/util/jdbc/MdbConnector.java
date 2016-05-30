@@ -22,7 +22,7 @@ import java.sql.SQLException;
 /**
  * Creates java.sql.Connection instance for MDB file(MS Access)
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2007. 08. 07
  */
 @SuppressWarnings("WeakerAccess")

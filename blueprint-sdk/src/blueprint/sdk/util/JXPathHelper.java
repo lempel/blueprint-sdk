@@ -24,7 +24,7 @@ import java.util.Iterator;
 /**
  * JXPath(apache commons) helper
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2014. 3. 18.
  */
 public class JXPathHelper {

@@ -16,7 +16,7 @@ package blueprint.sdk.google.gcm;
 /**
  * Element of 'results' from GCM's response message
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 12. 10.
  */
 public class GcmResponseDetail {

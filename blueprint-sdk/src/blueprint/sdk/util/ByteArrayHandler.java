@@ -18,7 +18,7 @@ package blueprint.sdk.util;
  * Some methods can change offset while others are not.<br>
  * <b>This class is not thread safe.</b><br>
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2008. 02. 05
  */
 public class ByteArrayHandler {

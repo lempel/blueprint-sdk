@@ -25,7 +25,7 @@ import java.lang.reflect.InvocationTargetException;
  *
  * @param <J> Job Type
  * @param <Q> Queue Type
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 12. 11.
  */
 public class GcmSpoolWorkerGroup<J, Q> extends WorkerGroup<J, Queue<J>> {

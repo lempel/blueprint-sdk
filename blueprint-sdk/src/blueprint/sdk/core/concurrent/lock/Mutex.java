@@ -5,7 +5,7 @@ import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 /**
  * Non-reentrant mutual exclusion lock
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2014. 4. 25.
  */
 public class Mutex {
@@ -42,7 +42,7 @@ public class Mutex {
     /**
      * Synchronizer for {@link Mutex}
      *
-     * @author Sangmin Lee
+     * @author lempel@gmail.com
      * @since 2014. 4. 24.
      */
     class Sync extends AbstractQueuedSynchronizer {

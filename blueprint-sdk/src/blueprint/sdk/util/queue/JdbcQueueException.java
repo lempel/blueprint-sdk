@@ -16,7 +16,7 @@ package blueprint.sdk.util.queue;
 /**
  * Exception for JdbcQueue
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 9. 4.
  */
 public class JdbcQueueException extends RuntimeException {

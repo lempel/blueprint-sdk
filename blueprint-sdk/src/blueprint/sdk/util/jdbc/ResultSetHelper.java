@@ -22,7 +22,7 @@ import java.sql.*;
  * Prevent NullPointerException from ResultSet.<br>
  * (getString, getBytes)<br>
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2009. 2. 26.
  */
 @SuppressWarnings("WeakerAccess")

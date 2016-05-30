@@ -21,7 +21,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Wrapper of {@link ReentrantLock} with timestamp.
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2014. 5. 9.
  */
 public class TimestampedLock extends TimestampedLockBase<ReentrantLock> implements Lock {

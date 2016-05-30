@@ -20,7 +20,7 @@ import java.util.Locale;
 /**
  * Character Set related methods for KSC5601 (EUC-KR) & ISO-8859_1 (Unicode)
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2002. 07. 30
  */
 public class CharsetUtil {

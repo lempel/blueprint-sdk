@@ -66,7 +66,7 @@ import blueprint.sdk.util.config.Config;
  * href="http://x-15.org/tracing.htm">http://x-15.org/tracing.htm</a>) file and<br>
  * create a 'trace.properties' file on working directory<br>
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2007. 12. 12
  */
 public class JavaLauncher {

@@ -18,7 +18,7 @@ import java.io.UnsupportedEncodingException;
 /**
  * String Handling Utility
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2002. 07. 30
  */
 public class StringUtil {

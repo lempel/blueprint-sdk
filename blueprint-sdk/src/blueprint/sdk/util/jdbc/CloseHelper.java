@@ -21,7 +21,7 @@ import java.sql.Statement;
 /**
  * Closes JDBC resources.
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 8. 27.
  */
 public class CloseHelper {

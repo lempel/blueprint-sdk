@@ -21,7 +21,7 @@ import java.io.IOException;
  * Cached File System.<br/>
  * Cached items will and only be evicted by TTL(Time-To-Live).<br/>
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2014. 4. 23.
  */
 public class CachedFileSystem extends ConcurrentFileSystem {

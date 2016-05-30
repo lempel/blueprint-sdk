@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Sends push message to GCM.
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 12. 3.
  */
 public class GcmSender {

@@ -35,7 +35,7 @@ import blueprint.sdk.util.Validator;
 /**
  * Configuration Handler
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 6. 18.
  */
 public class Config {

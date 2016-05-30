@@ -36,7 +36,7 @@ import java.util.Set;
  * If you kills a process of {@link KillMeInstead}, parent process will begin
  * shutdown procedure.<Br>
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 6. 22.
  */
 public class KillMeInstead {

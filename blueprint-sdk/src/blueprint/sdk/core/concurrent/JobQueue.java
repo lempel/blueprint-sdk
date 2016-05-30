@@ -26,7 +26,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * <b>Thread Safe</b><br>
  *
  * @param <T> job class
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2008. 11. 25.
  */
 public class JobQueue<T> implements Queue<T> {

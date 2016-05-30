@@ -21,7 +21,7 @@ import java.lang.reflect.ReflectPermission;
 /**
  * Provides reflective access to every field/method.
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 9. 5.
  */
 @SuppressWarnings("WeakerAccess")

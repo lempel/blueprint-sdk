@@ -18,7 +18,7 @@ import java.util.UUID;
 /**
  * Handles filenames.
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2002. 07. 30
  */
 @SuppressWarnings("WeakerAccess")

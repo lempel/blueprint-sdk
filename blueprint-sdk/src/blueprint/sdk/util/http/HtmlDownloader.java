@@ -53,7 +53,7 @@ import java.util.StringTokenizer;
 /**
  * Download HTML or whatever the link leads as a String
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2015. 03. 12
  */
 public class HtmlDownloader {
@@ -73,8 +73,18 @@ public class HtmlDownloader {
      */
     private HttpURLConnection connect(URL target) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) target.openConnection();
-        connection.setRequestProperty("User-Agent", USER_AGENT);
+//        connection.setRequestProperty("User-Agent", USER_AGENT);
+//        connection.setRequestProperty("Connection", "Keep-Alive");
+        
         connection.setRequestProperty("Connection", "Keep-Alive");
+        connection.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+        connection.setRequestProperty("Upgrade-Insecure-Requests", "1");
+        connection.setRequestProperty("User-Agent",
+			"Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/40.0.2214.115 Safari/537.36");
+        connection.setRequestProperty("DNT", "1");
+        connection.setRequestProperty("Accept-Encoding", "gzip, deflate, sdch");
+        connection.setRequestProperty("Accept-Language", "ko,en-US;q=0.8,en;q=0.6");
+	
         connection.connect();
 
         return connection;

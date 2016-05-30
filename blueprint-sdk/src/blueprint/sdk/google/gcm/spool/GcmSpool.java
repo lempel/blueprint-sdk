@@ -29,7 +29,7 @@ import blueprint.sdk.util.queue.Queue;
 /**
  * Spooler for GCM.<br>
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 12. 10.
  */
 public class GcmSpool implements Terminatable {

@@ -19,7 +19,7 @@ import java.util.Map;
 /**
  * Factory for ByteArrayPool
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2009. 1. 20.
  */
 @SuppressWarnings("WeakerAccess")

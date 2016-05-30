@@ -16,7 +16,7 @@ package blueprint.sdk.util.buffer;
 /**
  * OverFlow occurred in CircularByteBuffer
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2008. 12. 1.
  */
 public class OverflowException extends RuntimeException {

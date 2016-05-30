@@ -18,7 +18,7 @@ import java.util.Map;
 /**
  * Request message for GCM
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 12. 10.
  */
 public class Request {

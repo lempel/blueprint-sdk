@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Very simple Object cache with lazy eviction.
  *
  * @param <T> element type
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 2013. 6. 28.
  */
 public class Cache<T> {
@@ -204,7 +204,7 @@ public class Cache<T> {
     /**
      * Evictor thread for {@link Cache}
      *
-     * @author Sangmin Lee
+     * @author lempel@gmail.com
      * @since 2014. 3. 20.
      */
     private class CacheEvictor extends TerminatableThread {

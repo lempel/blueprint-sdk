@@ -37,7 +37,7 @@ import java.util.Set;
  * <br>
  * Based on sun.tool.jsp.Jps.<br>
  *
- * @author Sangmin Lee
+ * @author lempel@gmail.com
  * @since 1.5
  */
 public class JavaProcesses {
