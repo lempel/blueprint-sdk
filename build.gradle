@@ -38,10 +38,14 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 
-jar {
+task simpleJar(type: Jar, dependsOn: javadoc) {
+    baseName = project.name
+    from { sourceSets.main.allSource }
+    from { javadoc.destinationDir }
+    with jar
 }
 
-task fatJar(type: Jar) {
+task fatJar(type: Jar, dependsOn: javadoc) {
     baseName = project.name + '-all'
     manifest {
         attributes 'Implementation-Title': baseName,
@@ -52,5 +56,5 @@ task fatJar(type: Jar) {
             it.isDirectory() ? it : zipTree(it)
         }
     }
-    with jar
+    with simpleJar
 }

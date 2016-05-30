@@ -18,7 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
 /**
- * Character Set related methods for KSC5601 (EUC-KR) & ISO-8859_1 (Unicode)
+ * Character Set related methods for KSC5601 (EUC-KR), ISO-8859_1 (Unicode)
  *
  * @author lempel@gmail.com
  * @since 2002. 07. 30
@@ -43,7 +43,7 @@ public class CharsetUtil {
     private static final String defaultEncoding;
 
     /**
-     * 8859_1 -> KSC5601 (Unicode to EUC-KR)
+     * 8859_1 to KSC5601 (Unicode to EUC-KR)
      *
      * @param target String to convert
      * @return transcoded String
@@ -54,7 +54,7 @@ public class CharsetUtil {
     }
 
     /**
-     * KSC5601 -> 8859_1 (EUC-KR to Unicode)
+     * KSC5601 to 8859_1 (EUC-KR to Unicode)
      *
      * @param target String to convert
      * @return transcoded String

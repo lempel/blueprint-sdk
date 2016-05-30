@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * Recycle byte arrays as many as possible to reduce memory allocations.<br>
- * <b>BEWARE: </b>This pool reduces memory allocations & heap usage variations
+ * <b>BEWARE: </b>This pool reduces memory allocations and heap usage variations
  * but total performance could be decreased (due to inevitable locks).<br>
  *
  * @author lempel@gmail.com

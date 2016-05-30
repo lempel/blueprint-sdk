@@ -92,7 +92,6 @@ public class HtmlDownloader {
      * @param target target url
      * @return http response code
      * @throws IOException URI connection error
-     * @see {@link HttpURLConnection}
      */
     public int getResponseCode(String target) throws IOException {
         URL url = new URL(target);

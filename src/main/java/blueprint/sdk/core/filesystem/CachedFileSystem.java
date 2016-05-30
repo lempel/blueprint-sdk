@@ -18,8 +18,8 @@ import blueprint.sdk.util.cache.Cache;
 import java.io.IOException;
 
 /**
- * Cached File System.<br/>
- * Cached items will and only be evicted by TTL(Time-To-Live).<br/>
+ * Cached File System.<br>
+ * Cached items will and only be evicted by TTL(Time-To-Live).<br>
  *
  * @author lempel@gmail.com
  * @since 2014. 4. 23.

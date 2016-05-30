@@ -41,9 +41,9 @@ public abstract class FileSystem {
     public abstract boolean deleteFile(String path) throws IOException;
 
     /**
-     * Rename a file.<br/>
-     * <br/>
-     * <b>Usually, renaming a file would be done asynchronously by OS Kernel.</b><br/>
+     * Rename a file.<br>
+     * <br>
+     * <b>Usually, renaming a file would be done asynchronously by OS Kernel.</b><br>
      *
      * @param orgPath file path
      * @param newPath new path

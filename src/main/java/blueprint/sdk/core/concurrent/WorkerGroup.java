@@ -78,7 +78,7 @@ public class WorkerGroup<J, Q extends Queue<J>> extends TerminatableThread {
     }
 
     /**
-     * create & add a new Worker
+     * create and add a new Worker
      *
      * @throws NoSuchMethodException
      * @throws InstantiationException

@@ -23,14 +23,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Thread Safe File System.<br/>
- * <br/>
+ * Thread Safe File System.<br>
+ * <br>
  * For each and every file, a {@link TimestampedLock} is created for
- * synchronization.<br/>
+ * synchronization.<br>
  * Once a mutex is created for a file, it'll be stored to
- * {@link ConcurrentFileSystem#openFiles} and reused until eviction.<br/>
+ * {@link ConcurrentFileSystem#openFiles} and reused until eviction.<br>
  * Mutex eviction is done by TTL(Time-To-Live) because of actual file sync could
- * be delayed by OS's write-back cache & flushing policy.<br/>
+ * be delayed by OS's write-back cache and flushing policy.<br>
  *
  * @author lempel@gmail.com
  * @since 2014. 4. 23.
@@ -46,7 +46,7 @@ public class ConcurrentFileSystem extends GenericFileSystem {
     private static final long MIN_INTERVAL = 5 * 1000;
     /**
      * TTL(Time-To-Live) for {@link ConcurrentFileSystem#openFiles} in
-     * milliseconds.<br/>
+     * milliseconds.<br>
      * Default value is 10 minutes.
      */
     @SuppressWarnings("FieldCanBeLocal")

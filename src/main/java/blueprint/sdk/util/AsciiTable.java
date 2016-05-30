@@ -17,7 +17,7 @@ package blueprint.sdk.util;
  * ASCII Code Table
  *
  * @author lempel@gmail.com
- * @Since 2015-12-21
+ * @since 2015-12-21
  */
 public class AsciiTable {
     /**
@@ -173,7 +173,7 @@ public class AsciiTable {
      */
     public static final byte PERCENT = (byte) 0x25;
     /**
-     * ASCII Code : '&'
+     * ASCII Code : '&amp;'
      */
     public static final byte AND = (byte) 0x26;
     /**
@@ -261,7 +261,7 @@ public class AsciiTable {
      */
     public static final byte SEMI_COLON = (byte) 0x3b;
     /**
-     * ASCII Code : '<'
+     * ASCII Code : '&lt;'
      */
     public static final byte LESS_THAN = (byte) 0x3c;
     /**
@@ -269,7 +269,7 @@ public class AsciiTable {
      */
     public static final byte EQUAL = (byte) 0x3d;
     /**
-     * ASCII Code : '>'
+     * ASCII Code : '&gt;'
      */
     public static final byte GREATER_THAN = (byte) 0x3e;
     /**

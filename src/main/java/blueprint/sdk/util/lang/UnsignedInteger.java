@@ -25,8 +25,8 @@ public class UnsignedInteger {
     public static final long UINT_MAX = 0x0FFFFFFFL;
 
     /**
-     * Carry flag.<br/>
-     * If it's set, value can't be expressed as signed int.<br/>
+     * Carry flag.<br>
+     * If it's set, value can't be expressed as signed int.<br>
      */
     protected boolean carry = false;
     /**
