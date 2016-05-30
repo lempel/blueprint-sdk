@@ -50,7 +50,7 @@ public class IoC {
     public void init() {
         L.info("Initializing IoC Container");
 
-        boolean isExecuableJar = false;
+        boolean isExecutableJar = false;
         String mainClass = null;
         String rootPackage = null;
         try {
@@ -61,10 +61,9 @@ public class IoC {
             String lowerCases = mainClass.toLowerCase();
             if (lowerCases.endsWith(".jar") || lowerCases.endsWith(".zip")) {
                 rootPackage = "";
-                isExecuableJar = true;
+                isExecutableJar = true;
             } else {
                 int idx = mainClass.lastIndexOf(".");
-
                 if (idx >= 0) {
                     rootPackage = mainClass.substring(0, idx);
                 }
@@ -82,15 +81,13 @@ public class IoC {
             throw new NullPointerException("Can't find current JVM's root package");
         }
 
+        // TODO remove debug code
+        checkClasses();
+        System.gc();
+
         String classpath = System.getProperty("java.class.path");
         String[] tokens = classpath.split(System.getProperty("path.separator"));
         for (String token : tokens) {
-            L.debug(token);
-
-            // TODO remove debug code
-            checkClasses();
-            System.gc();
-
             // TODO remove debug code
             EveryTimeLoader testLoader = new EveryTimeLoader("D:\\git\\blueprint-sdk\\build\\classes\\main");
             try {
@@ -109,7 +106,7 @@ public class IoC {
                 // ---- look up class dirs if mainClass is class
                 // ---- look up jar files if mainClass is jar
 
-                if (isExecuableJar && token.endsWith(mainClass)) {
+                if (isExecutableJar && token.endsWith(mainClass)) {
                     try {
                         ZipFile jar = new ZipFile(target);
                         // TODO implement tailor made class loader
@@ -147,23 +144,43 @@ public class IoC {
                                 }
                             }
                         }
+
+                        // TODO remove debug code
+                        checkClasses();
+                        System.gc();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                } else if (!isExecuableJar && target.isDirectory()) {
-                    // TODO implement tailor made class loader
-                    ClazzLoader loader = new ClazzLoader();
+                } else if (!isExecutableJar && target.isDirectory()) {
+                    traverseClassDir(target);
 
-                    // TODO traverse class directory
-
-                    // TODO find class file
-
-                    // TODO inspect clazz and instantiate and put to some map
+                    // TODO remove debug code
+                    checkClasses();
+                    System.gc();
                 }
             }
         }
 
         L.info("IoC Container initialized");
+    }
+
+    // TODO implement tailor made class loader
+    ClazzLoader loader = new ClazzLoader();
+
+    private void traverseClassDir(File dir) {
+        String filename = dir.getName();
+        if (dir.isDirectory()) {
+            if (!".".equals(filename) && !"..".equals(filename)) {
+                File[] files = dir.listFiles();
+                for (File file : files) {
+                    traverseClassDir(file);
+                }
+            }
+        } else if (filename.endsWith(".class")) {
+            //Class clazz = loader.loadClass();
+
+            // TODO inspect clazz and instantiate and put to some map
+        }
     }
 
     // TODO remove debug code
