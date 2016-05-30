@@ -1,2 +1,7 @@
-/blueprint-sdk/nbproject/private/
-/blueprint-sdk-logger/nbproject/private/
+.idea/
+
+.gradle/
+build/
+gradle/
+gradlew
+gradlew.bat
