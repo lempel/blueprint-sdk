@@ -45,14 +45,24 @@ public class JavaProcesses {
 
     /**
      * @param monitoredHost host
-     * @param info VM information
+     * @param info          VM information
      * @return target VM
      */
     @SuppressWarnings("WeakerAccess")
     public static MonitoredVm getMonitoredVm(MonitoredHost monitoredHost, VmInfo info) {
+        return getMonitoredVm(monitoredHost, String.valueOf(info.pid));
+    }
+
+    /**
+     * @param monitoredHost host
+     * @param pid           PID of VM
+     * @return target VM
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static MonitoredVm getMonitoredVm(MonitoredHost monitoredHost, String pid) {
         MonitoredVm result = null;
 
-        String vmidString = toVmId(info.pid);
+        String vmidString = toVmId(pid);
 
         try {
             VmIdentifier id = new VmIdentifier(vmidString);
@@ -66,7 +76,7 @@ public class JavaProcesses {
      * @param pid process id
      * @return VM id
      */
-    private static String toVmId(int pid) {
+    private static String toVmId(String pid) {
         return "//" + pid + "?mode=r";
     }
 
@@ -118,5 +128,22 @@ public class JavaProcesses {
      */
     public MonitoredHost getMonitoredHost() throws MonitorException {
         return MonitoredHost.getMonitoredHost(arguments.hostId());
+    }
+
+    /**
+     * @param pid process id of desired VM
+     * @return main class or executable jar's name or null (not found)
+     * @throws MonitorException
+     */
+    public String findMainClass(String pid) throws MonitorException {
+        String result = null;
+        List<VmInfo> vms = listJvms();
+
+        for (VmInfo vm : vms) {
+            if (String.valueOf(vm.pid).equals(pid)) {
+                result = vm.mainClass;
+            }
+        }
+        return result;
     }
 }
