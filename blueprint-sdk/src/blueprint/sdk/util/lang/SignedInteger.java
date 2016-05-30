@@ -16,7 +16,7 @@ package blueprint.sdk.util.lang;
 /**
  * Signed Integer for interoperability with external systems.
  *
- * @author Sangmi Lee
+ * @author lempel@gmail.com
  * @since 2015-12-16
  */
 public class SignedInteger {

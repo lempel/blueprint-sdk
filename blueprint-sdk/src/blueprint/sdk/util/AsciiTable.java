@@ -16,7 +16,7 @@ package blueprint.sdk.util;
 /**
  * ASCII Code Table
  *
- * @author Sangmi Lee
+ * @author lempel@gmail.com
  * @Since 2015-12-21
  */
 public class AsciiTable {
