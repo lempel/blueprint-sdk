@@ -10,11 +10,18 @@ repositories {
     jcenter()
 }
 
+// ---> for offline build
+//dependencies {
+//    compile fileTree(dir: 'libs', include: ["*.jar"], exclude: ["*source*.jar"])
+//    compile fileTree(dir: System.env.'JAVA_HOME' + '/lib', include: ["tools.jar"])
+//}
+// <---
+
 dependencies {
     compile fileTree(dir: System.env.'JAVA_HOME' + '/lib', include: ["tools.jar"])
 
     // http://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.22'
     // http://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.21'
     // http://mvnrepository.com/artifact/log4j/log4j
