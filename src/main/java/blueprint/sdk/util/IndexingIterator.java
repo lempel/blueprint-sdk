@@ -21,6 +21,14 @@ public class IndexingIterator<E> implements Iterator<E> {
         this.iterator = iterator;
     }
 
+    public <T> IndexingIterator<T> wrap(Iterable<T> iterable) {
+        return new IndexingIterator<T>(iterable);
+    }
+
+    public <T> IndexingIterator<T> wrap(Iterator<T> iterator) {
+        return new IndexingIterator<T>(iterator);
+    }
+
     @Override
     public boolean hasNext() {
         return iterator.hasNext();
