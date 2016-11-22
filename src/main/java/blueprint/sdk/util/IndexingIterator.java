@@ -1,7 +1,10 @@
 package blueprint.sdk.util;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Iterator with index
@@ -52,5 +55,13 @@ public class IndexingIterator<E> implements Iterator<E> {
      */
     public int index() {
         return index;
+    }
+
+    public void forEach(BiConsumer<Integer, E> action) {
+        Objects.requireNonNull(action);
+        while (hasNext()) {
+            E item = next();
+            action.accept(index(), item);
+        }
     }
 }
