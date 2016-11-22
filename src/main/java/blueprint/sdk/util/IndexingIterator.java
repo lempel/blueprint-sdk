@@ -1,10 +1,9 @@
 package blueprint.sdk.util;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * Iterator with index
@@ -14,7 +13,7 @@ import java.util.stream.StreamSupport;
  */
 public class IndexingIterator<E> implements Iterator<E> {
     private Iterator<E> iterator;
-    private int index;
+    private int index = -1;
 
     public IndexingIterator(Iterable<E> iterble) {
         this.iterator = iterble.iterator();
