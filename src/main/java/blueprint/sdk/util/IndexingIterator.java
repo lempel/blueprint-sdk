@@ -43,6 +43,7 @@ public class IndexingIterator<E> implements Iterator<E> {
 
         try {
             result = iterator.next();
+            index++;
         } catch (NoSuchElementException e) {
             throw e;
         }
