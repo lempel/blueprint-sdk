@@ -9,11 +9,15 @@ import java.util.NoSuchElementException;
  * @author lempel@gmail.com
  * @since 2016. 11. 22
  */
-public class IndexingIterator<T> implements Iterator {
-    private Iterator<T> iterator;
+public class IndexingIterator<E> implements Iterator<E> {
+    private Iterator<E> iterator;
     private int index;
 
-    public IndexingIterator(Iterator<T> iterator) {
+    public IndexingIterator(Iterable<E> iterble) {
+        this.iterator = iterble.iterator();
+    }
+
+    public IndexingIterator(Iterator<E> iterator) {
         this.iterator = iterator;
     }
 
@@ -23,8 +27,8 @@ public class IndexingIterator<T> implements Iterator {
     }
 
     @Override
-    public T next() {
-        T result;
+    public E next() {
+        E result;
 
         try {
             result = iterator.next();
