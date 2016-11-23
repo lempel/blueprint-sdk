@@ -90,7 +90,7 @@ public final class Validator {
      * if the Object is null, throws NullPointerException with message
      *
      * @param value any Object
-     * @param name Object's name for error message
+     * @param name  Object's name for error message
      * @throws NullPointerException value is null
      */
     public static void checkNull(Object value, String name) throws NullPointerException {
@@ -103,7 +103,7 @@ public final class Validator {
      * if the String is null or empty, throws NullPointerException with message
      *
      * @param value any String
-     * @param name String's name for error message
+     * @param name  String's name for error message
      * @throws NullPointerException value is null
      */
     @SuppressWarnings("WeakerAccess")
@@ -117,6 +117,7 @@ public final class Validator {
      * substitutes null String
      *
      * @param value any String
+     * @param subst default value
      * @return validated String
      */
     public static String nvl(String value, String subst) {
@@ -186,7 +187,7 @@ public final class Validator {
      * message
      *
      * @param value any String
-     * @param name String's name for error message
+     * @param name  String's name for error message
      * @throws NullPointerException value is not an integer
      */
     public static void checkInteger(String value, String name) throws NumberFormatException {
@@ -229,7 +230,7 @@ public final class Validator {
      * if the String is boolean or not, throws RuntimeException with message
      *
      * @param value any String
-     * @param name String's name for error message
+     * @param name  String's name for error message
      * @throws RuntimeException value is not an boolean
      */
     public static void checkBoolean(String value, String name) throws RuntimeException {

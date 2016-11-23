@@ -212,6 +212,7 @@ public class ByteArrayHandler {
 
     /**
      * @param startIndex
+     * @param endIndex
      * @param delimeters
      * @return index or -1 (not found)
      */
@@ -244,6 +245,7 @@ public class ByteArrayHandler {
      * Returns index of all sequence matches
      *
      * @param startIndex
+     * @param endIndex
      * @param sequence
      * @return index or -1 (not found)
      */

@@ -57,6 +57,8 @@ public abstract class JdbcQueue extends MessageQueue {
 
     /**
      * create table and load queue contents from DataSource
+     *
+     * @throws SQLException
      */
     public void init() throws SQLException {
         synchronized (queue) {
