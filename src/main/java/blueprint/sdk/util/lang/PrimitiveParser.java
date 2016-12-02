@@ -31,7 +31,7 @@ public class PrimitiveParser {
      * @param o target
      * @return Boolean.parseBoolean(o)
      */
-    public static Boolean parseBoolean(final Object o) {
+    public static boolean parseBoolean(final Object o) {
         String s = String.valueOf(o).trim();
         return Boolean.parseBoolean(s);
     }
@@ -40,7 +40,7 @@ public class PrimitiveParser {
      * @param o target
      * @return Integer.parseInt(o)
      */
-    public static Integer parseInt(final Object o) {
+    public static int parseInt(final Object o) {
         return parseInt(o, 10);
     }
 
@@ -49,7 +49,7 @@ public class PrimitiveParser {
      * @param radix radix
      * @return Integer.parseInt(o)
      */
-    public static Integer parseInt(final Object o, final int radix) {
+    public static int parseInt(final Object o, final int radix) {
         String s = String.valueOf(o).trim();
         try {
             return Integer.parseInt(s, radix);
@@ -62,7 +62,7 @@ public class PrimitiveParser {
      * @param o target
      * @return Long.parseLong(o)
      */
-    public static Long parseLong(final Object o) {
+    public static long parseLong(final Object o) {
         return parseLong(o, 10);
     }
 
@@ -71,7 +71,7 @@ public class PrimitiveParser {
      * @param radix radix
      * @return Long.parseLong(o)
      */
-    public static Long parseLong(final Object o, final int radix) {
+    public static long parseLong(final Object o, final int radix) {
         String s = String.valueOf(o).trim();
         try {
             return Long.parseLong(s, radix);
@@ -84,7 +84,7 @@ public class PrimitiveParser {
      * @param o target
      * @return Float.parseFloat(o)
      */
-    public static Float parseFloat(final Object o) {
+    public static float parseFloat(final Object o) {
         String s = String.valueOf(o).trim();
         try {
             return Float.parseFloat(s);
@@ -97,7 +97,7 @@ public class PrimitiveParser {
      * @param o target
      * @return Double.parseDouble(o)
      */
-    public static Double parseDouble(final Object o) {
+    public static double parseDouble(final Object o) {
         String s = String.valueOf(o).trim();
         try {
             return Double.parseDouble(s);
