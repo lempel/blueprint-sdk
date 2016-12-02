@@ -41,9 +41,18 @@ public class PrimitiveParser {
      * @return Integer.parseInt(o)
      */
     public static Integer parseInt(final Object o) {
+        return parseInt(o, 10);
+    }
+
+    /**
+     * @param o     target
+     * @param radix radix
+     * @return Integer.parseInt(o)
+     */
+    public static Integer parseInt(final Object o, final int radix) {
         String s = String.valueOf(o).trim();
         try {
-            return Integer.parseInt(s);
+            return Integer.parseInt(s, radix);
         } catch (NumberFormatException e) {
             throw enhanceMessage(e, "parseInt");
         }
@@ -54,9 +63,18 @@ public class PrimitiveParser {
      * @return Long.parseLong(o)
      */
     public static Long parseLong(final Object o) {
+        return parseLong(o, 10);
+    }
+
+    /**
+     * @param o     target
+     * @param radix radix
+     * @return Long.parseLong(o)
+     */
+    public static Long parseLong(final Object o, final int radix) {
         String s = String.valueOf(o).trim();
         try {
-            return Long.parseLong(s);
+            return Long.parseLong(s, radix);
         } catch (NumberFormatException e) {
             throw enhanceMessage(e, "parseLong");
         }
