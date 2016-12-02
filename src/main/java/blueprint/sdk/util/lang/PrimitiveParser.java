@@ -102,7 +102,7 @@ public class PrimitiveParser {
         try {
             return Double.parseDouble(s);
         } catch (NumberFormatException e) {
-            throw enhanceMessage(e, "parseLong");
+            throw enhanceMessage(e, "parseDouble");
         }
     }
 
