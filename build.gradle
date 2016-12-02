@@ -1,5 +1,5 @@
 group 'lempel'
-version '0.4.2'
+version '0.4.3'
 
 apply plugin: 'java'
 apply plugin: 'idea'
@@ -65,3 +65,4 @@ task fatJar(type: Jar, dependsOn: javadoc) {
     }
     with simpleJar
 }
+
