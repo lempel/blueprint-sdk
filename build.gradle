@@ -20,25 +20,15 @@ repositories {
 dependencies {
     compile fileTree(dir: System.env.'JAVA_HOME' + '/lib', include: ["tools.jar"])
 
-    // http://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
     // http://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
     compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.21'
-    // http://mvnrepository.com/artifact/log4j/log4j
-    compile group: 'log4j', name: 'log4j', version: '1.2.17'
 
     // http://mvnrepository.com/artifact/com.h2database/h2
     compile group: 'com.h2database', name: 'h2', version: '1.4.192'
 
     // http://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.7.4'
-    // http://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.7.4'
-    // http://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.7.4'
 
-    // http://mvnrepository.com/artifact/commons-codec/commons-codec
-    compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
     // http://mvnrepository.com/artifact/commons-jxpath/commons-jxpath
     compile group: 'commons-jxpath', name: 'commons-jxpath', version: '1.3'
 

@@ -1,6 +1,11 @@
 .idea/
 .gradle/
+bin/
 build/
+classes/
 gradle/
+target/
+
+*.iml
 gradlew
 gradlew.bat
