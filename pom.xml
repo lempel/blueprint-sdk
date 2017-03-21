@@ -7,6 +7,7 @@
     <groupId>lempel76</groupId>
     <artifactId>blueprint-sdk</artifactId>
     <version>3.2.1_java7</version>
+    <packaging>jar</packaging>
 
     <distributionManagement>
         <repository>
