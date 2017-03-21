@@ -8,6 +8,14 @@
     <artifactId>blueprint-sdk</artifactId>
     <version>3.2.1_java7</version>
 
+    <distributionManagement>
+        <repository>
+            <id>bintray-lempel-lempel76</id>
+            <name>lempel-lempel76</name>
+            <url>https://api.bintray.com/maven/lempel/lempel76/blueprint-sdk/;publish=1</url>
+        </repository>
+    </distributionManagement>
+
     <build>
         <plugins>
             <plugin>
