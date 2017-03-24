@@ -4,16 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>lempel76</groupId>
+    <groupId>sangmin.lee</groupId>
     <artifactId>blueprint-sdk</artifactId>
     <version>3.2.1</version>
-    <packaging>jar</packaging>
 
     <distributionManagement>
         <repository>
-            <id>bintray-lempel-lempel76</id>
-            <name>lempel-lempel76</name>
-            <url>https://api.bintray.com/maven/lempel/lempel76/blueprint-sdk/;publish=1</url>
+            <id>bintray-lempel-sangmin.lee</id>
+            <name>lempel-sangmin.lee</name>
+            <url>https://api.bintray.com/maven/lempel/sangmin.lee/blueprint-sdk/;publish=1</url>
         </repository>
     </distributionManagement>
 

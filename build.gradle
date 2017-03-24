@@ -1,5 +1,5 @@
 group 'lempel'
-version '0.4.3'
+version '3.2.1'
 
 apply plugin: 'java'
 apply plugin: 'idea'
@@ -9,13 +9,6 @@ sourceCompatibility = 1.8
 repositories {
     jcenter()
 }
-
-// ---> for offline build
-//dependencies {
-//    compile fileTree(dir: 'libs', include: ["*.jar"], exclude: ["*source*.jar"])
-//    compile fileTree(dir: System.env.'JAVA_HOME' + '/lib', include: ["tools.jar"])
-//}
-// <---
 
 dependencies {
     compile fileTree(dir: System.env.'JAVA_HOME' + '/lib', include: ["tools.jar"])
@@ -63,4 +56,3 @@ task fatJar(type: Jar, dependsOn: javadoc) {
     }
     with simpleJar
 }
-
