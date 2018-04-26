@@ -8,7 +8,8 @@
  Distribution:
 
  Repository - https://github.com/lempel/blueprint-sdk.git
- Blog - http://lempel.egloos.com
+ Blog - http://lempel76.blogspot.kr
+        http://lempel.egloos.com
  */
 
 package blueprint.sdk.google.gcm;

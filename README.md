@@ -8,7 +8,8 @@ blueprint-sdk is licensed under the terms of Eclipse Public License(EPL) v1.0<br
 Distribution:<br>
 <br>
 Repository - https://github.com/lempel/blueprint-sdk.git<br>
-Blog - http://lempel.egloos.com<br>
+Blog - http://lempel76.blogspot.kr<br>
+       http://lempel.egloos.com<br>
 <br>
 <br>
 Sub-Projects:<br>
