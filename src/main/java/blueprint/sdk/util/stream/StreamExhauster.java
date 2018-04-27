@@ -28,12 +28,12 @@ public class StreamExhauster extends Thread {
      */
     private final DataInputStream ins;
     /**
-     * true: print, false: discard
+     * drain
      */
     private DataOutputStream dos;
 
     /**
-     * Silently exhanust input
+     * Silently exhaust input
      *
      * @param input InputStream to exhaust
      */
@@ -71,7 +71,7 @@ public class StreamExhauster extends Thread {
                     dos.write(bin);
                 }
             }
-        } catch (IOException ignored) { // NOPMD
+        } catch (IOException ignored) {
         }
     }
 }

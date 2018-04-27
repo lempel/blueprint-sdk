@@ -3,11 +3,10 @@ package blueprint.sdk.ioc;
 import blueprint.sdk.util.Validator;
 import blueprint.sdk.util.debug.ClazzLoader;
 import blueprint.sdk.util.debug.EveryTimeLoader;
-import blueprint.sdk.util.jvm.JavaProcesses;
+import blueprint.sdk.util.jvm.JpsHelper;
 import blueprint.sdk.util.jvm.shutdown.KillMeInstead;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.jvmstat.monitor.MonitorException;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -56,7 +55,7 @@ public class IoC {
         try {
             // current JVM's PID
             String pid = KillMeInstead.getPid();
-            mainClass = new JavaProcesses().findMainClass(pid);
+            mainClass = new JpsHelper().findMainClass(pid);
 
             String lowerCases = mainClass.toLowerCase();
             if (lowerCases.endsWith(".jar") || lowerCases.endsWith(".zip")) {
@@ -68,7 +67,7 @@ public class IoC {
                     rootPackage = mainClass.substring(0, idx);
                 }
             }
-        } catch (MonitorException e) {
+        } catch (IOException e) {
             throw new NullPointerException("Can't find current JVM's PID");
         }
 

@@ -21,9 +21,8 @@ package blueprint.sdk.util.jvm;
  * @since 2013. 6. 23.
  */
 public class VmInfo {
-    public int pid;
-    public String mainClass;
-    public String mainArgs;
-    public String vmArgs;
-    public String vmFlags;
+    public String pid = null;
+    public String command = null;
+    public String args = null;
+    public String vmArgs = null;
 }

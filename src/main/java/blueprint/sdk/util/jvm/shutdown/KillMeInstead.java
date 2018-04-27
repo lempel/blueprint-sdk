@@ -14,14 +14,9 @@
 
 package blueprint.sdk.util.jvm.shutdown;
 
-import blueprint.sdk.util.jvm.JavaProcesses;
+import blueprint.sdk.util.jvm.JpsHelper;
 import blueprint.sdk.util.jvm.VmInfo;
 import blueprint.sdk.util.stream.StreamExhauster;
-import sun.jvmstat.monitor.MonitorException;
-import sun.jvmstat.monitor.MonitoredHost;
-import sun.jvmstat.monitor.event.HostEvent;
-import sun.jvmstat.monitor.event.HostListener;
-import sun.jvmstat.monitor.event.VmStatusChangeEvent;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
@@ -29,7 +24,6 @@ import java.lang.management.OperatingSystemMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Marker Process for graceful shutdown.<br>
@@ -48,6 +42,7 @@ public class KillMeInstead {
      *                 process
      * @throws IOException Can't launch
      */
+    @SuppressWarnings("unused")
     public static void launch(final Runnable callback) throws IOException {
         launch(callback, false);
     }
@@ -71,34 +66,32 @@ public class KillMeInstead {
         cmds.add(getPid());
 
         ProcessBuilder bld = new ProcessBuilder(cmds);
-        Process proc = bld.start();
+        Process killMe = bld.start();
 
         OutputStream out = null;
         if (print) {
             out = System.out;
         }
 
-        final Thread ex1 = new StreamExhauster(proc.getErrorStream(), out);
-        final Thread ex2 = new StreamExhauster(proc.getInputStream(), out);
+        final Thread ex1 = new StreamExhauster(killMe.getErrorStream(), out);
+        final Thread ex2 = new StreamExhauster(killMe.getInputStream(), out);
         ex1.start();
         ex2.start();
 
-        Thread loop = new Thread() {
-            public void run() {
-                while (true) {
-                    if (ex1.isAlive() && ex2.isAlive()) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException ignored) {
-                        }
-                    } else {
-                        // if kill me is dead then invoke callback
-                        callback.run();
-                        break;
+        Thread loop = new Thread(() -> {
+            while (true) {
+                if (ex1.isAlive() && ex2.isAlive()) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ignored) {
                     }
+                } else {
+                    // if kill me is dead then invoke callback
+                    callback.run();
+                    break;
                 }
             }
-        };
+        });
         loop.setDaemon(true);
         loop.start();
     }
@@ -124,9 +117,8 @@ public class KillMeInstead {
     /**
      * @param args ["parent's pid"]
      * @throws FileNotFoundException Can't create *.pid file or *.err file
-     * @throws MonitorException      Can't monitor JVMs
      */
-    public static void main(String[] args) throws FileNotFoundException, MonitorException {
+    public static void main(String[] args) throws FileNotFoundException {
         String pid = getPid();
 
         try {
@@ -152,44 +144,10 @@ public class KillMeInstead {
         }
     }
 
-    private static void monitor(String[] args) throws MonitorException {
-        final int ppid = Integer.parseInt(args[0]);
-        final Object lock = new Object();
+    private static void monitor(String[] args) throws IOException {
+        final String ppid = args[0];
 
-        JavaProcesses jps = new JavaProcesses();
-
-        // find parent vm and install listener
-        List<VmInfo> vms = jps.listJvms();
-        for (VmInfo vm : vms) {
-            if (ppid == vm.pid) {
-                MonitoredHost host = jps.getMonitoredHost();
-                host.addHostListener(new HostListener() {
-                    @Override
-                    public void vmStatusChanged(VmStatusChangeEvent event) {
-                        @SuppressWarnings("unchecked")
-                        Set<Integer> deadPids = event.getTerminated();
-
-                        for (int deadPid : deadPids) {
-                            if (deadPid == ppid) {
-                                synchronized (lock) {
-                                    // die with parent
-                                    lock.notify();
-                                }
-                                break;
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void disconnected(HostEvent event) {
-                        synchronized (lock) {
-                            // die with parent
-                            lock.notify();
-                        }
-                    }
-                });
-            }
-        }
+        JpsHelper jps = new JpsHelper();
 
         boolean hasParent = true;
         while (hasParent) {
@@ -199,11 +157,11 @@ public class KillMeInstead {
             } catch (InterruptedException ignored) {
             }
 
-            // search parent - parent could be terminated without any event
-            vms = jps.listJvms();
+            // search parent
+            List<VmInfo> vms = jps.listJvms();
             hasParent = false;
             for (VmInfo vm : vms) {
-                if (ppid == vm.pid) {
+                if (vm.pid.equals(ppid)) {
                     hasParent = true;
                     break;
                 }
