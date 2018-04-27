@@ -6,7 +6,7 @@
 
     <groupId>sangmin.lee</groupId>
     <artifactId>blueprint-sdk</artifactId>
-    <version>3.2.3</version>
+    <version>3.2.4</version>
 
     <distributionManagement>
         <repository>
@@ -68,15 +68,6 @@
     </build>
 
     <dependencies>
-        <!-- tools.jar -->
-        <dependency>
-            <groupId>com.sun</groupId>
-            <artifactId>tools</artifactId>
-            <version>1.8</version>
-            <scope>system</scope>
-            <systemPath>${java.home}/../lib/tools.jar</systemPath>
-        </dependency>
-
         <!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
         <dependency>
             <groupId>org.slf4j</groupId>
