@@ -81,6 +81,7 @@ public class JpsHelper {
                     if (!Validator.isEmpty(pid) && vmInfoMap.containsKey(pid)) {
                         VmInfo vmInfo = vmInfoMap.get(pid);
                         vmInfo.vmArgs = tokenizer.remain();
+                        result.add(vmInfo);
                     }
                 }
             }
