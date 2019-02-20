@@ -31,8 +31,8 @@ public class IpUtil {
      * @return list of all available ip address
      * @throws SocketException I/O error occurs
      */
-    public static List<String> getAllIp() throws SocketException {
-        List<String> result = new ArrayList<>();
+    public static List<InetAddress> getAllAddress() throws SocketException {
+        List<InetAddress> result = new ArrayList<>();
 
         Enumeration<NetworkInterface> infs = NetworkInterface.getNetworkInterfaces();
         while (infs.hasMoreElements()) {
@@ -44,12 +44,25 @@ public class IpUtil {
             Enumeration<InetAddress> addrs = inf.getInetAddresses();
             while (addrs.hasMoreElements()) {
                 InetAddress addr = addrs.nextElement();
-                String ip = addr.getHostAddress();
-                if ("0.0.0.0".equals(ip) || "::0".equals(ip)) {
-                    continue;
+                if (!addr.isLoopbackAddress()) {
+                    result.add(addr);
                 }
-                result.add(ip);
             }
+        }
+
+        return result;
+    }
+
+    /**
+     * @return list of all available ip address
+     * @throws SocketException I/O error occurs
+     */
+    public static List<String> getAllIp() throws SocketException {
+        List<String> result = new ArrayList<>();
+
+        List<InetAddress> addrs = getAllAddress();
+        for (InetAddress addr : addrs) {
+            result.add(addr.getHostAddress());
         }
 
         return result;
@@ -59,7 +72,7 @@ public class IpUtil {
      * See if given address is private or not
      *
      * @param addr target address
-     * @return true : private network
+     * @return true : private address
      */
     public static boolean isPrivateIp(InetAddress addr) {
         boolean result = false;
@@ -77,7 +90,7 @@ public class IpUtil {
      * See if given address is private or not
      *
      * @param addr IPv4 address
-     * @return true : private network
+     * @return true : private address
      */
     public static boolean isPrivateIp(Inet4Address addr) {
         boolean result = false;
@@ -106,7 +119,7 @@ public class IpUtil {
      * See if given address is private or not
      *
      * @param addr IPv6 address
-     * @return true : private network
+     * @return true : private address
      */
     public static boolean isPrivateIp(Inet6Address addr) {
         boolean result = false;
@@ -126,63 +139,10 @@ public class IpUtil {
      * See if given address is loopback or not
      *
      * @param addr target address
-     * @return true : private network
+     * @return true : private address
      */
     public static boolean isLoopbackIp(InetAddress addr) {
-        boolean result = false;
-
-        if (addr instanceof Inet4Address) {
-            result = isLoopbackIp((Inet4Address) addr);
-        } else if (addr instanceof Inet6Address) {
-            result = isLoopbackIp((Inet6Address) addr);
-        }
-
-        return result;
-    }
-
-    /**
-     * See if given address is loopback or not
-     *
-     * @param addr IPv4 address
-     * @return true : private network
-     */
-    public static boolean isLoopbackIp(Inet4Address addr) {
-        boolean result = false;
-
-        byte[] address = addr.getAddress();
-
-        if ((address[0] & 0x000000ff) == 0x7f) {
-            // 127.*.*.*
-            result = true;
-        }
-
-        return result;
-    }
-
-    /**
-     * See if given address is loopback or not
-     *
-     * @param addr IPv6 address
-     * @return true : private network
-     */
-    public static boolean isLoopbackIp(Inet6Address addr) {
-        boolean result = false;
-
-        byte[] address = addr.getAddress();
-
-        boolean allZero = true;
-        for (byte abyte : address) {
-            if (abyte != 0) {
-                allZero = false;
-                break;
-            }
-        }
-
-        if (allZero && address[address.length - 1] == 1) {
-            result = true;
-        }
-
-        return result;
+        return addr.isLoopbackAddress();
     }
 
     /**
