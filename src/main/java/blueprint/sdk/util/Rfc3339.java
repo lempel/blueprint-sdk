@@ -16,6 +16,7 @@ package blueprint.sdk.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -33,21 +34,31 @@ public class Rfc3339 {
             "yyyy-MM-dd'T'HH:mm:ssXXX");
 
     /**
-     * Convert {@link Date} to RFC3339 (GMT)
+     * Convert {@link Calendar} to RFC3339
+     *
+     * @param cal Java Calendar
+     * @return RFC3339
+     */
+    public static String toString(Calendar cal) {
+        return toString(cal.getTime(), true);
+    }
+
+    /**
+     * Convert {@link Date} to RFC3339
      *
      * @param date Java Date
-     * @return RFC3339 (GMT)
+     * @return RFC3339
      */
     public static String toString(Date date) {
         return toString(date, true);
     }
 
     /**
-     * Convert {@link Date} to RFC3339 (GMT)
+     * Convert {@link Date} to RFC3339
      *
      * @param date            Java Date
      * @param includeMillisec include milli second
-     * @return RFC3339 (GMT)
+     * @return RFC3339
      */
     public static String toString(Date date, boolean includeMillisec) {
         if (includeMillisec) {
@@ -58,9 +69,9 @@ public class Rfc3339 {
     }
 
     /**
-     * Convert RFC3339 (GMT) to {@link Date}
+     * Convert RFC3339 to {@link Date}
      *
-     * @param date RFC3339 (GMT)
+     * @param date RFC3339
      * @return Java Date
      * @throws ParseException
      */
