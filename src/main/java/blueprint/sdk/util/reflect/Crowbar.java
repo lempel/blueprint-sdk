@@ -70,4 +70,38 @@ public class Crowbar {
         Method method = getMethod(target.getClass(), name, paramTypes);
         return method.invoke(target, params);
     }
+
+    /**
+     * See if 'test' is an instance of 'control'
+     *
+     * @param test    test class
+     * @param control control class
+     * @return true: 'test' is an instance of 'control'
+     */
+    public static boolean isInstance(Class test, Class control) {
+        boolean result;
+
+        if (test.equals(control)) {
+            result = true;
+        } else {
+            Class[] infs = test.getInterfaces();
+            result = false;
+
+            for (Class inf : infs) {
+                if (isInstance(inf, control)) {
+                    result = true;
+                    break;
+                }
+            }
+
+            if (!result) {
+                Class superClass = test.getSuperclass();
+                if (superClass != null) {
+                    result = isInstance(superClass, control);
+                }
+            }
+        }
+
+        return result;
+    }
 }

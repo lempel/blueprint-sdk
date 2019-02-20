@@ -17,11 +17,13 @@ package blueprint.sdk.core.concurrent;
 import blueprint.sdk.util.jvm.shutdown.TerminatableThread;
 import blueprint.sdk.util.jvm.shutdown.Terminator;
 import blueprint.sdk.util.queue.Queue;
+import blueprint.sdk.util.reflect.Crowbar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -89,11 +91,26 @@ public class WorkerGroup<J, Q extends Queue<J>> extends TerminatableThread {
     protected void newWorker() throws NoSuchMethodException, InstantiationException, IllegalAccessException,
             InvocationTargetException {
         Worker<J> aWorker;
-        Constructor<? extends Worker<J>> cons = workerClass.getConstructor(Queue.class, Object.class);
-        aWorker = cons.newInstance(jobQueue, deathMonitor);
-        workers.add(aWorker);
-        aWorker.start();
+
+        Constructor[] constructors = workerClass.getConstructors();
+        for (Constructor constructor : constructors) {
+            Parameter[] params = constructor.getParameters();
+
+            if (params == null || params.length != 2) {
+                continue;
+            }
+
+            if (Crowbar.isInstance(params[0].getType(), Queue.class)
+                    && Crowbar.isInstance(params[1].getType(), Object.class)) {
+                // FIXME how can I resolve this warning?
+                aWorker = (Worker<J>) constructor.newInstance(jobQueue, deathMonitor);
+                workers.add(aWorker);
+                aWorker.start();
+                break;
+            }
+        }
     }
+
 
     /**
      * Add more workers
