@@ -28,10 +28,19 @@ import java.util.List;
 @SuppressWarnings("WeakerAccess")
 public class IpUtil {
     /**
-     * @return list of all available ip address
+     * @return list of all available ip address except loopback
      * @throws SocketException I/O error occurs
      */
     public static List<InetAddress> getAllAddress() throws SocketException {
+        return getAllAddress(true);
+    }
+
+    /**
+     * @param excludeLoopback set to exclude loopback
+     * @return list of all available ip address
+     * @throws SocketException I/O error occurs
+     */
+    public static List<InetAddress> getAllAddress(boolean excludeLoopback) throws SocketException {
         List<InetAddress> result = new ArrayList<>();
 
         Enumeration<NetworkInterface> infs = NetworkInterface.getNetworkInterfaces();
@@ -44,9 +53,10 @@ public class IpUtil {
             Enumeration<InetAddress> addrs = inf.getInetAddresses();
             while (addrs.hasMoreElements()) {
                 InetAddress addr = addrs.nextElement();
-                if (!addr.isLoopbackAddress()) {
-                    result.add(addr);
+                if (excludeLoopback && addr.isLoopbackAddress()) {
+                    continue;
                 }
+                result.add(addr);
             }
         }
 
@@ -163,6 +173,18 @@ public class IpUtil {
      * @return a source which can reach to target or null (not found)
      * @throws UnknownHostException target is unknown
      */
+    public static InetAddress findReachable(List<String> sources, String target) throws UnknownHostException {
+        return findReachable(sources.toArray(new String[0]), target);
+    }
+
+    /**
+     * Find a reachable address to target
+     *
+     * @param sources source addresses
+     * @param target  target address
+     * @return a source which can reach to target or null (not found)
+     * @throws UnknownHostException target is unknown
+     */
     public static InetAddress findReachable(String[] sources, String target) throws UnknownHostException {
         return findReachable(sources, InetAddress.getByName(target));
     }
@@ -196,6 +218,17 @@ public class IpUtil {
      */
     public static InetAddress findReachable(InetAddress[] sources, String target) throws UnknownHostException {
         return findReachable(sources, InetAddress.getByName(target));
+    }
+
+    /**
+     * Find a reachable address to target
+     *
+     * @param sources source addresses
+     * @param target  target address
+     * @return a source which can reach to target or null (not found)
+     */
+    public static InetAddress findReachable(List<InetAddress> sources, InetAddress target) {
+        return findReachable(sources.toArray(new InetAddress[0]), target);
     }
 
     /**
