@@ -154,4 +154,106 @@ public class IpUtil {
     public static boolean isPublicIp(InetAddress addr) {
         return !(isPrivateIp(addr) || isLoopbackIp(addr));
     }
+
+    /**
+     * Find a reachable address to target
+     *
+     * @param sources source addresses
+     * @param target  target address
+     * @return a source which can reach to target or null (not found)
+     * @throws UnknownHostException target is unknown
+     */
+    public static InetAddress findReachable(String[] sources, String target) throws UnknownHostException {
+        return findReachable(sources, InetAddress.getByName(target));
+    }
+
+    /**
+     * Find a reachable address to target
+     *
+     * @param sources source addresses
+     * @param target  target address
+     * @return a source which can reach to target or null (not found)
+     * @throws UnknownHostException target is unknown
+     */
+    public static InetAddress findReachable(String[] sources, InetAddress target) throws UnknownHostException {
+        InetAddress[] addresses = new InetAddress[sources.length];
+        for (int i = 0; i < sources.length; i++) {
+            if (!Validator.isEmpty(sources[i])) {
+                addresses[i] = InetAddress.getByName(sources[i]);
+            }
+        }
+
+        return findReachable(addresses, target);
+    }
+
+    /**
+     * Find a reachable address to target
+     *
+     * @param sources source addresses
+     * @param target  target address
+     * @return a source which can reach to target or null (not found)
+     * @throws UnknownHostException target is unknown
+     */
+    public static InetAddress findReachable(InetAddress[] sources, String target) throws UnknownHostException {
+        return findReachable(sources, InetAddress.getByName(target));
+    }
+
+    /**
+     * Find a reachable address to target
+     *
+     * @param sources source addresses
+     * @param target  target address
+     * @return a source which can reach to target or null (not found)
+     */
+    public static InetAddress findReachable(InetAddress[] sources, InetAddress target) {
+        InetAddress result = null;
+
+        if (target != null) {
+            if (isLoopbackIp(target)) {
+                // find loopback address
+                for (InetAddress source : sources) {
+                    if (isLoopbackIp(source)) {
+                        result = source;
+                        break;
+                    }
+                }
+            } else if (isPrivateIp(target)) {
+                byte[] targetAddr = target.getAddress();
+
+                // find private address on same local network
+                for (InetAddress source : sources) {
+                    if (isPrivateIp(source)) {
+                        byte[] sourceAddr = source.getAddress();
+
+                        if (targetAddr.length != sourceAddr.length) {
+                            continue;
+                        }
+
+                        boolean match = true;
+                        for (int i = 0; i < targetAddr.length - 1; i++) {
+                            if (sourceAddr[i] != targetAddr[i]) {
+                                match = false;
+                                break;
+                            }
+                        }
+
+                        if (match) {
+                            result = source;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                // find public address
+                for (InetAddress source : sources) {
+                    if (isPublicIp(source)) {
+                        result = source;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
 }
