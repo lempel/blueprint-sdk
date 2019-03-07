@@ -14,8 +14,9 @@
 
 package blueprint.sdk.util;
 
+import org.apache.commons.lang3.time.FastDateFormat;
+
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -27,11 +28,9 @@ import java.util.Date;
  */
 public class Rfc3339 {
     // 2014-07-21T16:35:27.000Z / 2014-07-21T16:35:27.000+00:00
-    private static final SimpleDateFormat FORMAT_1 = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+    private static final FastDateFormat FORMAT_1 = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
     // 2014-07-21T16:35:27Z / 2014-07-21T16:35:27+00:00
-    private static final SimpleDateFormat FORMAT_2 = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ssXXX");
+    private static final FastDateFormat FORMAT_2 = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ssXXX");
 
     /**
      * Convert {@link Calendar} to RFC3339
