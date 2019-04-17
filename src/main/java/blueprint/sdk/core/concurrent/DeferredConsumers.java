@@ -83,7 +83,7 @@ public class DeferredConsumers<T> implements Terminatable, Runnable {
                 long now = System.currentTimeMillis();
 
                 List<Wrapper> candidates = map.values().stream()
-                        .filter(w -> w.stamp + ttl >= now)
+                        .filter(w -> w.stamp + ttl < now)
                         .collect(Collectors.toList());
 
                 candidates.forEach(w -> {
