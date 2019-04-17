@@ -125,14 +125,20 @@ public class DeferredConsumers<T> implements Terminatable, Runnable {
      *
      * @param key some key
      * @param arg argument for {@link Consumer}
+     * @return true: fired
      */
-    public void fire(String key, T arg) {
+    public boolean fire(String key, T arg) {
+        boolean result = false;
+
         if (!Validator.isEmpty(key)) {
             Wrapper w = map.get(key);
             if (w != null && w.consumer != null) {
                 w.consumer.accept(arg);
+                result = true;
             }
         }
+
+        return result;
     }
 
     @Override
