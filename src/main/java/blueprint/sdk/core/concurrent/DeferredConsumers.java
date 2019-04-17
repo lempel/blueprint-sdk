@@ -68,9 +68,11 @@ public class DeferredConsumers<T> implements Terminatable, Runnable {
      */
     public void start() {
         Thread t = new Thread(this);
+        t.setName(this.getClass().getSimpleName() + "#" + hashCode());
         t.setDaemon(true);
 
         Runtime.getRuntime().addShutdownHook(t);
+        running = true;
         t.start();
     }
 
