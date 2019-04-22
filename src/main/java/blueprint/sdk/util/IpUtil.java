@@ -262,7 +262,15 @@ public class IpUtil {
                             continue;
                         }
 
-                        if (sourceAddr[0] == targetAddr[0]) {
+                        if (targetAddr[0] == 10 && sourceAddr[0] == 10) {
+                            result = source;
+                            break;
+                        } else if (targetAddr[0] == 172 &&
+                                targetAddr[0] == sourceAddr[0] && targetAddr[1] == sourceAddr[1]) {
+                            result = source;
+                            break;
+                        } else if (targetAddr[0] == 192 && targetAddr[1] == 168 &&
+                                targetAddr[0] == sourceAddr[0] && targetAddr[1] == sourceAddr[1]) {
                             result = source;
                             break;
                         }
