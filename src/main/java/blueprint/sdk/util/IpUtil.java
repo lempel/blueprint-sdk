@@ -262,15 +262,7 @@ public class IpUtil {
                             continue;
                         }
 
-                        boolean match = true;
-                        for (int i = 0; i < targetAddr.length - 1; i++) {
-                            if (sourceAddr[i] != targetAddr[i]) {
-                                match = false;
-                                break;
-                            }
-                        }
-
-                        if (match) {
+                        if (sourceAddr[0] == targetAddr[0]) {
                             result = source;
                             break;
                         }
