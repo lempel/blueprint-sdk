@@ -265,11 +265,11 @@ public class IpUtil {
                         if (targetAddr[0] == 10 && sourceAddr[0] == 10) {
                             result = source;
                             break;
-                        } else if (targetAddr[0] == 172 &&
-                                targetAddr[0] == sourceAddr[0] && targetAddr[1] == sourceAddr[1]) {
+                        } else if (targetAddr[0] == (byte) 172 && sourceAddr[0] == (byte) 172
+                                && targetAddr[1] == sourceAddr[1]) {
                             result = source;
                             break;
-                        } else if (targetAddr[0] == 192 && targetAddr[1] == 168 &&
+                        } else if (targetAddr[0] == (byte) 192 && targetAddr[1] == (byte) 168 &&
                                 targetAddr[0] == sourceAddr[0] && targetAddr[1] == sourceAddr[1]) {
                             result = source;
                             break;
