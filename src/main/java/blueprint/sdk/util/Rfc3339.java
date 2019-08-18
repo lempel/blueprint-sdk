@@ -27,7 +27,7 @@ import java.util.GregorianCalendar;
  * @author lempel@gmail.com
  * @since 2015. 04. 17
  */
-public class Rfc3339 {
+public class Rfc3339 implements Comparable<Rfc3339> {
     // 2014-07-21T16:35:27.000Z / 2014-07-21T16:35:27.000+00:00
     private static final FastDateFormat FORMAT_1 = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
     // 2014-07-21T16:35:27Z / 2014-07-21T16:35:27+00:00
@@ -86,6 +86,15 @@ public class Rfc3339 {
      */
     public static String toString(Calendar cal) {
         return toString(cal.getTime(), true);
+    }
+
+    @Override
+    public int compareTo(Rfc3339 rfc3339) {
+        try {
+            return date().compareTo(rfc3339.date());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
