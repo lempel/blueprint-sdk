@@ -54,6 +54,11 @@ public class Rfc3339 {
         return value;
     }
 
+    @Override
+    public String toString() {
+        return value;
+    }
+
     /**
      * @return Equivalent {@link Date}
      * @throws ParseException Invalid RFC3339 String was provided to constructor
