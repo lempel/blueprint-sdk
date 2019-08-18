@@ -19,6 +19,7 @@ import org.apache.commons.lang3.time.FastDateFormat;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Convert Date/Time between {@link Date} and RFC3339
@@ -31,6 +32,46 @@ public class Rfc3339 {
     private static final FastDateFormat FORMAT_1 = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
     // 2014-07-21T16:35:27Z / 2014-07-21T16:35:27+00:00
     private static final FastDateFormat FORMAT_2 = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ssXXX");
+
+    private String value;
+
+    public Rfc3339(String rfc3339) {
+        value = rfc3339;
+    }
+
+    public Rfc3339(Calendar calendar) {
+        this(toString(calendar));
+    }
+
+    public Rfc3339(Date date) {
+        this(toString(date));
+    }
+
+    /**
+     * @return RFC3339 String
+     */
+    public String string() {
+        return value;
+    }
+
+    /**
+     * @return Equivalent {@link Date}
+     * @throws ParseException Invalid RFC3339 String was provided to constructor
+     */
+    public Date date() throws ParseException {
+        return fromString(value);
+    }
+
+    /**
+     * @return Equivalent {@link Calendar}
+     * @throws ParseException Invalid RFC3339 String was provided to constructor
+     */
+    public Calendar calendar() throws ParseException {
+        Calendar ret = GregorianCalendar.getInstance();
+        ret.setTime(date());
+
+        return ret;
+    }
 
     /**
      * Convert {@link Calendar} to RFC3339
