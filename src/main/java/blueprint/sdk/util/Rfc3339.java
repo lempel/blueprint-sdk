@@ -14,6 +14,8 @@
 
 package blueprint.sdk.util;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import org.apache.commons.lang3.time.FastDateFormat;
 
 import java.text.ParseException;
@@ -35,6 +37,10 @@ public class Rfc3339 implements Comparable<Rfc3339> {
 
     private String value;
 
+    public Rfc3339() {
+        value = null;
+    }
+
     public Rfc3339(String rfc3339) {
         value = rfc3339;
     }
@@ -45,6 +51,16 @@ public class Rfc3339 implements Comparable<Rfc3339> {
 
     public Rfc3339(Date date) {
         this(toString(date));
+    }
+
+    @JsonGetter
+    private String value() {
+        return value;
+    }
+
+    @JsonSetter
+    private void value(String value) {
+        this.value = value;
     }
 
     /**
