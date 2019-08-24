@@ -14,8 +14,11 @@
 
 package blueprint.sdk.util;
 
+import org.apache.commons.lang3.time.FastDateFormat;
+
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.text.ParseException;
 import java.util.Collection;
 
 /**
@@ -267,5 +270,45 @@ public final class Validator {
             result = true;
         }
         return result;
+    }
+
+    private static final FastDateFormat TS_FORMAT_1 = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
+    private static final FastDateFormat TS_FORMAT_2 = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
+    private static final FastDateFormat TS_FORMAT_3 = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ssXXX");
+    private static final FastDateFormat TS_FORMAT_4 = FastDateFormat.getInstance("yyyyMMddHHmm");
+    private static final FastDateFormat TS_FORMAT_5 = FastDateFormat.getInstance("yyyyMMddHHmmss");
+
+    /**
+     * See if given value is a timestamp or not (among known formats)
+     *
+     * @param val formatted String
+     * @return true: it's a timestamp
+     */
+    public static boolean isTimestamp(String val) {
+        boolean ret = true;
+
+        try {
+            TS_FORMAT_1.parse(val);
+        } catch (ParseException e) {
+            try {
+                TS_FORMAT_2.parse(val);
+            } catch (ParseException ex) {
+                try {
+                    TS_FORMAT_3.parse(val);
+                } catch (ParseException exc) {
+                    try {
+                        TS_FORMAT_4.parse(val);
+                    } catch (ParseException e1) {
+                        try {
+                            TS_FORMAT_5.parse(val);
+                        } catch (ParseException e2) {
+                            ret = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        return ret;
     }
 }
