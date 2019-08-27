@@ -289,19 +289,19 @@ public final class Validator {
 
         try {
             TS_FORMAT_1.parse(val);
-        } catch (ParseException e) {
+        } catch (NumberFormatException | ParseException e) {
             try {
                 TS_FORMAT_2.parse(val);
-            } catch (ParseException ex) {
+            } catch (NumberFormatException | ParseException ex) {
                 try {
                     TS_FORMAT_3.parse(val);
-                } catch (ParseException exc) {
+                } catch (NumberFormatException | ParseException exc) {
                     try {
                         TS_FORMAT_4.parse(val);
-                    } catch (ParseException e1) {
+                    } catch (NumberFormatException | ParseException e1) {
                         try {
                             TS_FORMAT_5.parse(val);
-                        } catch (ParseException e2) {
+                        } catch (NumberFormatException | ParseException e2) {
                             ret = false;
                         }
                     }
