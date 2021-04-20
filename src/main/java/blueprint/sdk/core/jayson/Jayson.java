@@ -35,30 +35,25 @@ import java.util.Map;
  * <br>
  * Setting another child JSON is allowed but must be in serialized form.<br>
  * ex 3) jayson.json("profile.characters.simon", "{\"comment\":\"just been replaced\"}");<br>
+ * Also, JSON array can be set.<br>
+ * ex 4) jayson.json("profile.characters.simon.items", "[{\"name\":\"item_1\"}, {\"name\":\"item_2\"}, {\"name\":\"item_3\"}]");<br>
  * <br>
  * Path can contain variables.<br>
  * Variables must be notated with braces.<br>
- * ex 4) profile.characters[{name}]<br>
+ * ex 5) profile.characters[{name}]<br>
  * Variable must be set with {@link Jayson#let(String, Object)}.<br>
- * ex 5) jayson.let("name", "simon");<br>
+ * ex 6) jayson.let("name", "simon");<br>
  * <br>
  * Children can be accessed with either brackets or dots.<br>
- * ex 6) profile.characters.{name}.items.{i}.prop.{j}.value<br>
- * ex 7) profile[characters][{name}][items][{i}][prop][{j}][value]<br>
+ * ex 7) profile.characters.{name}.items.{i}.prop.{j}.value<br>
+ * ex 8) profile[characters][{name}][items][{i}][prop][{j}][value]<br>
+ * <br>
  *
  * @author lempel@gmail.com
  * @since 2021. 4. 20.
  */
 public class Jayson extends HashMap {
     protected final Map<String, Object> values = new HashMap<>();
-
-    // -------------------------------------------------------------------
-    //
-    //
-    // FIXME after finishing this, update library versions before publish.
-    //
-    //
-    // -------------------------------------------------------------------
 
     /**
      * Serialize JSON
@@ -146,45 +141,64 @@ public class Jayson extends HashMap {
         Object lastTarget = null;
         String lastToken = null;
 
-        for (String token : tokens) {
+        for (int i = 0; i < tokens.length; i++) {
+            String token = tokens[i];
+
             if (token.isEmpty()) {
                 continue;
             }
 
+            // check variables
             if (token.matches("\\{[a-z|A-Z|\\d]+\\}")) {
                 String name = token.substring(1, token.length() - 1);
                 if (values.containsKey(name)) {
                     token = String.valueOf(values.get(name));
                 } else {
-                    throw new RuntimeException(token + " is not defined - " + processed.toString());
+                    throw new RuntimeException(token + " is not defined - " + processed);
                 }
             }
 
-            if (TypeChecker.isInteger(token)) {
-                List list = (List) target;
-                int index = Integer.parseInt(token);
-                if (index < list.size()) {
-                    lastTarget = target;
-                    lastToken = token;
-                    target = list.get(index);
+            if (target instanceof List) {
+                // search List
+                if (TypeChecker.isInteger(token)) {
+                    List list = (List) target;
+                    int index = Integer.parseInt(token);
+                    if (index < list.size()) {
+                        lastTarget = target;
+                        lastToken = token;
+                        target = list.get(index);
 
-                    processed.append("[").append(token).append("]");
+                        // compile path for messages
+                        processed.append("[").append(token).append("]");
+                    } else {
+                        throw new RuntimeException(index + " is out of bounds - " + processed);
+                    }
                 } else {
-                    throw new RuntimeException(index + " is out of bounds - " + processed.toString());
+                    // creating new child on List is not allowed
+
+                    throw new RuntimeException(token + " is not an index - " + processed);
                 }
             } else {
+                // search Map
                 Map map = (Map) target;
                 if (map.containsKey(token)) {
                     lastTarget = target;
                     lastToken = token;
                     target = map.get(token);
 
+                    // compile path for messages
                     if (processed.length() > 0) {
                         processed.append(".");
                     }
                     processed.append(token);
                 } else {
-                    throw new RuntimeException(token + " is not defined - " + processed.toString());
+                    if (doSet && i == tokens.length - 1) {
+                        // creating new child on Map
+                        lastTarget = target;
+                        lastToken = token;
+                    } else {
+                        throw new RuntimeException(token + " is not defined - " + processed);
+                    }
                 }
             }
         }
@@ -194,10 +208,19 @@ public class Jayson extends HashMap {
             if (value instanceof String) {
                 String valueStr = ((String) value).trim();
                 if (Validator.isNotEmpty(valueStr) && valueStr.startsWith("{") && valueStr.endsWith("}")) {
+                    // parse value if it's an JSON string
                     try {
                         actualValue = Jayson.parse(valueStr);
                     } catch (IOException e) {
-                        throw new RuntimeException("value is not a proper jSON - " + processed.toString());
+                        throw new RuntimeException("value is not a proper jSON - " + processed);
+                    }
+                } else if (Validator.isNotEmpty(valueStr) && valueStr.startsWith("[") && valueStr.endsWith("]")) {
+                    // parse value if it's an JSON array
+                    try {
+                        Jayson newChild = Jayson.parse("{\"array\":" + valueStr + "}");
+                        actualValue = newChild.json("array");
+                    } catch (IOException e) {
+                        throw new RuntimeException("\"" + value + "\" is not a proper JSON array - " + processed);
                     }
                 }
             }
