@@ -52,19 +52,19 @@ import java.util.Map;
  * @author lempel@gmail.com
  * @since 2021. 4. 20.
  */
-public class Jayson extends HashMap {
+public class Jayson extends HashMap<String, Object> {
     protected final Map<String, Object> values = new HashMap<>();
 
     /**
-     * Serialize JSON
+     * Serialize Map
      *
-     * @param jayson target
+     * @param target Map or Jayson
      * @return JSON String
      * @throws JsonProcessingException Jackson's Exception
      */
-    public static String stringify(Jayson jayson) throws JsonProcessingException {
+    public static String stringify(Map<String, Object> target) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(jayson);
+        return mapper.writeValueAsString(target);
     }
 
     /**
