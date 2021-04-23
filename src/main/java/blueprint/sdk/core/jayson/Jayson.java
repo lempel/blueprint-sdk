@@ -62,7 +62,7 @@ public class Jayson extends HashMap<String, Object> {
      * @return JSON String
      * @throws JsonProcessingException Jackson's Exception
      */
-    public static String stringify(Map<String, Object> target) throws JsonProcessingException {
+    public static String stringify(Map<String, ? extends Object> target) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(target);
     }
