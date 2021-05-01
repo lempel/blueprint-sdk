@@ -56,15 +56,54 @@ public class Jayson extends HashMap<String, Object> {
     protected final Map<String, Object> values = new HashMap<>();
 
     /**
-     * Serialize Map
+     * Serialize Map as JSON String
      *
      * @param target Map or Jayson
      * @return JSON String
      * @throws JsonProcessingException Jackson's Exception
      */
     public static String stringify(Map<String, ? extends Object> target) throws JsonProcessingException {
+        return stringify(target, false);
+    }
+
+    /**
+     * Serialize Map as JSON String
+     *
+     * @param target Map or Jayson
+     * @param pretty pretty format
+     * @return JSON String
+     * @throws JsonProcessingException Jackson's Exception
+     */
+    public static String stringify(Map<String, ? extends Object> target, boolean pretty) throws JsonProcessingException {
+        String ret;
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(target);
+        if (pretty) {
+            ret = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(target);
+        } else {
+            ret = mapper.writeValueAsString(target);
+        }
+        return ret;
+    }
+
+    /**
+     * Serialize as JSON String
+     *
+     * @return JSON String
+     * @throws JsonProcessingException Jackson's Exception
+     */
+    public String stringify() throws JsonProcessingException {
+        return stringify(this, false);
+    }
+
+    /**
+     * Serialize as JSON String
+     *
+     * @param pretty pretty format
+     * @return JSON String
+     * @throws JsonProcessingException Jackson's Exception
+     */
+    public String stringify(boolean pretty) throws JsonProcessingException {
+        return stringify(this, pretty);
     }
 
     /**
