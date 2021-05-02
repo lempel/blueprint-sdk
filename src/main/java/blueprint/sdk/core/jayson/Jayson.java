@@ -85,6 +85,8 @@ public class Jayson extends HashMap<String, Object> {
         return ret;
     }
 
+    // TODO Map<String, Object> 를 argument 로 받는 constructor 구현
+
     /**
      * Serialize as JSON String
      *
@@ -143,9 +145,9 @@ public class Jayson extends HashMap<String, Object> {
      *
      * @param path target
      * @return designated value
-     * @throws RuntimeException invalid path
+     * @throws JaysonException invalid path
      */
-    public Object json(String path) throws RuntimeException {
+    public Object json(String path) throws JaysonException {
         return json(path, false, null);
     }
 
@@ -155,9 +157,11 @@ public class Jayson extends HashMap<String, Object> {
      * @param path  target
      * @param value new value
      * @return designated value
-     * @throws RuntimeException invalid path
+     * @throws JaysonException invalid path
      */
-    public Object json(String path, Object value) throws RuntimeException {
+    public Object json(String path, Object value) throws JaysonException {
+        // TODO 자동생성 flag 를 두고, map 에 한정해서 자동으로 child 를 생성할수 있게 하자
+
         return json(path, true, value);
     }
 
@@ -168,9 +172,9 @@ public class Jayson extends HashMap<String, Object> {
      * @param doSet true: do set
      * @param value new value
      * @return designated value
-     * @throws RuntimeException invalid path
+     * @throws JaysonException invalid path
      */
-    protected Object json(String path, boolean doSet, Object value) throws RuntimeException {
+    protected Object json(String path, boolean doSet, Object value) throws JaysonException {
         Object ret;
 
         String[] tokens = tokenizePath(path);
@@ -193,7 +197,7 @@ public class Jayson extends HashMap<String, Object> {
                 if (values.containsKey(name)) {
                     token = String.valueOf(values.get(name));
                 } else {
-                    throw new RuntimeException(token + " is not defined - " + processed);
+                    throw new JaysonException(token + " is not defined - " + processed);
                 }
             }
 
@@ -210,12 +214,12 @@ public class Jayson extends HashMap<String, Object> {
                         // compile path for messages
                         processed.append("[").append(token).append("]");
                     } else {
-                        throw new RuntimeException(index + " is out of bounds - " + processed);
+                        throw new JaysonException(index + " is out of bounds - " + processed);
                     }
                 } else {
                     // creating new child on List is not allowed
 
-                    throw new RuntimeException(token + " is not an index - " + processed);
+                    throw new JaysonException(token + " is not an index - " + processed);
                 }
             } else {
                 // search Map
@@ -236,7 +240,7 @@ public class Jayson extends HashMap<String, Object> {
                         lastTarget = target;
                         lastToken = token;
                     } else {
-                        throw new RuntimeException(token + " is not defined - " + processed);
+                        throw new JaysonException(token + " is not defined - " + processed);
                     }
                 }
             }
@@ -251,7 +255,7 @@ public class Jayson extends HashMap<String, Object> {
                     try {
                         actualValue = Jayson.parse(valueStr);
                     } catch (IOException e) {
-                        throw new RuntimeException("value is not a proper jSON - " + processed);
+                        throw new JaysonException("value is not a proper jSON - " + processed);
                     }
                 } else if (Validator.isNotEmpty(valueStr) && valueStr.startsWith("[") && valueStr.endsWith("]")) {
                     // parse value if it's an JSON array
@@ -259,7 +263,7 @@ public class Jayson extends HashMap<String, Object> {
                         Jayson newChild = Jayson.parse("{\"array\":" + valueStr + "}");
                         actualValue = newChild.json("array");
                     } catch (IOException e) {
-                        throw new RuntimeException("\"" + value + "\" is not a proper JSON array - " + processed);
+                        throw new JaysonException("\"" + value + "\" is not a proper JSON array - " + processed);
                     }
                 }
             }
@@ -278,11 +282,30 @@ public class Jayson extends HashMap<String, Object> {
     }
 
     /**
+     * See if given path exists or not
+     *
+     * @param path target
+     * @return true: exists
+     */
+    public boolean exists(String path) {
+        boolean ret = false;
+
+        try {
+            json(path);
+
+            ret = true;
+        } catch (RuntimeException ignored) {
+        }
+
+        return ret;
+    }
+
+    /**
      * Gets the length of designated array
      *
      * @param path target
      * @return array length
-     * @throws RuntimeException target is not an array
+     * @throws JaysonException target is not an array
      */
     public int length(String path) {
         int ret = -1;
@@ -291,7 +314,7 @@ public class Jayson extends HashMap<String, Object> {
         if (target instanceof List) {
             ret = ((List) target).size();
         } else {
-            throw new RuntimeException("not an array - " + path);
+            throw new JaysonException("not an array - " + path);
         }
 
         return ret;
