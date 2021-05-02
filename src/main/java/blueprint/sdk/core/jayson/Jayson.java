@@ -305,7 +305,7 @@ public class Jayson extends HashMap<String, Object> {
         ret.add(value);
 
         // replace
-        json(path, list);
+        json(path, ret);
 
         return ret;
     }
