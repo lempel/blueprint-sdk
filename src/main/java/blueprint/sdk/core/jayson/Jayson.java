@@ -20,10 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * JSON wrapper built on top of Jackson.<br>
@@ -277,6 +274,38 @@ public class Jayson extends HashMap<String, Object> {
         } else {
             ret = target;
         }
+
+        return ret;
+    }
+
+    /**
+     * Push a value to target array
+     *
+     * @param path  target array
+     * @param value value to push
+     * @return target array
+     * @throws JaysonException invalid target
+     */
+    public Object push(String path, Object value) throws JaysonException {
+        List ret = new ArrayList();
+
+        // get as a list
+        List list = null;
+        Object arr = json(path);
+        if (arr instanceof Object[]) {
+            list = Arrays.asList(arr);
+        } else if (arr instanceof List) {
+            list = (List) arr;
+        } else {
+            throw new JaysonException("target is not an array - " + path);
+        }
+
+        // append value
+        ret.addAll(list);
+        ret.add(value);
+
+        // replace
+        json(path, list);
 
         return ret;
     }

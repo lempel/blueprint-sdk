@@ -6,7 +6,7 @@
 
     <groupId>sangmin.lee</groupId>
     <artifactId>blueprint-sdk</artifactId>
-    <version>3.3.21</version>
+    <version>3.3.22</version>
 
     <distributionManagement>
         <repository>
