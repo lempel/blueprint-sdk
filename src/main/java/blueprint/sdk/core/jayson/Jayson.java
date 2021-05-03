@@ -265,7 +265,7 @@ public class Jayson extends HashMap<String, Object> {
                 }
             }
 
-            if (TypeChecker.isInteger(lastToken)) {
+            if (TypeChecker.isInteger(lastToken) && lastTarget instanceof List) {
                 ((List) lastTarget).set(Integer.parseInt(lastToken), actualValue);
             } else {
                 ((Map) lastTarget).put(lastToken, actualValue);
