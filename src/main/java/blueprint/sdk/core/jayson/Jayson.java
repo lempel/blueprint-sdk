@@ -39,6 +39,7 @@ import java.util.*;
  * Variables must be notated with braces.<br>
  * ex 5) profile.characters[{name}]<br>
  * Variable must be set with {@link Jayson#let(String, Object)}.<br>
+ * Variable name must be consists of alphabets, numbers and under score.<br>
  * ex 6) jayson.let("name", "simon");<br>
  * <br>
  * Children can be accessed with either brackets or dots.<br>
@@ -189,7 +190,7 @@ public class Jayson extends HashMap<String, Object> {
             }
 
             // check variables
-            if (token.matches("\\{[a-z|A-Z|\\d]+\\}")) {
+            if (token.matches("\\{[a-z|A-Z|\\_|\\d]+\\}")) {
                 String name = token.substring(1, token.length() - 1);
                 if (values.containsKey(name)) {
                     token = String.valueOf(values.get(name));
