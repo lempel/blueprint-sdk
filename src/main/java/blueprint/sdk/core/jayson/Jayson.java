@@ -290,6 +290,27 @@ public class Jayson extends HashMap<String, Object> {
     public Object push(String path, Object value) throws JaysonException {
         List ret = new ArrayList();
 
+        Object actualValue = value;
+        if (value instanceof String) {
+            String valueStr = ((String) value).trim();
+            if (Validator.isNotEmpty(valueStr) && valueStr.startsWith("{") && valueStr.endsWith("}")) {
+                // parse value if it's an JSON string
+                try {
+                    actualValue = Jayson.parse(valueStr);
+                } catch (IOException e) {
+                    throw new JaysonException("value is not a proper jSON - " + value);
+                }
+            } else if (Validator.isNotEmpty(valueStr) && valueStr.startsWith("[") && valueStr.endsWith("]")) {
+                // parse value if it's an JSON array
+                try {
+                    Jayson newChild = Jayson.parse("{\"array\":" + valueStr + "}");
+                    actualValue = newChild.json("array");
+                } catch (IOException e) {
+                    throw new JaysonException("\"" + value + "\" is not a proper JSON array - " + value);
+                }
+            }
+        }
+
         // get as a list
         List list = null;
         Object arr = json(path);
@@ -303,7 +324,7 @@ public class Jayson extends HashMap<String, Object> {
 
         // append value
         ret.addAll(list);
-        ret.add(value);
+        ret.add(actualValue);
 
         // replace
         json(path, ret);
