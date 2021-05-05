@@ -4,20 +4,95 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>sangmin.lee</groupId>
+    <!-- for bintray -->
+    <!--    <groupId>sangmin.lee</groupId>-->
+    <!-- for sonatype -->
+    <groupId>io.github.lempel</groupId>
     <artifactId>blueprint-sdk</artifactId>
     <version>3.3.24</version>
 
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>Personal library for Java development. Deployed on OSSRH for Apache Maven.</description>
+    <url>https://github.com/lempel/blueprint-sdk</url>
+
+    <licenses>
+        <license>
+            <name>Eclipse Public License - v 1.0</name>
+            <url>https://www.eclipse.org/legal/epl-v10.html</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Sangmin Lee</name>
+            <email>lempel@gmail.com</email>
+            <organization>n/a</organization>
+            <organizationUrl>n/a</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/lempel/blueprint-sdk.git</connection>
+        <developerConnection>scm:git:ssh://github.com/lempel/blueprint-sdk.git</developerConnection>
+        <url>https://github.com/lempel/blueprint-sdk</url>
+    </scm>
+
     <distributionManagement>
+        <!-- for bintray -->
+        <!--        <repository>-->
+        <!--            <id>bintray-lempel-sangmin.lee</id>-->
+        <!--            <name>lempel-sangmin.lee</name>-->
+        <!--            <url>https://api.bintray.com/maven/lempel/sangmin.lee/blueprint-sdk/;publish=1</url>-->
+        <!--        </repository>-->
+
+        <!-- for sonatype -->
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
         <repository>
-            <id>bintray-lempel-sangmin.lee</id>
-            <name>lempel-sangmin.lee</name>
-            <url>https://api.bintray.com/maven/lempel/sangmin.lee/blueprint-sdk/;publish=1</url>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
-
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.8</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                    <goals>deploy</goals>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
