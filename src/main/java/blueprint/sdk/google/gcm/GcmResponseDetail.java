@@ -7,9 +7,8 @@
 
  Distribution:
 
- Repository - https://github.com/lempel/blueprint-sdk.git
- Blog - http://lempel76.blogspot.kr
-        http://lempel.egloos.com
+ Maven Central - https://search.maven.org/artifact/io.github.lempel/blueprint-sdk
+ MVN Repository - https://mvnrepository.com/artifact/io.github.lempel/blueprint-sdk
  */
 
 package blueprint.sdk.google.gcm;
@@ -19,6 +18,7 @@ package blueprint.sdk.google.gcm;
  *
  * @author lempel@gmail.com
  * @since 2013. 12. 10.
+ * @deprecated GCM is replaced by FCM - https://firebase.google.com/docs/cloud-messaging
  */
 public class GcmResponseDetail {
     public boolean success = false;

@@ -9,7 +9,7 @@ Maven repository:<br>
 Checkout
 <a href="https://search.maven.org/artifact/io.github.lempel/blueprint-sdk">Maven Central</a>
 or
-<a href="https://mvnrepository.com/artifact/io.github.lempel/blueprint-sdk/">MVN Repository</a>
+<a href="https://mvnrepository.com/artifact/io.github.lempel/blueprint-sdk">MVN Repository</a>
 for latest release and dependencies.<br>
 <br>
 <br>
