@@ -19,6 +19,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Provides Object validation methods
@@ -59,6 +60,17 @@ public final class Validator {
     }
 
     /**
+     * see the array is null or empty
+     *
+     * @param value any array
+     * @return true: value is null or empty
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static boolean isEmpty(Object[] value) {
+        return isNull(value) || (value.length <= 0);
+    }
+
+    /**
      * see the Collection is null or empty
      *
      * @param value any Collection
@@ -66,6 +78,17 @@ public final class Validator {
      */
     @SuppressWarnings("WeakerAccess")
     public static boolean isEmpty(Collection<?> value) {
+        return isNull(value) || (value.isEmpty());
+    }
+
+    /**
+     * see the Map is null or empty
+     *
+     * @param value any Map
+     * @return true: value is null or empty
+     */
+    @SuppressWarnings("WeakerAccess")
+    public static boolean isEmpty(Map<?, ?> value) {
         return isNull(value) || (value.isEmpty());
     }
 
@@ -80,12 +103,32 @@ public final class Validator {
     }
 
     /**
+     * see the array is null or empty
+     *
+     * @param value any array
+     * @return true: value is not null and not empty
+     */
+    public static boolean isNotEmpty(Object[] value) {
+        return !isEmpty(value);
+    }
+
+    /**
      * see the Collection is null or empty
      *
      * @param value any Collection
      * @return true: value is not null and not empty
      */
     public static boolean isNotEmpty(Collection<?> value) {
+        return !isEmpty(value);
+    }
+
+    /**
+     * see the Map is null or empty
+     *
+     * @param value any Map
+     * @return true: value is not null and not empty
+     */
+    public static boolean isNotEmpty(Map<?, ?> value) {
         return !isEmpty(value);
     }
 

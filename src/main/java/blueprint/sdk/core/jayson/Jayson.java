@@ -53,6 +53,25 @@ public class Jayson extends HashMap<String, Object> {
     protected final Map<String, Object> values = new HashMap<>();
 
     /**
+     * Constructor
+     */
+    public Jayson() {
+        super();
+    }
+
+    /**
+     * Constructor
+     *
+     * @param json JSON string
+     * @throws IOException Jackson's Exception
+     */
+    public Jayson(String json) throws IOException {
+        super();
+
+        putAll(parse(json));
+    }
+
+    /**
      * Serialize Map as JSON String
      *
      * @param target Map or Jayson
@@ -108,7 +127,7 @@ public class Jayson extends HashMap<String, Object> {
     /**
      * Parse JSON String
      *
-     * @param jsonStr target
+     * @param jsonStr JSON string
      * @return parsed Jayson
      * @throws IOException Jackson's Exception
      */
