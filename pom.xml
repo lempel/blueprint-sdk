@@ -26,8 +26,9 @@
         <developer>
             <name>Sangmin Lee</name>
             <email>lempel@gmail.com</email>
-            <organization>n/a</organization>
-            <organizationUrl>n/a</organizationUrl>
+            <!-- place holder. currently not included in GPG key. -->
+            <!--<organization>n/a</organization>-->
+            <!--<organizationUrl>n/a</organizationUrl>-->
         </developer>
     </developers>
 
@@ -57,18 +58,17 @@
     </distributionManagement>
     <build>
         <plugins>
-            <!-- staging sucks. error prone, slow etc. -->
-            <!--<plugin>-->
-            <!--    <groupId>org.sonatype.plugins</groupId>-->
-            <!--    <artifactId>nexus-staging-maven-plugin</artifactId>-->
-            <!--    <version>1.6.8</version>-->
-            <!--    <extensions>true</extensions>-->
-            <!--    <configuration>-->
-            <!--        <serverId>ossrh</serverId>-->
-            <!--        <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>-->
-            <!--        <autoReleaseAfterClose>true</autoReleaseAfterClose>-->
-            <!--    </configuration>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.8</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
