@@ -26,6 +26,11 @@ import java.security.SecureRandom;
 public class IdGenerator extends Radix62Integer {
     private static SecureRandom numberGenerator;
 
+    static {
+        numberGenerator = new SecureRandom();
+        numberGenerator.setSeed(System.currentTimeMillis());
+    }
+
     public static String generateId(String prefix, String postfix) {
         return cleanseSuffix(prefix) + '_' + randomBase64UUID() + '_' + cleanseSuffix(postfix);
     }
@@ -46,13 +51,8 @@ public class IdGenerator extends Radix62Integer {
      * @return Base64 encoded UUID
      */
     public static String randomBase64UUID() {
-        SecureRandom ng = numberGenerator;
-        if (ng == null) {
-            numberGenerator = ng = new SecureRandom();
-        }
-
         byte[] randomBytes = new byte[16];
-        ng.nextBytes(randomBytes);
+        numberGenerator.nextBytes(randomBytes);
         randomBytes[6] &= 0x0f;  /* clear version        */
         randomBytes[6] |= 0x40;  /* set to version 4     */
         randomBytes[8] &= 0x3f;  /* clear variant        */
