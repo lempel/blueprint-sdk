@@ -9,7 +9,7 @@
     <!-- for sonatype -->
     <groupId>io.github.lempel</groupId>
     <artifactId>blueprint-sdk</artifactId>
-    <version>3.3.26</version>
+    <version>3.3.27</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Personal library for Java development. Deployed on OSSRH for Apache Maven.</description>

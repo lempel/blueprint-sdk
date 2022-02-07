@@ -36,7 +36,8 @@ public final class Validator {
      */
     @SuppressWarnings("WeakerAccess")
     public static boolean isNull(Object value) {
-        return value == null;
+        String valueStr = String.valueOf(value);
+        return "null".equalsIgnoreCase(valueStr) || "undefined".equalsIgnoreCase(valueStr);
     }
 
     /**
