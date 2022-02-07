@@ -29,6 +29,22 @@ import java.util.Map;
  */
 public final class Validator {
     /**
+     * return null if given value is null, 'null' or 'undefined'
+     *
+     * @param value String to test
+     * @return value or null
+     */
+    public static String nullify(String value) {
+        String ret = value;
+
+        if (value == null || "null".equalsIgnoreCase(value) || "undefined".equalsIgnoreCase(value)) {
+            ret = null;
+        }
+
+        return ret;
+    }
+
+    /**
      * see the Object is null or not
      *
      * @param value any Object
