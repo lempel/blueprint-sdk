@@ -29,6 +29,105 @@ import java.util.Map;
  */
 public final class Validator {
     /**
+     * Assert target String matches given date format (target can't be empty)
+     *
+     * @param target target String
+     * @param name   name of target
+     * @param format {@link FastDateFormat}
+     */
+    public static void assertDate(String target, String name, FastDateFormat format) {
+        assertDate(target, name, format, false);
+    }
+
+    /**
+     * Assert target String matches given date format
+     *
+     * @param target     target String
+     * @param name       name of target
+     * @param format     {@link FastDateFormat}
+     * @param allowEmpty true: target can be empty
+     */
+    public static void assertDate(String target, String name, FastDateFormat format, boolean allowEmpty) {
+        if (format == null) {
+            throw new IllegalArgumentException("format can't be null");
+        } else {
+            if (isEmpty(target)) {
+                if (!allowEmpty) {
+                    throw new IllegalArgumentException(name + " should be " + format.getPattern());
+                }
+            } else {
+                try {
+                    format.parse(target);
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException(name + " should be " + format.getPattern());
+                }
+            }
+        }
+    }
+
+    /**
+     * Assert target is not null
+     *
+     * @param target target Object
+     * @param name   name of target
+     */
+    public static void assertNotNull(Object target, String name) {
+        if (target == null) {
+            throw new IllegalArgumentException(name + " can't be null");
+        }
+    }
+
+    /**
+     * Assert target is neither null nor empty
+     *
+     * @param target target Object
+     * @param name   name of target
+     */
+    public static void assertNotEmpty(Object target, String name) {
+        if (isEmpty(target)) {
+            throw new IllegalArgumentException(name + " can't be empty");
+        }
+    }
+
+    /**
+     * Assert that at least one target is neither null nor empty
+     *
+     * @param targets target Objects
+     * @param names   name of targets (must be in same order as targets)
+     */
+    public static void assertNotEmpty(Object[] targets, String[] names) {
+        if (isEmpty(targets)) {
+            throw new IllegalArgumentException("no targets");
+        }
+        if (isEmpty(names)) {
+            throw new IllegalArgumentException("no names");
+        }
+        if (targets.length != names.length) {
+            throw new IllegalArgumentException("length of targets and names are not equal");
+        }
+
+        boolean found = false;
+        for (int i = 0; i < targets.length; i++) {
+            if (isNotEmpty(targets[i])) {
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < names.length; i++) {
+                if (i != 0) {
+                    builder.append(", ");
+                }
+                builder.append(names[i]);
+            }
+
+            throw new IllegalArgumentException("at least one of (" + builder + ") shouldn't be empty");
+        }
+    }
+
+    /**
      * return null if given value is null, 'null' or 'undefined'
      *
      * @param value String to test
@@ -67,85 +166,38 @@ public final class Validator {
     }
 
     /**
-     * see the String is null or empty
+     * See if given value is empty or null
      *
-     * @param value any String
-     * @return true: value is null or empty
-     */
-    public static boolean isEmpty(String value) {
-        return isNull(value) || (value.trim().length() == 0);
-    }
-
-    /**
-     * see the array is null or empty
-     *
-     * @param value any array
-     * @return true: value is null or empty
+     * @param value any Object
+     * @return true: value is empty or null
      */
     @SuppressWarnings("WeakerAccess")
-    public static boolean isEmpty(Object[] value) {
-        return isNull(value) || (value.length <= 0);
+    public static boolean isEmpty(Object value) {
+        boolean ret = isNull(value);
+
+        if (!ret) {
+            if (value instanceof String) {
+                ret = ((String) value).trim().length() == 0;
+            } else if (value instanceof Collection) {
+                ret = ((Collection) value).isEmpty();
+            } else if (value instanceof Map) {
+                ret = ((Map) value).isEmpty();
+            } else if (value instanceof Object[]) {
+                ret = ((Object[]) value).length <= 0;
+            }
+        }
+
+        return ret;
     }
 
     /**
-     * see the Collection is null or empty
+     * See if given value is neither null nor empty
      *
-     * @param value any Collection
-     * @return true: value is null or empty
+     * @param value any Object
+     * @return true: value is neither null nor empty
      */
     @SuppressWarnings("WeakerAccess")
-    public static boolean isEmpty(Collection<?> value) {
-        return isNull(value) || (value.isEmpty());
-    }
-
-    /**
-     * see the Map is null or empty
-     *
-     * @param value any Map
-     * @return true: value is null or empty
-     */
-    @SuppressWarnings("WeakerAccess")
-    public static boolean isEmpty(Map<?, ?> value) {
-        return isNull(value) || (value.isEmpty());
-    }
-
-    /**
-     * see the String is null or empty
-     *
-     * @param value any String
-     * @return true: value is not null and not empty
-     */
-    public static boolean isNotEmpty(String value) {
-        return !isEmpty(value);
-    }
-
-    /**
-     * see the array is null or empty
-     *
-     * @param value any array
-     * @return true: value is not null and not empty
-     */
-    public static boolean isNotEmpty(Object[] value) {
-        return !isEmpty(value);
-    }
-
-    /**
-     * see the Collection is null or empty
-     *
-     * @param value any Collection
-     * @return true: value is not null and not empty
-     */
-    public static boolean isNotEmpty(Collection<?> value) {
-        return !isEmpty(value);
-    }
-
-    /**
-     * see the Map is null or empty
-     *
-     * @param value any Map
-     * @return true: value is not null and not empty
-     */
-    public static boolean isNotEmpty(Map<?, ?> value) {
+    public static boolean isNotEmpty(Object value) {
         return !isEmpty(value);
     }
 
