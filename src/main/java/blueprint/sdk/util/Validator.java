@@ -15,6 +15,7 @@ package blueprint.sdk.util;
 
 import org.apache.commons.lang3.time.FastDateFormat;
 
+import java.io.File;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.text.ParseException;
@@ -28,6 +29,32 @@ import java.util.Map;
  * @since 2009. 8. 22.
  */
 public final class Validator {
+    /**
+     * Assert target exists or not
+     *
+     * @param target file path
+     * @param name   name of target
+     */
+    public static void assertFile(String target, String name) {
+        assertNotEmpty(target, "target");
+
+        assertFile(new File(target), name);
+    }
+
+    /**
+     * Assert target exists or not
+     *
+     * @param target target File
+     * @param name   name of target
+     */
+    public static void assertFile(File target, String name) {
+        assertNotNull(target, "target");
+
+        if (!target.exists()) {
+            throw new IllegalArgumentException(name + " doesn't exist");
+        }
+    }
+
     /**
      * Assert target String matches given date format (target can't be empty)
      *
