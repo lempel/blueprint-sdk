@@ -76,7 +76,7 @@ public class WorkerGroup<J, Q extends Queue<J>> extends TerminatableThread {
         setName(this.getClass().getName());
         setDaemon(true);
 
-        L.info("worker group created - class: " + workerClass + ", count: " + workerCount);
+        L.info("worker group created - worker: {}, count: {}", workerClass, workerCount);
     }
 
     /**
