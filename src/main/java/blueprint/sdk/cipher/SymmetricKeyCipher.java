@@ -19,6 +19,7 @@ import blueprint.sdk.util.StringUtil;
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -107,15 +108,16 @@ public class SymmetricKeyCipher {
     /**
      * Decrypt input with given key
      *
-     * @param key   symmetric key
-     * @param input encrypted Base64 String
+     * @param key     symmetric key
+     * @param input   encrypted Base64 String
+     * @param charset The charset to be used to decode the bytes
      * @return decrypted String
      * @throws IOException decryption failure
      */
-    public String decrypt(String key, String input) throws IOException {
+    public String decrypt(String key, String input, Charset charset) throws IOException {
         mutex.lock();
         try {
-            return new String(doFinal(key, Cipher.DECRYPT_MODE, b64dec.decode(input)));
+            return new String(doFinal(key, Cipher.DECRYPT_MODE, b64dec.decode(input)), charset);
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             throw new IOException("decryption failure", e);
         } finally {
@@ -126,15 +128,16 @@ public class SymmetricKeyCipher {
     /**
      * Decrypt input with given key
      *
-     * @param key   symmetric key
-     * @param input encrypted Base64 String
+     * @param key     symmetric key
+     * @param input   encrypted Base64 String
+     * @param charset The charset to be used to decode the bytes
      * @return decrypted String
      * @throws IOException decryption failure
      */
-    public String decrypt(String key, byte[] input) throws IOException {
+    public String decrypt(String key, byte[] input, Charset charset) throws IOException {
         mutex.lock();
         try {
-            return new String(doFinal(key, Cipher.DECRYPT_MODE, b64dec.decode(input)));
+            return new String(doFinal(key, Cipher.DECRYPT_MODE, b64dec.decode(input)), charset);
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             throw new IOException("decryption failure", e);
         } finally {
