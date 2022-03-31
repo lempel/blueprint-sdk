@@ -50,13 +50,18 @@ public class SymmetricKeyCipher {
         b64dec = Base64.getDecoder();
     }
 
+    /**
+     * Create appropriate SecretKey for given key with current algorithm
+     *
+     * @param key secret key
+     * @return {@link SecretKey}
+     */
     public SecretKey toSecretKey(String key) {
         SecretKey ret;
         String algorithm = cipher.getAlgorithm();
 
         switch (algorithm) {
             case AES_ECP_PKCS5:
-                System.out.println("key length = " + key.length());
                 String paddedKey = StringUtil.lpadSpace(key, 32); // max 32
                 ret = new SecretKeySpec(paddedKey.getBytes(StandardCharsets.UTF_8), "AES");
                 break;
@@ -76,9 +81,21 @@ public class SymmetricKeyCipher {
      * @throws IOException encryption failure
      */
     public String encrypt(String key, String input) throws IOException {
+        return encrypt(key, input.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Encrypt input with given key
+     *
+     * @param key   symmetric key
+     * @param input input
+     * @return encrypted Base64 String
+     * @throws IOException encryption failure
+     */
+    public String encrypt(String key, byte[] input) throws IOException {
         mutex.lock();
         try {
-            byte[] b64 = b64enc.encode(doFinal(key, Cipher.ENCRYPT_MODE, input.getBytes(StandardCharsets.UTF_8)));
+            byte[] b64 = b64enc.encode(doFinal(key, Cipher.ENCRYPT_MODE, input));
             return new String(b64);
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             throw new IOException("encryption failure", e);
@@ -96,6 +113,25 @@ public class SymmetricKeyCipher {
      * @throws IOException decryption failure
      */
     public String decrypt(String key, String input) throws IOException {
+        mutex.lock();
+        try {
+            return new String(doFinal(key, Cipher.DECRYPT_MODE, b64dec.decode(input)));
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+            throw new IOException("decryption failure", e);
+        } finally {
+            mutex.unlock();
+        }
+    }
+
+    /**
+     * Decrypt input with given key
+     *
+     * @param key   symmetric key
+     * @param input encrypted Base64 String
+     * @return decrypted String
+     * @throws IOException decryption failure
+     */
+    public String decrypt(String key, byte[] input) throws IOException {
         mutex.lock();
         try {
             return new String(doFinal(key, Cipher.DECRYPT_MODE, b64dec.decode(input)));
